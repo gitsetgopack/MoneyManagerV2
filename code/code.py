@@ -18,6 +18,7 @@ import add_recurring
 import receipt
 from datetime import datetime
 from jproperties import Properties
+import display_currency
 
 configs = Properties()
 
@@ -136,10 +137,13 @@ def addUserHistory(chat_id, user_record):
     user_list[str(chat_id)].append(user_record)
     return user_list
 
+@bot.message_handler(commands=['DisplayCurrency'])
+def command_history(message):
+    display_currency.run(message, bot)
 
 def main():
     try:
-        bot.polling(none_stop=True)
+        bot.polling(non_stop=True)
     except Exception as e:
         logging.exception(str(e))
         time.sleep(3)
