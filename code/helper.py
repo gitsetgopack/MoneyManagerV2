@@ -50,7 +50,7 @@ category_options = {
 # set of implemented commands and their description
 commands = {
     'menu': 'Display this menu',
-    'add': 'Record/Add a new spending',
+    'add_expense': 'Record/Add a new spending',
     'add_recurring': 'Add a new recurring expense for future months',
     'display': 'Show sum of expenditure for the current day/month',
     'estimate': 'Show an estimate of expenditure for the next day/month',

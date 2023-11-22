@@ -14,11 +14,11 @@ def run(message, bot):
         income_amount = 0.0
         expense_amount = 0.0
         am=""
-        Dict_income = {'Jan': 0.0, 'Feb': 0.0, 'Mar': 0.0, 'Apr': 0.0, 'May': 0.0, 'Jun': 0.0, 'Jul': 0.0, 'Sep': 0.0,
+        Dict_income = {'Jan': 0.0, 'Feb': 0.0, 'Mar': 0.0, 'Apr': 0.0, 'May': 0.0, 'Jun': 0.0, 'Jul': 0.0, 'Aug': 0.0, 'Sep': 0.0,
                        'Oct': 0.0, 'Nov': 0.0, 'Dec': 0.0}
-        Dict_expense = {'Jan': 0.0, 'Feb': 0.0, 'Mar': 0.0, 'Apr': 0.0, 'May': 0.0, 'Jun': 0.0, 'Jul': 0.0, 'Sep': 0.0,
+        Dict_expense = {'Jan': 0.0, 'Feb': 0.0, 'Mar': 0.0, 'Apr': 0.0, 'May': 0.0, 'Jun': 0.0, 'Jul': 0.0, 'Aug': 0.0, 'Sep': 0.0,
                         'Oct': 0.0, 'Nov': 0.0, 'Dec': 0.0}
-        Dict_profit = {'Jan': 0.0, 'Feb': 0.0, 'Mar': 0.0, 'Apr': 0.0, 'May': 0.0, 'Jun': 0.0, 'Jul': 0.0, 'Sep': 0.0,
+        Dict_profit = {'Jan': 0.0, 'Feb': 0.0, 'Mar': 0.0, 'Apr': 0.0, 'May': 0.0, 'Jun': 0.0, 'Jul': 0.0, 'Aug': 0.0, 'Sep': 0.0,
                        'Oct': 0.0, 'Nov': 0.0, 'Dec': 0.0}
         if user_income_history and user_expense_history is None:
             raise Exception("Sorry! No records found!")

@@ -63,7 +63,7 @@ def start_and_menu_command(m):
 
 # defines how the /new command has to be handled/processed
 # function to add an expense
-@bot.message_handler(commands=['add'])
+@bot.message_handler(commands=['add_expense'])
 def command_add(message):
     add.run(message, bot)
 
