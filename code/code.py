@@ -16,6 +16,7 @@ import extract
 import sendEmail
 import add_recurring
 import receipt
+import add_income
 from datetime import datetime
 from jproperties import Properties
 
@@ -126,6 +127,11 @@ def command_sendEmail(message):
 @bot.message_handler(commands=['receipt'])
 def command_receipt(message):
     receipt.command_receipt(message, bot)
+
+
+@bot.message_handler(commands=['add_income'])
+def command_add_income(message):
+    add_income.run(message, bot)
 
 
 # not used

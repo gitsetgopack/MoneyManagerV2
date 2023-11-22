@@ -28,11 +28,17 @@ budget_types = {
 
 data_format = {
     'data': [],
+    'income_data': [],
     'budget': {
         'overall': None,
         'category': None,
         'max_per_txn_spend': None
     }
+}
+
+income_or_expense_options = {
+    'income': 'Income',
+    'expense': 'Expense'
 }
 
 category_options = {
@@ -55,7 +61,8 @@ commands = {
     'category': 'Add/Delete/Show custom categories',
     'extract': 'Extract data into CSV',
     'sendEmail': 'Email CSV to user',
-    'receipt': 'Show the receipt for the day'
+    'receipt': 'Show the receipt for the day',
+    'add_income': 'Add a new income',
 }
 
 dateFormat = '%d-%b-%Y'
@@ -115,10 +122,17 @@ def validate_transaction_limit(chat_id, amount_value, bot):
                 chat_id, 'Warning! You went over your transaction spend limit')
 
 
-def getUserHistory(chat_id):
+def getUserExpenseHistory(chat_id):
     data = getUserData(chat_id)
     if data is not None:
         return data['data']
+    return None
+
+
+def getUserIncomeHistory(chat_id):
+    data = getUserData(chat_id)
+    if data is not None:
+        return data['income_data']
     return None
 
 
@@ -208,13 +222,13 @@ def display_remaining_overall_budget(message, bot):
         msg = '\nRemaining Overall Budget is $' + str(remaining_budget)
     else:
         msg = '\nBudget Exceded!\nExpenditure exceeds the budget by $' + \
-            str(remaining_budget)[1:]
+              str(remaining_budget)[1:]
     bot.send_message(chat_id, msg)
 
 
 def calculateRemainingOverallBudget(chat_id):
     budget = getOverallBudget(chat_id)
-    history = getUserHistory(chat_id)
+    history = getUserExpenseHistory(chat_id)
     query = datetime.now().today().strftime(getMonthFormat())
     queryResult = [value for index, value in enumerate(
         history) if str(query) in value]
@@ -238,14 +252,14 @@ def display_remaining_category_budget(message, bot, cat):
         msg = '\nRemaining Budget for ' + cat + ' is $' + str(remaining_budget)
     else:
         msg = '\nBudget for ' + cat + \
-            ' Exceded!\nExpenditure exceeds the budget by $' + \
-            str(abs(remaining_budget))
+              ' Exceded!\nExpenditure exceeds the budget by $' + \
+              str(abs(remaining_budget))
     bot.send_message(chat_id, msg)
 
 
 def calculateRemainingCategoryBudget(chat_id, cat):
     budget = getCategoryBudgetByCategory(chat_id, cat)
-    history = getUserHistory(chat_id)
+    history = getUserExpenseHistory(chat_id)
     query = datetime.now().today().strftime(getMonthFormat())
     queryResult = [value for index, value in enumerate(
         history) if str(query) in value]
@@ -315,3 +329,22 @@ def getUpdateOptions():
 
 def getCategoryOptions():
     return category_options
+
+
+def getIncomeCategories():
+    with open("income_categories.txt", "r") as tf:
+        income_categories = tf.read().split(',')
+    return income_categories
+
+
+def getCategories(selectedType):
+    if selectedType == "Income":
+        income_categories = getIncomeCategories()
+        return income_categories
+    else:
+        spend_categories = getSpendCategories()
+        return spend_categories
+
+
+def getIncomeOrExpense():
+    return income_or_expense_options
