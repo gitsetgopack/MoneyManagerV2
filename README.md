@@ -13,10 +13,10 @@ This video shows only the new features and enhancement of some older features. A
 ![MIT license](https://img.shields.io/badge/License-MIT-green.svg)
 [![Platform](https://img.shields.io/badge/Platform-Telegram-blue)](https://desktop.telegram.org/)
 ![GitHub](https://img.shields.io/badge/Language-Python-blue.svg)
-[![GitHub contributors](https://img.shields.io/github/contributors/anuj672/MyDollarBot-BOTGo)](https://github.com/anuj672/MyDollarBot-BOTGo/graphs/contributors)
+[![GitHub contributors](https://img.shields.io/github/contributors/JayProngs/MyDollarBot-BOTGo)](https://github.com/JayProngs/MyDollarBot-BOTGo/graphs/contributors)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10023576.svg)](https://doi.org/10.5281/zenodo.10023576)
-[![codecov](https://codecov.io/gh/JayProngs/MyDollarBot-BOTGo/branch/main/graph/badge.svg?token=f2f94630-96d4-4b94-8144-21d07b65165)](https://codecov.io/gh/JayProngs/MyDollarBot-BOTGo)
-[![Test and Formatting](https://github.com/anuj672/MyDollarBot-BOTGo/actions/workflows/test.yml/badge.svg)](https://github.com/anuj672/MyDollarBot-BOTGo/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/JayProngs/MyDollarBot-BOTGo/branch/main/graph/badge.svg?token=5AYMR8MNMP)](https://codecov.io/gh/JayProngs/MyDollarBot-BOTGo)
+[![Test and Formatting](https://github.com/JayProngs/MyDollarBot-BOTGo/actions/workflows/test.yml/badge.svg)](https://github.com/JayProngs/MyDollarBot-BOTGo/actions/workflows/test.yml)
 <!-- [![codecov](https://codecov.io/gh/sak007/MyDollarBot-BOTGo/branch/main/graph/badge.svg?token=5AYMR8MNMP)](https://codecov.io/gh/sak007/MyDollarBot-BOTGo) -->
 [![GitHub issues](https://img.shields.io/github/issues/anuj672/MyDollarBot-BOTGo)](https://github.com/anuj672/MyDollarBot-BOTGo/issues)
 [![GitHub closed issues](https://img.shields.io/github/issues-closed/bhaveshittadwar/csc-510-se-group-49)](https://github.com/bhaveshittadwar/csc-510-se-group-49/issues?q=is%3Aissue+is%3Aclosed)
