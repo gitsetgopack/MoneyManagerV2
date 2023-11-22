@@ -145,7 +145,7 @@ def test_validate_entered_amount_mixed():
 def test_getUserHistory_without_data(mocker):
     mocker.patch.object(helper, 'read_json')
     helper.read_json.return_value = {}
-    result = helper.getUserHistory(MOCK_CHAT_ID)
+    result = helper.getUserExpenseHistory(MOCK_CHAT_ID)
     if result is None:
         assert True
     else:
@@ -155,7 +155,7 @@ def test_getUserHistory_without_data(mocker):
 def test_getUserHistory_with_data(mocker):
     mocker.patch.object(helper, 'read_json')
     helper.read_json.return_value = MOCK_USER_DATA
-    result = helper.getUserHistory(MOCK_CHAT_ID)
+    result = helper.getUserExpenseHistory(MOCK_CHAT_ID)
     if result == MOCK_USER_DATA[str(MOCK_CHAT_ID)]['data']:
         assert True
     else:
@@ -165,7 +165,7 @@ def test_getUserHistory_with_data(mocker):
 def test_getUserHistory_with_none(mocker):
     mocker.patch.object(helper, 'read_json')
     helper.read_json.return_value = None
-    result = helper.getUserHistory(MOCK_CHAT_ID)
+    result = helper.getUserExpenseHistory(MOCK_CHAT_ID)
     if result is None:
         assert True
     else:

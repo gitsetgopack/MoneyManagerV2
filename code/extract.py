@@ -10,7 +10,7 @@ import os
 def run(message, bot):
     try:
         chat_id = message.chat.id
-        user_history = helper.getUserHistory(chat_id)
+        user_history = helper.getUserExpenseHistory(chat_id)
         if not user_history:
             bot.send_message(chat_id, "no data to generate csv")
             return None
