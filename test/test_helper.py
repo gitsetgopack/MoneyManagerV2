@@ -250,6 +250,7 @@ def test_throw_exception(mock_telebot, mocker):
 def test_createNewUserRecord():
     data_format_call = helper.createNewUserRecord()
     data_format = {
+        'income_data': [],
         'data': [],
         'budget': {
             'overall': None,

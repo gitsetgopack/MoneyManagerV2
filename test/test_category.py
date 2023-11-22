@@ -27,7 +27,7 @@ def test_post_operation_selection_working(mock_telebot, mocker):
     mc.send_message.return_value = True
 
     message = create_message("hello from testing!")
-    category.post_operation_selection(message, mc)
+    category.post_operation_selection(message, mc, 'Income')
     assert(mc.send_message.called)
 
 @patch('telebot.telebot')
@@ -39,7 +39,7 @@ def test_post_operation_selection_noMatchingCategory(mock_telebot, mocker):
     category.helper.getCategoryOptions.return_value = {}
 
     message = create_message("hello from test_category.py!")
-    category.post_operation_selection(message, mc)
+    category.post_operation_selection(message, mc, 'Income')
     mc.send_message.assert_called_with(11, 'Invalid', reply_markup=ANY)
 
 def create_message(text):
