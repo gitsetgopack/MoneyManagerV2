@@ -55,7 +55,8 @@ commands = {
     'category': 'Add/Delete/Show custom categories',
     'extract': 'Extract data into CSV',
     'sendEmail': 'Email CSV to user',
-    'receipt': 'Show the receipt for the day'
+    'receipt': 'Show the receipt for the day',
+    'upload':'Upload CSV file for bulk insert'
 }
 
 dateFormat = '%d-%b-%Y'
