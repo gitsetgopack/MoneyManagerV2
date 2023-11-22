@@ -17,6 +17,7 @@ import sendEmail
 import add_recurring
 import receipt
 import process_csv
+import add_income
 from datetime import datetime
 from jproperties import Properties
 
@@ -63,7 +64,7 @@ def start_and_menu_command(m):
 
 # defines how the /new command has to be handled/processed
 # function to add an expense
-@bot.message_handler(commands=['add'])
+@bot.message_handler(commands=['add_expense'])
 def command_add(message):
     add.run(message, bot)
 
@@ -127,6 +128,11 @@ def command_sendEmail(message):
 @bot.message_handler(commands=['receipt'])
 def command_receipt(message):
     receipt.command_receipt(message, bot)
+
+
+@bot.message_handler(commands=['add_income'])
+def command_add_income(message):
+    add_income.run(message, bot)
 
 
 # not used

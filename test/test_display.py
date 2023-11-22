@@ -63,7 +63,7 @@ def test_valid_format_day(mock_telebot, mocker):
 def test_spending_run_working(mock_telebot, mocker):
     MOCK_USER_DATA = test_read_json()
     mocker.patch.object(display, 'helper')
-    display.helper.getUserHistory.return_value = MOCK_USER_DATA["894127939"]
+    display.helper.getUserExpenseHistory.return_value = MOCK_USER_DATA["894127939"]
     display.helper.getSpendDisplayOptions.return_value = [
         "Day", "Month"]
     display.helper.getDateFormat.return_value = '%d-%b-%Y'
@@ -80,7 +80,7 @@ def test_spending_run_working(mock_telebot, mocker):
 def test_spending_display_working(mock_telebot, mocker):
     MOCK_USER_DATA = test_read_json()
     mocker.patch.object(display, 'helper')
-    display.helper.getUserHistory.return_value = MOCK_USER_DATA["894127939"]
+    display.helper.getUserExpenseHistory.return_value = MOCK_USER_DATA["894127939"]
     display.helper.getSpendDisplayOptions.return_value = [
         "Day", "Month"]
     display.helper.getDateFormat.return_value = '%d-%b-%Y'
@@ -97,7 +97,7 @@ def test_spending_display_working(mock_telebot, mocker):
 def test_spending_display_month(mock_telebot, mocker):
     MOCK_USER_DATA = test_read_json()
     mocker.patch.object(display, 'helper')
-    display.helper.getUserHistory.return_value = MOCK_USER_DATA["894127939"]
+    display.helper.getUserExpenseHistory.return_value = MOCK_USER_DATA["894127939"]
     display.helper.getSpendDisplayOptions.return_value = [
         "Day", "Month"]
     display.helper.getDateFormat.return_value = '%d-%b-%Y'
