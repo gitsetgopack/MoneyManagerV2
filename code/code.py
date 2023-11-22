@@ -16,6 +16,7 @@ import extract
 import sendEmail
 import add_recurring
 import receipt
+import process_csv
 import add_income
 from datetime import datetime
 from jproperties import Properties
@@ -142,6 +143,20 @@ def addUserHistory(chat_id, user_record):
     user_list[str(chat_id)].append(user_record)
     return user_list
 
+@bot.message_handler(commands=["upload"])
+def bulkInsert(message):
+    '''
+    This function is used to add bulk expenses using uploading a csv file.
+    :param message: telebot.types.Message object representing the message object
+    :return: None
+    '''
+    document = open('data/records.csv', 'rb')
+    bot.send_message(str(message.chat.id), "Please update the below csv and repload it with data.")
+    bot.register_next_step_handler(message, handle_document_csv)
+    bot.send_document(str(message.chat.id), document)
+
+def handle_document_csv(message):
+    process_csv.process_csv_file(message=message,bot=bot)
 
 def main():
     try:

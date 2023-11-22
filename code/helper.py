@@ -62,6 +62,7 @@ commands = {
     'extract': 'Extract data into CSV',
     'sendEmail': 'Email CSV to user',
     'receipt': 'Show the receipt for the day',
+    'upload':'Upload CSV file for bulk insert',
     'add_income': 'Add a new income',
 }
 
