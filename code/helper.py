@@ -133,7 +133,8 @@ def getUserExpenseHistory(chat_id):
 def getUserIncomeHistory(chat_id):
     data = getUserData(chat_id)
     if data is not None:
-        return data['income_data']
+        if 'income_data' in data:
+            return data['income_data']
     return None
 
 

@@ -20,8 +20,7 @@ def run(message, bot):
                         'Oct': 0.0, 'Nov': 0.0, 'Dec': 0.0}
         Dict_profit = {'Jan': 0.0, 'Feb': 0.0, 'Mar': 0.0, 'Apr': 0.0, 'May': 0.0, 'Jun': 0.0, 'Jul': 0.0, 'Aug': 0.0, 'Sep': 0.0,
                        'Oct': 0.0, 'Nov': 0.0, 'Dec': 0.0}
-        if user_income_history and user_expense_history is None:
-            raise Exception("Sorry! No records found!")
+        
         spend_total_str = "Here is your spending history : \nDATE, CATEGORY, AMOUNT\n----------------------\n"
         if len(user_expense_history) == 0:
             spend_total_str = "Sorry! No spending records found!"
@@ -38,7 +37,7 @@ def run(message, bot):
         bot.send_message(chat_id, spend_total_str)
 
         income_total_str = "Here is your income history : \nDATE, CATEGORY, AMOUNT\n----------------------\n"
-        if len(user_income_history) == 0:
+        if user_expense_history is None or len(user_income_history) == 0:
             income_total_str = "Sorry! No income records found!"
         else:
             for rec in user_income_history:
