@@ -8,7 +8,7 @@ pytest-mock==3.11.1
 python-telegram-bot==20.6
 black==23.10.0
 pylint==3.0.1
-
+forex-python
 requests~=2.31.0
 telebot~=0.0.5
 python-dateutil~=2.8.2
