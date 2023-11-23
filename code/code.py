@@ -16,6 +16,8 @@ import extract
 import sendEmail
 import add_recurring
 import receipt
+import process_csv
+import add_income
 from datetime import datetime
 from jproperties import Properties
 import display_currency
@@ -64,7 +66,7 @@ def start_and_menu_command(m):
 
 # defines how the /new command has to be handled/processed
 # function to add an expense
-@bot.message_handler(commands=['add'])
+@bot.message_handler(commands=['add_expense'])
 def command_add(message):
     add.run(message, bot)
 
@@ -130,6 +132,11 @@ def command_receipt(message):
     receipt.command_receipt(message, bot)
 
 
+@bot.message_handler(commands=['add_income'])
+def command_add_income(message):
+    add_income.run(message, bot)
+
+
 # not used
 def addUserHistory(chat_id, user_record):
     global user_list
@@ -138,13 +145,28 @@ def addUserHistory(chat_id, user_record):
     user_list[str(chat_id)].append(user_record)
     return user_list
 
-@bot.message_handler(commands=['DisplayCurrency'])
-def command_history(message):
-    display_currency.run(message, bot)
+
+@bot.message_handler(commands=["upload"])
+def bulkInsert(message):
+    '''
+    This function is used to add bulk expenses using uploading a csv file.
+    :param message: telebot.types.Message object representing the message object
+    :return: None
+    '''
+    document = open('data/records.csv', 'rb')
+    bot.send_message(str(message.chat.id), "Please update the below csv and repload it with data.")
+    bot.register_next_step_handler(message, handle_document_csv)
+    bot.send_document(str(message.chat.id), document)
+
+
+def handle_document_csv(message):
+    process_csv.process_csv_file(message=message, bot=bot)
+
 
 @bot.message_handler(commands=['chat'])
 def command_history(message):
     chatGPT_ext.run(message, bot)
+
 
 def main():
     try:
