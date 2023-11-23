@@ -7,13 +7,12 @@ def run(message, bot):
     helper.read_json()
     chat_id = message.chat.id
     history = helper.getUserHistory(chat_id)
-    print('here 1')
 
     if history is None:
         bot.send_message(chat_id, "Sorry, there are no records of the spending!")
     else:
-        bot.send_message(chat_id, "Hi, I am your AI finance assistant. I can help you with your spending and "
-                                  "budgeting. Please type exit to stop chatting with me.")
+        bot.send_message(chat_id, "Hi, I am your AI finance assistant. I can help you with your spendings and "
+                                  "budgeting. Please type 'exit' to stop chatting with me.")
         # added by Jay for chatbot integration
         sign = Login('airtelbharti9004@gmail.com', 'J@yesh17598')
         cookies = sign.login()
@@ -33,14 +32,12 @@ def run_display(message, bot, chatbot):
     chat_id = message.chat.id
     user_input = message.text
     user_history = helper.getUserHistory(chat_id)
-    print('Here:' + user_input)
 
     # get history of user
     spend_total_str = ""
     # Amount for each month
     Dict = {'Jan': 0.0, 'Feb': 0.0, 'Mar': 0.0, 'Apr': 0.0, 'May': 0.0, 'Jun': 0.0, 'Jul': 0.0, 'Aug': 0.0,
             'Sep': 0.0, 'Oct': 0.0, 'Nov': 0.0, 'Dec': 0.0}
-    print('Here 2:' + user_input)
 
     if user_input == 'exit':
         bot.send_message(chat_id, 'Nice talking to you. Happy Finance!')
