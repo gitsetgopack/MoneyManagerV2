@@ -6,7 +6,7 @@ from hugchat.login import Login
 def run(message, bot):
     helper.read_json()
     chat_id = message.chat.id
-    history = helper.getUserHistory(chat_id)
+    history = helper.getUserExpenseHistory(chat_id)
 
     if history is None:
         bot.send_message(chat_id, "Sorry, there are no records of the spending!")
@@ -31,7 +31,7 @@ def run_display(message, bot, chatbot):
     helper.read_json()
     chat_id = message.chat.id
     user_input = message.text
-    user_history = helper.getUserHistory(chat_id)
+    user_history = helper.getUserExpenseHistory(chat_id)
 
     # get history of user
     spend_total_str = ""
