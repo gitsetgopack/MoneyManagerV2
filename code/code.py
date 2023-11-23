@@ -19,6 +19,7 @@ import receipt
 from datetime import datetime
 from jproperties import Properties
 import display_currency
+import chatGPT_ext
 
 configs = Properties()
 
@@ -141,12 +142,16 @@ def addUserHistory(chat_id, user_record):
 def command_history(message):
     display_currency.run(message, bot)
 
+@bot.message_handler(commands=['chat'])
+def command_history(message):
+    chatGPT_ext.run(message, bot)
+
 def main():
     try:
         bot.polling(non_stop=True)
     except Exception as e:
         logging.exception(str(e))
-        time.sleep(3)
+        time.sleep(10)
         print("Connection Timeout")
 
 

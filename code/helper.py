@@ -55,7 +55,9 @@ commands = {
     'category': 'Add/Delete/Show custom categories',
     'extract': 'Extract data into CSV',
     'sendEmail': 'Email CSV to user',
-    'receipt': 'Show the receipt for the day'
+    'receipt': 'Show the receipt for the day',
+    'DisplayCurrency': 'Display total expenditure in a currency of your choice',
+    'chat': 'Chat with the bot'
 }
 
 dateFormat = '%d-%b-%Y'
