@@ -167,6 +167,10 @@ def handle_document_csv(message):
 def command_history(message):
     chatGPT_ext.run(message, bot)
 
+@bot.message_handler(commands=['DisplayCurrency'])
+def command_history(message):
+     display_currency.run(message, bot)
+
 
 def main():
     try:
