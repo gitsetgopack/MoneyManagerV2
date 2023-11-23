@@ -20,6 +20,8 @@ import process_csv
 import add_income
 from datetime import datetime
 from jproperties import Properties
+import display_currency
+import chatGPT_ext
 
 configs = Properties()
 
@@ -143,6 +145,7 @@ def addUserHistory(chat_id, user_record):
     user_list[str(chat_id)].append(user_record)
     return user_list
 
+
 @bot.message_handler(commands=["upload"])
 def bulkInsert(message):
     '''
@@ -155,15 +158,22 @@ def bulkInsert(message):
     bot.register_next_step_handler(message, handle_document_csv)
     bot.send_document(str(message.chat.id), document)
 
+
 def handle_document_csv(message):
-    process_csv.process_csv_file(message=message,bot=bot)
+    process_csv.process_csv_file(message=message, bot=bot)
+
+
+@bot.message_handler(commands=['chat'])
+def command_history(message):
+    chatGPT_ext.run(message, bot)
+
 
 def main():
     try:
-        bot.polling(none_stop=True)
+        bot.polling(non_stop=True)
     except Exception as e:
         logging.exception(str(e))
-        time.sleep(3)
+        time.sleep(10)
         print("Connection Timeout")
 
 

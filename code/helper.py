@@ -64,6 +64,8 @@ commands = {
     'receipt': 'Show the receipt for the day',
     'upload':'Upload CSV file for bulk insert',
     'add_income': 'Add a new income',
+    'DisplayCurrency': 'Display total expenditure in a currency of your choice',
+    'chat': 'Chat with the bot'
 }
 
 dateFormat = '%d-%b-%Y'
