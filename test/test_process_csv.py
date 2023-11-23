@@ -22,11 +22,22 @@ def test_process_csv_save_file_function(mock_telebot, mocker):
     mc.download_file.return_value=create_csv()
 
     message = create_message("hello from testing!")
-    print('#####',message)
     process_csv.save_file(message,mc)
     time.sleep(3)
 
     assert(os.path.isfile('./data/11_records.csv'))
+
+@patch('telebot.telebot')
+def test_process_csv_main_fucntion(mock_telebot, mocker):
+    mc = mock_telebot.return_value
+    mc.send_message.return_value = True
+    mc.get_file.return_value=dict2obj({'file_path':'temp.csv'})
+    mc.download_file.return_value=create_csv()
+
+    message = create_message("hello from testing!")
+    process_csv.process_csv_file(message,mc)
+
+    assert(mc.send_message.called)
 
 def create_csv():
     with open('data/test_records.csv', 'w', newline='') as file:
