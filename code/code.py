@@ -18,6 +18,7 @@ import add_recurring
 import receipt
 import process_csv
 import add_income
+import pdf
 from datetime import datetime
 from jproperties import Properties
 import display_currency
@@ -137,6 +138,11 @@ def command_add_income(message):
     add_income.run(message, bot)
 
 
+@bot.message_handler(commands=['pdf'])
+def command_category(message):
+    pdf.run(message, bot)
+
+
 # not used
 def addUserHistory(chat_id, user_record):
     global user_list
@@ -166,6 +172,7 @@ def handle_document_csv(message):
 @bot.message_handler(commands=['chat'])
 def command_history(message):
     chatGPT_ext.run(message, bot)
+
 
 @bot.message_handler(commands=['DisplayCurrency'])
 def command_history(message):

@@ -65,7 +65,8 @@ commands = {
     'upload':'Upload CSV file for bulk insert',
     'add_income': 'Add a new income',
     'DisplayCurrency': 'Display total expenditure in a currency of your choice',
-    'chat': 'Chat with the bot'
+    'chat': 'Chat with the bot',
+    'pdf': 'Generate a pdf for Income or History'
 }
 
 dateFormat = '%d-%b-%Y'
@@ -352,3 +353,10 @@ def getCategories(selectedType):
 
 def getIncomeOrExpense():
     return income_or_expense_options
+
+
+def getUserHistory(chat_id, selectedType):
+    if selectedType == "Income":
+        return getUserIncomeHistory(chat_id)
+    else:
+        return getUserExpenseHistory(chat_id)
