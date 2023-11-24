@@ -26,7 +26,7 @@ This video shows only the new features and enhancement of some older features. A
 
 <hr>
 
-## About TrackMyDollar
+## :money_with_wings: About TrackMyDollar
 
 TrackMyDollar is an easy-to-use Telegram Bot that assists you in recording your daily expenses on a local system without any hassle 
 With simple commands, this bot allows you to:
@@ -49,6 +49,7 @@ With simple commands, this bot allows you to:
 - Transaction Limit Notifications: Users can set transaction limits and receive alerts when expenses exceed the specified limits, helping them stay within budget.
 - GitHub Actions Automation: Automated testing, code formatting, and syntax checks have been implemented through Github Actions. A minimum 80% code coverage is required for successful builds, ensuring code quality and testing standards are maintained.
 
+## :star: Whats New
 ## Project 3
 - Add Income Feature: Apart from adding expenses, users can now add income for different categories like salary, part-time and can be managed just like expenses with single command /add_income. 
 - Generate PDF: PDFs can be generated for Income or expenses with /pdf command.
@@ -65,7 +66,7 @@ Please refer to the issue list available [here](https://github.com/anuj672/MyDol
 
 https://user-images.githubusercontent.com/72677919/140454147-f879010a-173b-47b9-9cfb-a389171924de.mp4
 
-## Installation guide
+## :rocket: Installation guide
 
 The below instructions can be followed in order to set-up this bot at your end in a span of few minutes! Let's get started:
 
