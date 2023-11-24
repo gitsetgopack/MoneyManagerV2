@@ -40,14 +40,22 @@ With simple commands, this bot allows you to:
 - Added pie charts, bar graphs with and without budget lines 
 - Deployment on GCP 
 
-## What's new? (From Phase 3 to Phase 4)
+## Project 2
 
 - Email Transaction History: Users can request their complete transaction history via email for easy access and record-keeping.
 - CSV Transaction History Extraction: Users can download their transaction history in CSV format, providing a versatile data export option for analysis.
 - Receipt Management: Users can upload and retrieve receipts for specific transactions by date, simplifying expense tracking and documentation.
 - Transaction Limit Notifications: Users can set transaction limits and receive alerts when expenses exceed the specified limits, helping them stay within budget.
-- Github Actions Automation: Automated testing, code formatting, and syntax checks have been implemented through Github Actions. A minimum 80% code coverage is required for successful builds, ensuring code quality and testing standards are maintained.
+- GitHub Actions Automation: Automated testing, code formatting, and syntax checks have been implemented through Github Actions. A minimum 80% code coverage is required for successful builds, ensuring code quality and testing standards are maintained.
 
+## Project 3
+- Add Income Feature: Apart from adding expenses, users can now add income for different categories like salary, part-time and can be managed just like expenses with single command /add_income. 
+- Generate PDF: PDFs can be generated for Income or expenses with /pdf command.
+- multiple currency support:
+- upload CSV:
+- AI integration
+- Calendar functionality
+- Test cases added to improve coverage
 
 ## What more can be done?
 Please refer to the issue list available [here](https://github.com/anuj672/MyDollarBot-BOTGo/issues) to see what more can be done to make MyDollarBot better. Please refer to the MyDollarBot project present [here](https://github.com/bhaveshittadwar/csc-510-se-group-49/projects) to have a look at the tasks done or in progress
