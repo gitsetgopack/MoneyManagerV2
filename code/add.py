@@ -1,3 +1,4 @@
+from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
 import helper
 import logging
 from telebot import types, telebot
@@ -32,32 +33,6 @@ def run(message, bot):
         markup.add(c)
     msg = bot.reply_to(message, 'Select Category', reply_markup=markup)
     bot.register_next_step_handler(msg, post_category_selection, bot)
-
-
-@bot.message_handler(content_types=['photo'])
-def handle_uploaded_receipt(message, bot):
-    try:
-        chat_id = message.chat.id
-        file_id = message.photo[-1].file_id
-        file_info = bot.get_file(file_id)
-        file_url = 'https://api.telegram.org/file/bot{}/{}'.format(
-            api_token, file_info.file_path)
-
-        # store image
-        file_extension = file_info.file_path.split('.')[-1]
-
-        receipt_file_name = os.path.join(
-            "receipts", f"receipt_{chat_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}.{file_extension}")
-
-        with open(receipt_file_name, 'wb') as file:
-            file.write(requests.get(file_url).content)
-
-        bot.send_message(
-            chat_id, 'Receipt uploaded successfully and The expenditure is recorded!')
-    except Exception as e:
-        logging.exception(str(e))
-        bot.send_message(chat_id, 'Error uploading receipt. ' + str(e))
-
 
 def post_category_selection(message, bot):
     try:
@@ -97,7 +72,36 @@ def post_amount_input(message, bot, selected_category):
 
         helper.validate_transaction_limit(chat_id, amount_value, bot)
 
-        date_of_entry = datetime.today().strftime(
+        calendar, step = DetailedTelegramCalendar().build()
+        bot.send_message(chat_id, f"Select {LSTEP[step]}", reply_markup=calendar)
+
+        @bot.callback_query_handler(func=DetailedTelegramCalendar.func())
+        def cal(c):
+            result, key, step = DetailedTelegramCalendar().process(c.data)
+
+            if not result and key:
+                bot.edit_message_text(
+                    f"Select {LSTEP[step]}",
+                    c.message.chat.id,
+                    c.message.message_id,
+                    reply_markup=key,
+                )
+            elif result:
+                post_date_input(message, bot, result,amount_value,selected_category)
+                bot.edit_message_text(
+                    f"Date is set: {result}",
+                    c.message.chat.id,
+                    c.message.message_id,
+                )
+    except Exception as e:
+        logging.exception(str(e))
+        bot.reply_to(message, 'Oh no! ' + str(e))
+
+
+def post_date_input(message, bot, date_entered,amount_value,selected_category):
+    try:
+        chat_id = message.chat.id
+        date_of_entry = date_entered.strftime(
             helper.getDateFormat() + ' ' + helper.getTimeFormat())
         date_str, category_str, amount_str = str(
             date_of_entry), str(option[chat_id]), str(amount_value)
@@ -111,9 +115,34 @@ def post_amount_input(message, bot, selected_category):
             chat_id, 'Do you want to upload a receipt image (if available)?', reply_markup=markup)
         bot.register_next_step_handler(
             msg, handle_receipt_decision, bot, amount_str, category_str, date_str, selected_category)
+
     except Exception as e:
         logging.exception(str(e))
-        bot.reply_to(message, 'Oh no! ' + str(e))
+        bot.reply_to(date_entered, 'Oh no. ' + str(e))
+
+@bot.message_handler(content_types=['photo'])
+def handle_uploaded_receipt(message, bot):
+    try:
+        chat_id = message.chat.id
+        file_id = message.photo[-1].file_id
+        file_info = bot.get_file(file_id)
+        file_url = 'https://api.telegram.org/file/bot{}/{}'.format(
+            api_token, file_info.file_path)
+
+        # store image
+        file_extension = file_info.file_path.split('.')[-1]
+
+        receipt_file_name = os.path.join(
+            "receipts", f"receipt_{chat_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}.{file_extension}")
+
+        with open(receipt_file_name, 'wb') as file:
+            file.write(requests.get(file_url).content)
+
+        bot.send_message(
+            chat_id, 'Receipt uploaded successfully and The expenditure is recorded!')
+    except Exception as e:
+        logging.exception(str(e))
+        bot.send_message(chat_id, 'Error uploading receipt. ' + str(e))
 
 
 def handle_receipt_decision(message, bot, amount_str, category_str, date_str, selected_category):
