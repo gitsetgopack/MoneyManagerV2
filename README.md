@@ -20,6 +20,8 @@ This video shows only the new features and enhancement of some older features. A
 [![GitHub issues](https://img.shields.io/github/issues/anuj672/MyDollarBot-BOTGo)](https://github.com/anuj672/MyDollarBot-BOTGo/issues)
 [![GitHub closed issues](https://img.shields.io/github/issues-closed/bhaveshittadwar/csc-510-se-group-49)](https://github.com/bhaveshittadwar/csc-510-se-group-49/issues?q=is%3Aissue+is%3Aclosed)
 ![Fork](https://img.shields.io/github/forks/anuj672/MyDollarBot-BOTGo)
+![Discord](https://img.shields.io/discord/1163591668637896807?color=blueviolet&label=Discord%20Discussion%20Chat)
+
 
 <hr>
 
