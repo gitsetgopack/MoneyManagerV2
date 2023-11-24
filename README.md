@@ -127,7 +127,16 @@ You can download and install the Telegram desktop application for your system fr
 
 <hr>
 <p>Title:'Track My Dollar'</p>
-<p>Version: '4.2'</p>
+<p>Version: '4.4'</p>
+<p>Authors(Iteration 5):
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/JayProngs"><img src="https://avatars.githubusercontent.com/u/38587156?v=4" width="75px;" alt=""/><br /><sub><b>Jayesh Thakur</b></sub></a></td>
+    <td align="center"><a href="https://github.com/hrmauny"><img src="https://avatars.githubusercontent.com/u/142813992?v=4" width="75px;" alt=""/><br /><sub><b>Harsh Mauny</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/sagar110599"><img src="https://avatars.githubusercontent.com/u/46983757?v=4" width="75px;" alt=""/><br /><sub><b>Sagar Dama</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/ssawant3"><img src="https://avatars.githubusercontent.com/u/143014992?v=4" width="75px;" alt=""/><br /><sub><b>Soham Sawant</b></sub></a><br /></td>
+  </tr>
+</table>
 <p>Description: 'An easy to use Telegram Bot to track everyday expenses'</p>
 <p>Authors(Iteration 4):'Anuj, Bhavesh, Jash, Vaibhavi'</p>
 <p>Authors(Iteration 3):'Vraj, Alex, Leo, Prithvish, Seeya'</p>
