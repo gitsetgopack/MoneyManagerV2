@@ -42,6 +42,48 @@ def test_post_operation_selection_noMatchingCategory(mock_telebot, mocker):
     category.post_operation_selection(message, mc, 'Income')
     mc.send_message.assert_called_with(11, 'Invalid', reply_markup=ANY)
 
+@patch('telebot.telebot')
+def test_category_add_income(mock_telebot, mocker):
+    mc = mock_telebot.return_value
+    message = create_message("Test Category")
+    message.text='Test Category'
+    mocker.patch.object(category, 'getFileName')
+    category.getFileName.return_value="test_income.txt"
+    category.category_add(message, mc, 'Income')
+    mc.send_message.assert_called_with(11, 'Add category "{}" successfully!'.format('Test Category'))
+
+@patch('telebot.telebot')
+def test_category_delete_income(mock_telebot, mocker):
+    mc = mock_telebot.return_value
+    message = create_message("Test Category")
+    message.text='Test Category'
+    mocker.patch.object(category, 'getFileName')
+    category.getFileName.return_value="test_income.txt"
+    category.category_delete(message, mc, 'Income')
+    mc.send_message.assert_called_with(11, 'Delete category "{}" successfully!'.format('Test Category'))
+
+@patch('telebot.telebot')
+def test_category_not_income(mock_telebot, mocker):
+    mc = mock_telebot.return_value
+    message = create_message("Test Category")
+    message.text='Test Category'
+    mocker.patch.object(category, 'getFileName')
+    category.getFileName.return_value="test_category.txt"
+    category.category_add(message, mc, 'Not_Income')
+    mc.send_message.assert_called_with(11, 'Add category "{}" successfully!'.format('Test Category'))
+
+@patch('telebot.telebot')
+def test_category_view(mock_telebot, mocker):
+    mc = mock_telebot.return_value
+    message = create_message("Test Category")
+    message.text='Test Category'
+    mocker.patch.object(category, 'getFileName')
+    category.getFileName.return_value="test_category.txt"
+    category.category_view(message, mc, 'Not_Income')
+    assert(mc.send_message.called)
+
+
+   
 def create_message(text):
     params = {'messagebody': text}
     chat = types.User(11, False, 'test')
