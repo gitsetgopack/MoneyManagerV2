@@ -57,7 +57,8 @@ With simple commands, this bot allows you to:
 - upload CSV:
 - AI integration: If you need second opinion on your budget planning then you can chat with AI in app. Chat functionality allows user to chat with AI to receive some information or to summarize the impact on their financial budgeting.
 - Calendar functionality: What if you forget to record yesterday’s expense!! Don't worry, now you can select the date for expenses and income. Allows you to record your backdated expenses.
-- Test cases added to improve coverage
+- Code coverage failure resolved
+- New Test cases added for new features and to improve code coverage.
 
 ## What more can be done?
 Please refer to the issue list available [here](https://github.com/anuj672/MyDollarBot-BOTGo/issues) to see what more can be done to make MyDollarBot better. Please refer to the MyDollarBot project present [here](https://github.com/bhaveshittadwar/csc-510-se-group-49/projects) to have a look at the tasks done or in progress
