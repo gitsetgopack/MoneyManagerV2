@@ -109,7 +109,42 @@ def test_spending_display_month(mock_telebot, mocker):
     display.display_total(message, mc)
     assert mc.send_message.called
 
+@patch('telebot.telebot')
+def test_plot_total_1(mock_telebot, mocker):
+    mc = mock_telebot.return_value
+    message = create_message("tesing")
+    message.text='Bar with budget'
+    f=open('expenditure.png', 'w+')
+    f.close()
+    mocker.patch.object(display, 'graphing')
+    display.graphing.visualise.return_type=True
+    display.plot_total(message,mc)
+    assert mc.send_photo.called
 
+
+@patch('telebot.telebot')
+def test_plot_total_2(mock_telebot, mocker):
+    mc = mock_telebot.return_value
+    message = create_message("tesing")
+    message.text='Bar without budget'
+    mocker.patch.object(display, 'graphing')
+    f=open('expend.png', 'w+')
+    f.close()
+    display.graphing.visualise.return_type=True
+    display.plot_total(message,mc)
+    assert mc.send_photo.called
+
+@patch('telebot.telebot')
+def test_plot_total_3(mock_telebot, mocker):
+    mc = mock_telebot.return_value
+    message = create_message("tesing")
+    message.text='Bar with budget and pie'
+    mocker.patch.object(display, 'graphing')
+    f=open('pie.png', 'w+')
+    f.close()
+    display.graphing.visualise.return_type=True
+    display.plot_total(message,mc)
+    assert mc.send_photo.called    
 # @patch('telebot.telebot')
 # def test_display_overall_budget_by_text(mock_telebot, mocker):
 #     MOCK_USER_DATA = test_read_json()

@@ -87,15 +87,21 @@ def plot_total(message, bot):
      if pyi == 'Bar with budget':
        
        graphing.visualize(total,bud)
-       bot.send_photo(chat_id, photo=open('expenditure.png', 'rb'))
+       f=open('expenditure.png', 'rb')
+       bot.send_photo(chat_id, photo=f)
+       f.close()
        os.remove('expenditure.png')
      elif pyi == 'Bar without budget': 
        graphing.viz(total)
-       bot.send_photo(chat_id, photo=open('expend.png', 'rb'))
+       f=open('expend.png', 'rb')
+       bot.send_photo(chat_id, photo=f)
+       f.close()
        os.remove('expend.png')
      else:
        graphing.vis(total)
-       bot.send_photo(chat_id, photo=open('pie.png', 'rb'))
+       f=open('pie.png', 'rb')
+       bot.send_photo(chat_id, photo=f)
+       f.close()
        os.remove('pie.png')
 def calculate_spendings(queryResult):
     total_dict = {}
