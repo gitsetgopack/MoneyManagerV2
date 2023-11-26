@@ -123,6 +123,13 @@ coverage report
 Please note: A coverage below 80% will cause the build to fail.
 
 ## :information_desk_person: Feature Demo
+### Display Menu
+
+Checkout what all actions you can perform in BotGo 
+
+1. Enter the `/menu` command.
+2. A list of commands with their description will be displayed.
+
 ### Budget
 
 I want to increase/decrease my monthly budget.
@@ -195,7 +202,7 @@ I want to convert my total daily or monthly expenditure in a different currency.
 3. Choose from the category of day or month
 4. You will get the converted price in that currency
 
-### SendEmail 
+### Send Email 
 
 I want to send myself an email for the monthly expenditure
 
@@ -212,14 +219,67 @@ You can get a second opinion on your spendings by chatting with integrated AI.
 2. You will be welcomed by the AI and since your history is already available to it you can ask questions regarding your financial questions
 3. enter `exit` to stop the chat.
 
-### download pdf 
+### Download PDF 
 
 You can get a summary of your transactions in PDF format.
 
 1. Enter the `/pdf` command.
 2. Select the category that you want in the PDF history.
 3. your PDF history will be created and ready to download.
-4. 
+
+### Add recurring expense
+
+I have to add an expense will be repeated in the future
+
+1. Enter the  `/add_recurring` command.
+2. Select the category
+3. Enter the amount 
+4. Enter for how many months the expense will be there.
+5. Your recurring expense will be added.
+
+### Spending Estimation
+
+Get an estimate of your spending for next day or month
+
+1. Enter the  `/estimate` command.
+2. Select from following
+   1. Next Day
+   2. Next Month
+3. An Estimate will be provided
+
+### Display your transactions
+
+Get a tabular and graphical representation of your transactions
+
+1. Enter the `/display` command.
+2. Select from following category
+   1. Day
+   2. Month
+3. Tabulated data will be provided
+4. Following options can be chosen for graphical representation.
+   1. Bar with budget
+   2. Pie
+   3. Bar without budget
+5. Graph will be displayed according to choice.
+
+### Receipts
+
+Display all receipts for the day
+
+1. Enter the `/receipt` command.
+2. Enter the date `(YYYY-MM-DD or YYYYMMDD)` in this format to get receipt for that particular day.
+
+### Category
+
+Add/Delete/Show custom categories
+
+1. Enter the `/category` command.
+2. Select an option between expense and income in which you want to see the category
+3. You can perform the following operations.
+   1. Show Categories which will display the existing category
+   2. Add a new category
+   3. Delete a category
+
 
 ## Notes:
 You can download and install the Telegram desktop application for your system from the following site: https://desktop.telegram.org/
