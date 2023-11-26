@@ -122,6 +122,105 @@ coverage report
 
 Please note: A coverage below 80% will cause the build to fail.
 
+## :information_desk_person: Feature Demo
+### Budget
+
+I want to increase/decrease my monthly budget.
+
+1. Enter the `/budget` command
+2. Following this user can add/update his/her budget, view current budget, delete the budget, or review per transaction maximum spend limit
+
+### Add Expense
+
+I just spent money and want to mark it as a transaction! 
+
+1. Enter the `/add_expense` command
+2. Click on the category to add
+3. Type in the amount spent
+4. Click on the date of the transaction
+5. Select if you want to upload a receipt
+6. Finally, your transaction will be recoded
+
+
+### Add Income
+
+I just earned some money and want to mark it as a transaction! 
+
+1. Enter the `/add_income` command
+2. Click on the category to add
+3. Type in the amount earned
+4. Click on the date of the transaction
+5. Select if you want to upload a receipt
+6. Finally, your transaction will be recoded
+
+### Delete
+
+Oh no! I entered a transaction but want to delete it! 
+
+1. Enter the `/delete` command
+2. This will delete all the transactions made so far.
+
+### Edit
+
+Oh no! I entered a transaction but entered the wrong category!
+
+1. Enter the `/edit` command
+2. Specify the date, category, and value of the transaction
+3. Specify what part of the transaction to edit (either date, category, or value)
+4. Enter in a new value
+
+### Adding transactions from CSV 
+
+I want to add transactions from a CSV my bank gave me, and visalize my spendings
+
+
+1. Drag the .csv file into the telegram chat according to the format provided, and press send
+2. For each transaction, classify the category
+   1. The application will remember these mappings
+
+### Download History
+
+I want a CSV file of all my transactions.
+
+1. Make sure you have a transaction history.
+2. Enter the `/extract` command.
+3. A CSV file will be sent with your history.
+
+### See total Expenditure in different currencies
+
+I want to convert my total daily or monthly expenditure in a different currency.
+
+1. Enter the `/displayCurrency` command
+2. Next, Choose your currency from the options
+3. Choose from the category of day or month
+4. You will get the converted price in that currency
+
+### SendEmail 
+
+I want to send myself an email for the monthly expenditure
+
+1. Make sure you have a transaction history.
+2. Enter the `/sendEmail` command.
+3. Type the intended email address
+4. You will get an email with the history file as attachment.
+
+### Chat with AI
+
+You can get a second opinion on your spendings by chatting with integrated AI.
+
+1. Enter the `/chat` command.
+2. You will be welcomed by the AI and since your history is already available to it you can ask questions regarding your financial questions
+3. enter `exit` to stop the chat.
+
+### download pdf 
+
+You can get a summary of your transactions in PDF format.
+
+1. Enter the `/pdf` command.
+2. Select the category that you want in the PDF history.
+3. your PDF history will be created and ready to download.
+4. 
+
 ## Notes:
 You can download and install the Telegram desktop application for your system from the following site: https://desktop.telegram.org/
 
