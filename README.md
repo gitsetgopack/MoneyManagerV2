@@ -2,7 +2,7 @@
 
 [https://www.youtube.com/watch?v=9fJScubX-cI](https://youtu.be/Kpe4u8LHseg)
 
-This video shows only the new features and enhancement of some older features. All the other features from phase 3 are working as it is.
+This video shows only the new features and enhancement of some older features. All the other features from Project 3 are working as it is.
 <hr>
 <p align="center">
 <a><img  height=360 width=550 
