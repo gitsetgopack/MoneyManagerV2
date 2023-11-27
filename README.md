@@ -1,6 +1,6 @@
 # 💰 TrackMyDollar V4.0 - Budget On The Go(BOTGo) 💰
 
-https://www.youtube.com/watch?v=9fJScubX-cI
+[https://www.youtube.com/watch?v=9fJScubX-cI](https://youtu.be/Kpe4u8LHseg)
 
 This video shows only the new features and enhancement of some older features. All the other features from phase 3 are working as it is.
 <hr>
