@@ -1,7 +1,7 @@
 import helper
 import logging
 from telebot import types
-
+import time
 
 # The main funtion of category.py.
 # User can start to manage their categories after calling it
@@ -67,10 +67,7 @@ def post_operation_selection(message, bot, selectedType):
 def category_add(message, bot, selectedType):
     chat_id = message.chat.id
     category_name = message.text
-    if selectedType == "Income":
-        file_name = "income_categories.txt"
-    else:
-        file_name = "categories.txt"
+    file_name=getFileName(selectedType)
     with open(file_name, "r") as tf:
         lines = tf.read().split(',')
         tf.close()
@@ -86,10 +83,7 @@ def category_add(message, bot, selectedType):
 # Use the function to view all the categories in chat room
 def category_view(message, bot, selectedType):
     chat_id = message.chat.id
-    if selectedType == "Income":
-        file_name = "income_categories.txt"
-    else:
-        file_name = "categories.txt"
+    file_name=getFileName(selectedType=selectedType)
     with open(file_name, "r") as tf:
         lines = tf.read()
         tf.close()
@@ -101,10 +95,7 @@ def category_delete(message, bot, selectedType):
     chat_id = message.chat.id
     category_name = message.text
     find_to_delete = False
-    if selectedType == "Income":
-        file_name = "income_categories.txt"
-    else:
-        file_name = "categories.txt"
+    file_name=getFileName(selectedType)
     with open(file_name, "r") as tf:
         categories = tf.read().split(',')
         tf.close()
@@ -118,7 +109,7 @@ def category_delete(message, bot, selectedType):
     if find_to_delete == False:
         bot.send_message(chat_id, 'Cannot find the category QAQ', reply_markup=types.ReplyKeyboardRemove())
     elif find_to_delete:
-        f = open("categories.txt", "w")
+        f = open(file_name, "w")
         for category in categories:
             if category == categories[0]:
                 f.write(category)
@@ -126,3 +117,10 @@ def category_delete(message, bot, selectedType):
                 f.write("," + category)
         f.close()
         bot.send_message(chat_id, 'Delete category "{}" successfully!'.format(category_name))
+
+def getFileName(selectedType):
+    if selectedType == "Income":
+        return "income_categories.txt"
+    else:
+        return "categories.txt"
+
