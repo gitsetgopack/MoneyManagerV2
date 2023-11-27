@@ -1,8 +1,8 @@
 # 💰 TrackMyDollar V4.0 - Budget On The Go(BOTGo) 💰
 
-https://www.youtube.com/watch?v=9fJScubX-cI
+[https://www.youtube.com/watch?v=9fJScubX-cI](https://youtu.be/Kpe4u8LHseg)
 
-This video shows only the new features and enhancement of some older features. All the other features from phase 3 are working as it is.
+This video shows only the new features and enhancement of some older features. All the other features from Project 3 are working as it is.
 <hr>
 <p align="center">
 <a><img  height=360 width=550 
@@ -51,13 +51,20 @@ With simple commands, this bot allows you to:
 
 ## :star: Whats New
 ## Project 3
-- Add Income Feature: Apart from adding expenses, users can now add income for different categories like salary, part-time and can be managed just like expenses with single command /add_income. 
+- Add Income Feature: Apart from adding expenses, users can now add income for different categories like salary, part-time and can be managed just like expenses with single command /add_income.
+
 - Generate PDF: PDFs can be generated for Income or expenses with /pdf command.
+
 - Multiple currency support: We can see the expenses and budget in different currency with actual currency exchange rates. Currently supported currencies are INR, EUR and CHF.
+
 - upload CSV: User can upload a CSV File to add expenses in bulk.
+
 - AI integration: If you need second opinion on your budget planning then you can chat with AI in app. Chat functionality allows user to chat with AI to receive some information or to summarize the impact on their financial budgeting.
+
 - Calendar functionality: What if you forget to record yesterday’s expense!! Don't worry, now you can select the date for expenses and income. Allows you to record your backdated expenses.
+
 - Code coverage failure resolved
+
 - New Test cases added for new features and to improve code coverage.
 
 ## What more can be done?
