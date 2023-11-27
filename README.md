@@ -54,7 +54,7 @@ With simple commands, this bot allows you to:
 - Add Income Feature: Apart from adding expenses, users can now add income for different categories like salary, part-time and can be managed just like expenses with single command /add_income. 
 - Generate PDF: PDFs can be generated for Income or expenses with /pdf command.
 - Multiple currency support: We can see the expenses and budget in different currency with actual currency exchange rates. Currently supported currencies are INR, EUR and CHF.
-- upload CSV:
+- upload CSV: User can upload a CSV File to add expenses in bulk.
 - AI integration: If you need second opinion on your budget planning then you can chat with AI in app. Chat functionality allows user to chat with AI to receive some information or to summarize the impact on their financial budgeting.
 - Calendar functionality: What if you forget to record yesterday’s expense!! Don't worry, now you can select the date for expenses and income. Allows you to record your backdated expenses.
 - Code coverage failure resolved
