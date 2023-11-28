@@ -288,6 +288,8 @@ Add/Delete/Show custom categories
    2. Add a new category
    3. Delete a category
 
+## Discord Chat
+![image](https://github.com/JayProngs/MyDollarBot-BOTGo/assets/142813992/2bce084d-3d99-461c-aa9b-0f7dda486e9c)
 
 ## Notes:
 You can download and install the Telegram desktop application for your system from the following site: https://desktop.telegram.org/
