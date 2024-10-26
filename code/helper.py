@@ -78,15 +78,16 @@ monthFormat = '%b-%Y'
 # function to load .json expense record data
 def read_json():
     try:
-        if not os.path.exists('expense_record.json'):
-            with open('expense_record.json', 'w') as json_file:
-                json_file.write('{}')
-            return json.dumps('{}')
-        elif os.stat('expense_record.json').st_size != 0:
+        
+        if os.path.exists('expense_record.json') and os.stat('expense_record.json').st_size != 0:
             with open('expense_record.json') as expense_record:
                 expense_record_data = json.load(expense_record)
             return expense_record_data
-
+        elif not os.path.exists('expense_record.json') or os.stat('expense_record.json').st_size == 0:
+            with open('expense_record.json', 'w') as json_file:
+                json_file.write('{}')
+            print("here")
+            return json.dumps('{}')
     except FileNotFoundError:
         print("---------NO RECORDS FOUND---------")
 
