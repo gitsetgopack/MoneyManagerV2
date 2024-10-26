@@ -66,7 +66,8 @@ commands = {
     'add_income': 'Add a new income',
     'DisplayCurrency': 'Display total expenditure in a currency of your choice',
     'chat': 'Chat with the bot',
-    'pdf': 'Generate a pdf for Income or History'
+    'pdf': 'Generate a pdf for Income or History',
+    'csv': 'Generate a csv for Income or History'
 }
 
 dateFormat = '%d-%b-%Y'
