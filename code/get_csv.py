@@ -44,10 +44,13 @@ def post_type_selection(message, bot):
             csvwriter = csv.writer(csvfile)
             # Write header
             csvwriter.writerow(['Date', 'Category', 'Amount'])
+
+            print(user_history)
             
             # Write transactions
             for record in user_history:
                 try:
+                    print(record)
                     date_time, category, amount = record.split(",")
                     date, _ = date_time.split(" ")
                     csvwriter.writerow([date, category, amount])

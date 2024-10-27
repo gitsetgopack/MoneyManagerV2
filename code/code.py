@@ -24,6 +24,7 @@ from datetime import datetime
 from jproperties import Properties
 import display_currency
 import chatGPT_ext
+import scan_receipt
 
 configs = Properties()
 
@@ -137,6 +138,12 @@ def command_receipt(message):
 @bot.message_handler(commands=['add_income'])
 def command_add_income(message):
     add_income.run(message, bot)
+
+
+
+@bot.message_handler(commands=['scan_receipt'])
+def command_scan_receipt(message):
+    scan_receipt.run(message, bot)
 
 
 @bot.message_handler(commands=['pdf'])
