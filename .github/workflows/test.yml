@@ -3,10 +3,12 @@ name: Test and Formatting
 on:
     schedule:
       - cron: '*/15 * * * *'  # Run every 15 minutes
-    push:
+    push:  # Run on all branches for each push
       branches:
-        - main
-        - development  # Add the second branch you want to monitor
+        - '**'
+    pull_request:  # Optionally, run on all PRs across branches
+      branches:
+        - '**'
 
 jobs:
   test:
