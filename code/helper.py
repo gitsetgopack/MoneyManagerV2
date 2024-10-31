@@ -66,7 +66,9 @@ commands = {
     'add_income': 'Add a new income',
     'DisplayCurrency': 'Display total expenditure in a currency of your choice',
     'chat': 'Chat with the bot',
-    'pdf': 'Generate a pdf for Income or History'
+    'pdf': 'Generate a pdf for Income or History',
+    'csv':  'Generate a csv file for Income or Expenses',
+    'scan_receipt': 'Scan a receipt using AI to upload transactions'
 }
 
 dateFormat = '%d-%b-%Y'
