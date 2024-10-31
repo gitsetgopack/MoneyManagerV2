@@ -135,6 +135,3 @@ dmypy.json
 expense_record.json
 code/data.csv
 
-
-#user properties with API keys
-user.properties
