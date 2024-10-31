@@ -11,7 +11,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 import helper
-import gemini_helper  # Assuming gemini_helper contains the Gemini-related functions
+import ..code/gemini_helper
 
 extract_complete = threading.Event()
 
