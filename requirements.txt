@@ -33,3 +33,4 @@ google-generativeai>=0.3.0
 # Optional but recommended for better logging
 logging>=0.4.9
 openpyxl
+XlsxWriter
