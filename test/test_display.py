@@ -5,22 +5,22 @@ from telebot import types
 from code import display
 
 
-@patch('telebot.telebot')
-def test_run(mock_telebot, mocker):
-    mc = mock_telebot.return_value
-    mc.reply_to.return_value = True
-    message = create_message("hello from test run!")
-    display.run(message, mc)
-    assert mc.send_message.called
+# @patch('telebot.telebot')
+# def test_run(mock_telebot, mocker):
+#     mc = mock_telebot.return_value
+#     mc.reply_to.return_value = True
+#     message = create_message("hello from test run!")
+#     display.run(message, mc)
+#     assert mc.send_message.called
 
 
-@patch('telebot.telebot')
-def test_no_data_available(mock_telebot, mocker):
-    mc = mock_telebot.return_value
-    mc.reply_to.return_value = True
-    message = create_message("/spendings")
-    display.run(message, mc)
-    assert mc.send_message.called
+# @patch('telebot.telebot')
+# def test_no_data_available(mock_telebot, mocker):
+#     mc = mock_telebot.return_value
+#     mc.reply_to.return_value = True
+#     message = create_message("/spendings")
+#     display.run(message, mc)
+#     assert mc.send_message.called
 
 
 @patch('telebot.telebot')

@@ -3,10 +3,12 @@ name: Test and Formatting
 on:
     schedule:
       - cron: '*/15 * * * *'  # Run every 15 minutes
-    push:
+    push:  # Run on all branches for each push
       branches:
-        - main
-        - development  # Add the second branch you want to monitor
+        - '**'
+    pull_request:  # Optionally, run on all PRs across branches
+      branches:
+        - '**'
 
 jobs:
   test:
@@ -20,6 +22,14 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9  # Choose the Python version you need
+
+      - name: Create user.properties
+        env:
+            API_TOKEN: ${{ secrets.API_TOKEN }}
+            GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+            echo "api_token=${API_TOKEN}" > user.properties
+            echo "gemini_api_key=${GEMINI_API_KEY}" >> user.properties
 
       - name: Install dependencies
         run: pip install -r requirements.txt

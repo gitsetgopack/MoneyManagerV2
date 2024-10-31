@@ -1,4 +1,4 @@
-# 💰 TrackMyDollar V4.0 - Budget On The Go(BOTGo) 💰
+# 💰 TrackMyDollar V5.0 - Budget On The Go(BOTGo) 💰
 
 [https://www.youtube.com/watch?v=9fJScubX-cI](https://youtu.be/Kpe4u8LHseg)
 
@@ -13,15 +13,16 @@ This video shows only the new features and enhancement of some older features. A
 ![MIT license](https://img.shields.io/badge/License-MIT-green.svg)
 [![Platform](https://img.shields.io/badge/Platform-Telegram-blue)](https://desktop.telegram.org/)
 ![GitHub](https://img.shields.io/badge/Language-Python-blue.svg)
-[![GitHub contributors](https://img.shields.io/github/contributors/anuj672/MyDollarBot-BOTGo)](https://github.com/anuj672/MyDollarBot-BOTGo/graphs/contributors)
+[![GitHub contributors](https://img.shields.io/github/contributors/CSC510SEFALL2024/MyDollarBot-BOTGo)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/graphs/contributors)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10023576.svg)](https://doi.org/10.5281/zenodo.10023576)
-[![Test and Formatting](https://github.com/anuj672/MyDollarBot-BOTGo/actions/workflows/test.yml/badge.svg)](https://github.com/anuj672/MyDollarBot-BOTGo/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/JayProngs/MyDollarBot-BOTGo/graph/badge.svg?token=E5235TMYDN)](https://codecov.io/gh/JayProngs/MyDollarBot-BOTGo)
-[![GitHub issues](https://img.shields.io/github/issues/anuj672/MyDollarBot-BOTGo)](https://github.com/anuj672/MyDollarBot-BOTGo/issues)
-[![GitHub closed issues](https://img.shields.io/github/issues-closed/bhaveshittadwar/csc-510-se-group-49)](https://github.com/bhaveshittadwar/csc-510-se-group-49/issues?q=is%3Aissue+is%3Aclosed)
-![GitHub release (with filter)](https://img.shields.io/github/v/release/JayProngs/MyDollarBot-BOTGo)
-![Fork](https://img.shields.io/github/forks/anuj672/MyDollarBot-BOTGo)
+[![Test and Formatting](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/actions/workflows/test.yml/badge.svg)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/CSC510SEFALL2024/MyDollarBot-BOTGo/graph/badge.svg?token=E5235TMYDN)](https://codecov.io/gh/CSC510SEFALL2024/MyDollarBot-BOTGo)
+[![GitHub issues](https://img.shields.io/github/issues/CSC510SEFALL2024/MyDollarBot-BOTGo)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/issues)
+[![GitHub closed issues](https://img.shields.io/github/issues-closed/CSC510SEFALL2024/MyDollarBot-BOTGo)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/issues?q=is%3Aissue+is%3Aclosed)
+![GitHub release (with filter)](https://img.shields.io/github/v/release/CSC510SEFALL2024/MyDollarBot-BOTGo)
+![Fork](https://img.shields.io/github/forks/CSC510SEFALL2024/MyDollarBot-BOTGo)
 ![Discord](https://img.shields.io/discord/1163591668637896807?color=blueviolet&label=Discord%20Discussion%20Chat)
+
 
 
 <hr>
@@ -74,41 +75,72 @@ Please refer to the issue list available [here](https://github.com/anuj672/MyDol
 
 https://user-images.githubusercontent.com/72677919/140454147-f879010a-173b-47b9-9cfb-a389171924de.mp4
 
-## :rocket: Installation guide
+## 🚀 Installation Guide for TrackMyDollar BOTGo
 
-The below instructions can be followed in order to set-up this bot at your end in a span of few minutes! Let's get started:
+Follow these instructions to set up the TrackMyDollar BOTGo on your local system in a few minutes.
 
-1. Clone this repository to your local system.
+### Step 1: Clone Repository
+1. Open a terminal.
+2. Clone this repository to your local system:
+   ```bash
+   git clone https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/tree/addedfeatures101
+   ```
 
-2. Start a terminal session in the directory where the project has been cloned. Run the following command to install the required dependencies:
-```
-  pip install -r requirements.txt
-```
+### Step 2: Install Dependencies
+1. Navigate to the project directory where the repository was cloned.
+2. Install the required dependencies by running:
+    ```bash
+     pip install -r requirements.txt
+     ```
+### Step 3: Set Up Telegram Bot with BotFather
+1. Open Telegram and search for "BotFather".
+2. Click "Start" and enter the following command:
+    ```bash
+      /newbot
+    ```
+3. Follow the instructions to:
+    * Name your bot.
+    * Choose a username ending with "bot".
+4. Copy the token BotFather provides for accessing the HTTP API.
 
-3. In Telegram, search for "BotFather". Click on "Start", and enter the following command:
-```
-  /newbot
-```
-Follow the instructions on screen and choose a name for your bot. After this, select a username for your bot that ends with "bot".
+### Step 4: Configure API Token
+1. Create a user.properties in the repository folder.
+    ```bash
+    touch user.properties
+    ```
+2. Add the api key from telegram in the user.properties file
+    ```bash
+    api_token=<your_api_token>
+    ```
+### Step 5: Set Up Gemini API Key
+1. Go to the Gemini Developer Console and log in or create an account.
+2. Navigate to the API section and select Create New Project.
+3. Name your project and select the appropriate settings for API access.
+4. Once the project is created, go to the API Keys section within your project dashboard.
+5. Generate a new API key and secret. Make sure to note down the key and secret as they will only be shown once.
+6. Open the `user.properties` file in the project directory and add the Gemini API key and secret as follows:
+     ```bash
+       api_token=<your_telegram_api_token>
+       gemini_api_key=<your_gemini_api_key>
+    ```
 
-4. BotFather will now confirm the creation of your bot and provide a TOKEN to access the HTTP API - copy and save this token for future use.
+### Step 6: Run the Bot
+1. From the project directory, execute the following command:
+    ```bash
+      Copy code
+      ./run.sh
+    ```
+    (Or use bash run.sh if needed. If you're on Mac or Linux, you may need to run chmod +x run.sh first.)
+    A successful run will generate a terminal message: "TeleBot: Started polling."
 
-5. Copy the token provided by the bot and add/replace it in the user.properties file (in the format api_token=<your_token>).
+### Step 7: Connect to Your Bot on Telegram
+1. In Telegram, search for your bot using the username you created.
+2. Open the bot and type the command:
+    ```bash
+      /start
+    ```
 
-6. In the directory where this repo has been cloned, please run the below command to execute a bash script to run the Telegram Bot:
-```
-   ./run.sh
-```
-(OR)
-```
-   bash run.sh
-```
-
-(Please Note: You may require to run `chmod +x run.sh` on mac/linux)
-
-A successful run will generate a message on your terminal that says "TeleBot: Started polling." 
-
-7. In the Telegram app, search for your newly created bot by entering the username and open the same. Now, on Telegram, enter the "/start" or "/menu" command, and you are all set to track your expenses!
+**You are now ready to track your expenses with TrackMyDollar BOTGo!**
 
 ## Testing
 
@@ -297,17 +329,18 @@ You can download and install the Telegram desktop application for your system fr
 
 <hr>
 <p>Title:'Track My Dollar'</p>
-<p>Version: '4.4'</p>
-<p>Authors(Iteration 5):
+<p>Version: '4.5'</p>
+<p>Authors(Iteration 6):
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/JayProngs"><img src="https://avatars.githubusercontent.com/u/38587156?v=4" width="75px;" alt=""/><br /><sub><b>Jayesh Thakur</b></sub></a></td>
-    <td align="center"><a href="https://github.com/hrmauny"><img src="https://avatars.githubusercontent.com/u/142813992?v=4" width="75px;" alt=""/><br /><sub><b>Harsh Mauny</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/sagar110599"><img src="https://avatars.githubusercontent.com/u/46983757?v=4" width="75px;" alt=""/><br /><sub><b>Sagar Dama</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/ssawant3"><img src="https://avatars.githubusercontent.com/u/143014992?v=4" width="75px;" alt=""/><br /><sub><b>Soham Sawant</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/AnuragGorkar"><img src="https://avatars.githubusercontent.com/u/56599642?s=400&u=351897f9422f135c4df24317d3fc8a28796f58bc&v=4" width="75px;" alt=""/><br /><sub><b>Anurag Gorkar</b></sub></a></td>
+    <td align="center"><a href="https://github.com/aryansharma2k2"><img src="https://avatars.githubusercontent.com/u/118040810?v=4" width="75px;" alt=""/><br /><sub><b>Aryan Iguva</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/harshvora7"><img src="https://avatars.githubusercontent.com/u/45733155?v=4" width="75px;" alt=""/><br /><sub><b>Harsh Vora</b></sub></a><br /></td>
   </tr>
 </table>
 <p>Description: 'An easy to use Telegram Bot to track everyday expenses'</p>
+
+<p>Authors(Iteration 5):'Jayesh, Harsh, Sagar, Soham'</p>
 <p>Authors(Iteration 4):'Anuj, Bhavesh, Jash, Vaibhavi'</p>
 <p>Authors(Iteration 3):'Vraj, Alex, Leo, Prithvish, Seeya'</p>
 <p>Authors(Iteration 2):'Athithya, Subramanian, Ashok, Zunaid, Rithik'</p>
