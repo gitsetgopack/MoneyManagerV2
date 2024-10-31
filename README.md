@@ -23,8 +23,6 @@ This video shows only the new features and enhancement of some older features. A
 ![Fork](https://img.shields.io/github/forks/CSC510SEFALL2024/MyDollarBot-BOTGo)
 ![Discord](https://img.shields.io/discord/1163591668637896807?color=blueviolet&label=Discord%20Discussion%20Chat)
 
-
-
 <hr>
 
 ## :money_with_wings: About TrackMyDollar
@@ -321,7 +319,7 @@ Add/Delete/Show custom categories
    3. Delete a category
 
 ## Discord Chat
-![image](https://github.com/JayProngs/MyDollarBot-BOTGo/assets/142813992/2bce084d-3d99-461c-aa9b-0f7dda486e9c)
+![image](https://github.com/user-attachments/assets/cfeb6ce7-bccd-4342-b5bf-7f7db5afb5ff)
 
 ## Notes:
 You can download and install the Telegram desktop application for your system from the following site: https://desktop.telegram.org/
