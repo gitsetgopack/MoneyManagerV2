@@ -1,80 +1,107 @@
-# Contributing to TrackMyDollar - BudgetOnTheGo - BOTGo v4
+# Contributing to MyDollarBot-BOTGo V5
 
-Follow the set of guidelines below to contribute to MyDollarBot-BOTGo!
+Thank you for your interest in contributing to **MyDollarBot-BOTGo**! We welcome all contributions, including bug reports, feature requests, and code contributions. To ensure the project maintains high standards, please follow the guidelines below.
 
-## Code of Conduct
+---
 
-By participating, you are expected to uphold this code. Please report unacceptable behavior to vmsangaw@ncsu.edu, achetwa@ncsu.edu
+## Table of Contents
 
-Prerequistes required before starting this project
+- [Getting Started](#getting-started)
+- [Coding Standards](#coding-standards)
+- [Submitting Issues](#submitting-issues)
+- [Creating a Pull Request](#creating-a-pull-request)
+- [Commit Guidelines](#commit-guidelines)
+- [Testing Standards](#testing-standards)
+- [Code Review Process](#code-review-process)
 
-If you're doing this as part of CSC510 - SE for Fall'23, then: 
-1. Have good understanding of Python Programming Language and Telegram Bots
+---
 
-If you like our project and would like to contribue otherwise, please note:
-1. This project is created as part of CSC510 Coursework at NC State for Fall'23.
-2. If you like to contribute, reach out to the maintainers before creating a branch, to confirm if we're still maintaining the repo.
-3. Have good understanding of Python Programming Language and Telegram Bots
+## Getting Started
 
-## How can I Contribute -
- 
-### Reporting Bugs
+1. **Fork the repository** on GitHub to your personal account.
+2. **Clone your forked repository**:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/MyDollarBot-BOTGo.git
+   ```
 
-This section guides you through submitting a bug report for TrackMyDollar.
-Following these guidelines helps maintainers and the community understand your report, reproduce the behavior and find related reports.
+3. Set up the development environment by installing dependencies listed in requirements.txt or the package.json file if using Node.js.
+4. Create a new branch for each feature or bug fix:
+    ```bash
+    git checkout -b feature/your-feature-name
+    ```
 
-Before Submitting A Bug Report
+## Coding Standards
+To maintain code readability and consistency, please adhere to the following coding standards:
+* Language: Python (ensure code is compatible with Python 3.8+).
+* Formatting: Use PEP 8 standards for Python code.
+  * Use 4 spaces for indentation, not tabs.
+  * Limit lines to 79 characters.
+* Documentation:
+  * Use descriptive variable names.
+  * Add docstrings to all functions and classes following the Google Python Style Guide.
+  * Document complex logic with inline comments.
+* Naming Conventions:
+  * Variables and functions: `snake_case`
+  * Classes: `PascalCase`
+  * Constants: `UPPER_CASE`
+*  Linting: Run linting using flake8 (Python) or eslint (JavaScript) to catch syntax and style issues before committing:
+    ```bash
+    flake8 your_file.py
+    ```
 
-Check the debugging guide
+## Submitting Issues
+If you identify any issues or bugs in the project, please submit an issue using the following steps:
 
-Check the FAQs on the forum for a list of common questions and problems.
-Determine which repository the problem should be reported in.
+1. Search existing issues to check if it has already been reported.
+2. Provide a detailed description including:
+  * Expected behavior
+  * Actual behavior
+  * Steps to reproduce
+3. Add labels (e.g., `bug`, `enhancement`) to categorize the issue.
 
-Perform a cursory search to see if the problem has already been reported.
+## Creating a Pull Request
+Before creating a pull request (PR), ensure the following:
 
-## How Do I Submit A (Good) Bug Report?
+1. Branch is up-to-date with the main branch:
+    ```bash
+    git pull origin main
+    ```
+2. **Tests are passing**: Run all tests locally to ensure your changes do not break the existing code.
+3. **Include meaningful commit messages** following the commit guidelines.
+4. **Create a PR**:
+    * Go to your forked repository on GitHub.
+    * Click on New Pull Request.
+    * Provide a descriptive title and a summary of your changes.
+5. **Link issues** your PR addresses, if applicable.
+### PR Guidelines
+* One PR should contain only one feature or bug fix.
+* Ensure code follows the Coding Standards.
+* Avoid unrelated changes or formatting in your PR.
 
-Use a clear and descriptive title for the issue to identify the problem.
+## Commit Guidelines
+  * Format: <type>(<scope>): <description>
+  * Types:
+  * `feat`: A new feature
+  * `fix`: A bug fix
+  * `docs`: Documentation-only changes
+  * `style`: Changes that do not affect the meaning of the code (white-space, formatting, etc.)
+  * `refactor`: Code change that neither fixes a bug nor adds a feature
+  * `test`: Adding missing or correcting existing tests
+  * `chore`: Other changes that don’t modify src or test files
+* Example:
+    ```bash
+    git commit -m "feat(user-auth): add user login functionality"
+   ```
+### Testing Standards
+* Write unit tests for all new features and bug fixes using pytest (or the chosen testing framework).
+* Test Coverage: Aim to cover at least 90% of new code with tests.
+* Run tests locally before submitting a PR:
+    ```bash
+    pytest
+    ```
 
-Describe the exact steps which reproduce the problem in as many details as possible.
-
-Provide specific examples to demonstrate the steps.
-
-Describe the behavior you observed after following the steps and point out what exactly is the problem with that behavior.
-
-Explain which behavior you expected to see instead and why.
-
-Include screenshots and animated GIFs which show you following the described steps and clearly demonstrate the problem.
-
-If the problem is related to performance or memory, include a CPU profile capture with your report.
-
-## Suggesting Enhancements
-Any suggesting enhancements like adding new features or imporving existing functionalities, etc can done by following the below guidelines. They help maintainers understand your improvement. The template- this template is to be filled to add suggestions. These can include the steps that you imagine you would take if the feature you're requesting existed.
-
-## Start Your Contribution
-beginner and help-wanted issues can help you getting started to contribute your first contribution:
-
-[Beginner issues][beginner] - issues which should only require a few lines of code, and a test or two.
-[Help wanted issues][help-wanted] - issues which should be a bit more involved than beginner issues.
-
-## Pull Requests
-
-The process described here has several goals:
-
-Maintain the projects quality and ensure you have a code coverage of > 80%. Otherwise your PR will not be approved.
-
-Fix problems that are important to users.
-
-Enable a sustainable system for the projects maintainers to review contributions
-
-## Tips to Extend
-
-Check the Projects tab for TO-DO list and pick the feature you find interesting to work on.
-
-Create a branch and implement the feature in Python using Telegram bot and test it locally. (Check the docs to learn more)
-
-Write corresponding test cases to ensure it is not breaking the existing system.
-
-Create pull request and request for the code review. Once the request is approved, merge to main.
-
-Any suggestions to improve the bot is appreciated. Please add it to the TO-DO list.
+## Code Review Process
+1. Reviewers will check your PR for adherence to coding standards, functionality, and testing coverage.
+2. Feedback may be provided in the PR comments; please respond promptly and make any necessary changes.
+3. Final Approval: Once all checks pass and feedback is addressed, your PR will be approved and merged.
+  
