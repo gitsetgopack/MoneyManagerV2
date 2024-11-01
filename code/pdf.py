@@ -107,19 +107,31 @@ def generate_pdf(user_history, selectedType, chat_id, bot):
         top -= 0.15
 
     plt.axis("off")
-    pdf_path = f"history_{chat_id}.pdf"
-    plt.savefig(pdf_path)
-    plt.close()
+    pdf_path = f"history_{chat_id}.png"  # Changed to PNG
+    try:
+        plt.savefig(pdf_path)
+        plt.close()
+        print(f"PDF saved to {pdf_path}")  # Debugging output
+    except Exception as e:
+        response = f"Error saving the PDF: {str(e)}"
+        bot.reply_to(chat_id, response)
+        return response
 
     if os.path.exists(pdf_path):
-        with open(pdf_path, "rb") as pdf_file:
-            bot.send_document(chat_id, pdf_file)
-        os.remove(pdf_path)
-        response = "PDF generated and sent successfully!"
-        return response
+        try:
+            with open(pdf_path, "rb") as pdf_file:
+                bot.send_document(chat_id, pdf_file)
+            os.remove(pdf_path)
+            response = "PDF generated and sent successfully!"
+            return response
+        except Exception as e:
+            response = f"Failed to send PDF: {str(e)}"
+            bot.reply_to(chat_id, response)
+            return response
     else:
         response = "Failed to generate PDF."
         bot.reply_to(chat_id, response)
         return response
+
 
 
