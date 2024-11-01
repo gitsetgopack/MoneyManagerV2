@@ -29,7 +29,8 @@ def post_type_selection(message, bot):
         bot.register_next_step_handler(msg, get_start_date, bot, selectedType, chat_id)
     except Exception as e:
         logging.exception(str(e))
-        return str(e)
+        return str(e)  # Return the exception message for testing
+
 
 def get_start_date(message, bot, selectedType, chat_id):
     try:
@@ -43,45 +44,56 @@ def get_start_date(message, bot, selectedType, chat_id):
     except ValueError:
         return "Invalid date format. Please use YYYY-MM-DD."
 
+
 def get_end_date(message, bot, selectedType, chat_id, start_date):
     try:
         end_date = datetime.strptime(message.text, "%Y-%m-%d")
         
         if end_date < start_date:
-            return "End date cannot be before start date. Please try again."
+            response = "End date cannot be before start date. Please try again."
+            bot.reply_to(message, response)
+            return response
 
         user_history = helper.getUserHistory(chat_id, selectedType) or []
+        print("User history:", user_history)  # Debugging output
+
         filtered_history = [
             rec for rec in user_history if start_date <= datetime.strptime(rec.split(",")[0], "%Y-%m-%d %H:%M:%S") <= end_date
         ]
+        print("Filtered history:", filtered_history)  # Debugging output
 
         if not filtered_history:
-            return f"No {selectedType} records found between {start_date.date()} and {end_date.date()}."
+            response = f"No {selectedType} records found between {start_date.date()} and {end_date.date()}."
+            bot.reply_to(message, response)
+            return response
 
         pdf_status = generate_pdf(filtered_history, selectedType, chat_id, bot)
+        bot.reply_to(message, pdf_status)  # Send feedback message about PDF generation status
         return pdf_status
 
     except ValueError:
-        return "Invalid date format. Please use YYYY-MM-DD."
+        response = "Invalid date format. Please use YYYY-MM-DD."
+        bot.reply_to(message, response)
+        return response
     except Exception as e:
+        response = f"An error occurred: {e}"
         logging.exception(str(e))
-        return str(e)
+        bot.reply_to(message, response)
+        return response
 
 def generate_pdf(user_history, selectedType, chat_id, bot):
     if not user_history:
-        return "No records to generate a PDF."
+        response = "No records to generate a PDF."
+        bot.reply_to(chat_id, response)
+        return response
     
-    fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1)
+    fig, ax = plt.subplots()
     top = 0.8
 
     for rec in user_history:
         date, category, amount = rec.split(",")
         date, time = date.split(" ")
-        if selectedType == "Income":
-            rec_str = f"{amount}$ {category} income on {date} at {time}"
-        else:
-            rec_str = f"{amount}$ {category} expense on {date} at {time}"
+        rec_str = f"{amount}$ {category} {selectedType.lower()} on {date} at {time}"
         plt.text(
             0,
             top,
@@ -89,7 +101,7 @@ def generate_pdf(user_history, selectedType, chat_id, bot):
             horizontalalignment="left",
             verticalalignment="center",
             transform=ax.transAxes,
-            fontsize=14,
+            fontsize=12,
             bbox=dict(facecolor="red", alpha=0.3),
         )
         top -= 0.15
@@ -98,10 +110,16 @@ def generate_pdf(user_history, selectedType, chat_id, bot):
     pdf_path = f"history_{chat_id}.pdf"
     plt.savefig(pdf_path)
     plt.close()
+    print(f"PDF saved to {pdf_path}")  # Debugging output
 
     if os.path.exists(pdf_path):
-        bot.send_document(chat_id, open(pdf_path, "rb"))
+        with open(pdf_path, "rb") as pdf_file:
+            bot.send_document(chat_id, pdf_file)
         os.remove(pdf_path)
-        return "PDF generated and sent successfully!"
+        response = "PDF generated and sent successfully!"
+        return response
     else:
-        return "Failed to generate PDF."
+        response = "Failed to generate PDF."
+        bot.reply_to(chat_id, response)
+        return response
+
