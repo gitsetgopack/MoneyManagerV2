@@ -42,8 +42,9 @@ def get_start_date(message, bot, selectedType, chat_id):
             msg, get_end_date, bot, selectedType, chat_id, start_date
         )
     except ValueError:
-        return "Invalid date format. Please use YYYY-MM-DD."
-
+        response = "Invalid date format. Please use YYYY-MM-DD."
+        bot.reply_to(message, response)
+        return response
 
 def get_end_date(message, bot, selectedType, chat_id, start_date):
     try:
@@ -55,12 +56,10 @@ def get_end_date(message, bot, selectedType, chat_id, start_date):
             return response
 
         user_history = helper.getUserHistory(chat_id, selectedType) or []
-        print("User history:", user_history)  # Debugging output
 
         filtered_history = [
             rec for rec in user_history if start_date <= datetime.strptime(rec.split(",")[0], "%Y-%m-%d %H:%M:%S") <= end_date
         ]
-        print("Filtered history:", filtered_history)  # Debugging output
 
         if not filtered_history:
             response = f"No {selectedType} records found between {start_date.date()} and {end_date.date()}."
@@ -80,6 +79,7 @@ def get_end_date(message, bot, selectedType, chat_id, start_date):
         logging.exception(str(e))
         bot.reply_to(message, response)
         return response
+
 
 def generate_pdf(user_history, selectedType, chat_id, bot):
     if not user_history:
@@ -110,7 +110,6 @@ def generate_pdf(user_history, selectedType, chat_id, bot):
     pdf_path = f"history_{chat_id}.pdf"
     plt.savefig(pdf_path)
     plt.close()
-    print(f"PDF saved to {pdf_path}")  # Debugging output
 
     if os.path.exists(pdf_path):
         with open(pdf_path, "rb") as pdf_file:
@@ -122,4 +121,5 @@ def generate_pdf(user_history, selectedType, chat_id, bot):
         response = "Failed to generate PDF."
         bot.reply_to(chat_id, response)
         return response
+
 
