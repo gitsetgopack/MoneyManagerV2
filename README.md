@@ -68,7 +68,7 @@ Follow these instructions to set up the TrackMyDollar BOTGo on your local system
 1. Open a terminal.
 2. Clone this repository to your local system:
    ```bash
-   git clone https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/tree/addedfeatures101
+   git clone https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/tree/main
    ```
 
 ### Step 2: Install Dependencies
