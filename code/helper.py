@@ -375,6 +375,13 @@ def getUserHistory(chat_id, selectedType):
 
 def set_max_expenditure_limit(chat_id, limit, time_frame):
     data = getUserData(chat_id)
+    if data is None:
+        # If no data exists for the user, create a new user record
+        data = createNewUserRecord()
+        
+    # Ensure data['data'] exists and initialize if necessary
+    if 'data' not in data:
+        data['data'] = []
     existing_spending = calculate_spending_for_time_frame(data['data'], time_frame)
 
     new_limit = {
