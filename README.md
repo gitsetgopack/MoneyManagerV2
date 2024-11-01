@@ -14,7 +14,7 @@ This video shows only the new features and enhancement of some older features. A
 [![Platform](https://img.shields.io/badge/Platform-Telegram-blue)](https://desktop.telegram.org/)
 ![GitHub](https://img.shields.io/badge/Language-Python-blue.svg)
 [![GitHub contributors](https://img.shields.io/github/contributors/CSC510SEFALL2024/MyDollarBot-BOTGo)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/graphs/contributors)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10023576.svg)](https://doi.org/10.5281/zenodo.10023576)
+[![DOI](https://img.shields.io/badge/DOI-figshare-blue)](https://doi.org/10.6084/m9.figshare.27383202.v1)
 [![Test and Formatting](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/actions/workflows/test.yml/badge.svg)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/CSC510SEFALL2024/MyDollarBot-BOTGo/graph/badge.svg?token=E5235TMYDN)](https://codecov.io/gh/CSC510SEFALL2024/MyDollarBot-BOTGo)
 [![GitHub issues](https://img.shields.io/github/issues/CSC510SEFALL2024/MyDollarBot-BOTGo)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/issues)
@@ -245,13 +245,14 @@ You can get a second opinion on your spendings by chatting with integrated AI.
 2. You will be welcomed by the AI and since your history is already available to it you can ask questions regarding your financial questions
 3. enter `exit` to stop the chat.
 
-### Download PDF 
+### Download PDF (Enhanced)
 
 You can get a summary of your transactions in PDF format.
 
 1. Enter the `/pdf` command.
 2. Select the category that you want in the PDF history.
-3. your PDF history will be created and ready to download.
+3. Select a start and end date for the pdf output
+4. your PDF history will be created and ready to download.
 
 ### Download CSV (New)
 
@@ -259,7 +260,8 @@ You can get a summary of your transactions in CSV format.
 
 1. Enter the `/csv` command.
 2. Select the category that you want in the CSV history.
-3. your CSV history will be created and ready to download with graphs and images.
+3. Select a start and end date for the csv output
+4. your CSV history will be created and ready to download with graphs and images.
 
 ### Scan Receipt (New)
 
