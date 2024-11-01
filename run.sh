@@ -1,4 +1,4 @@
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 
 api_token=$(grep "api_token"  user.properties|cut -d'=' -f2)
 
@@ -24,5 +24,5 @@ fi
 
 if [ -n "$api_token" ]
 then
-  python3 code/code.py
+  python code/code.py
 fi
