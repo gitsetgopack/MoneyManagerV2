@@ -23,8 +23,6 @@ This video shows only the new features and enhancement of some older features. A
 ![Fork](https://img.shields.io/github/forks/CSC510SEFALL2024/MyDollarBot-BOTGo)
 ![Discord](https://img.shields.io/discord/1163591668637896807?color=blueviolet&label=Discord%20Discussion%20Chat)
 
-
-
 <hr>
 
 ## :money_with_wings: About TrackMyDollar
@@ -39,37 +37,24 @@ With simple commands, this bot allows you to:
 - Add a recurring expense 
 - User can add a new category and delete an existing category 
 - User can see the budget value for the total expense 
-- Added pie charts, bar graphs with and without budget lines 
+- Added pie charts, bar graphs with and without budget lines
+- Scan receipts using AI and add new transactions
+- Send and Email to themselves with spend analysis using AI and spend graphs
+- Export expenses and income to CSV with pivots and charts
 - Deployment on GCP 
 
-## Project 2
 
-- Email Transaction History: Users can request their complete transaction history via email for easy access and record-keeping.
-- CSV Transaction History Extraction: Users can download their transaction history in CSV format, providing a versatile data export option for analysis.
-- Receipt Management: Users can upload and retrieve receipts for specific transactions by date, simplifying expense tracking and documentation.
-- Transaction Limit Notifications: Users can set transaction limits and receive alerts when expenses exceed the specified limits, helping them stay within budget.
-- GitHub Actions Automation: Automated testing, code formatting, and syntax checks have been implemented through Github Actions. A minimum 80% code coverage is required for successful builds, ensuring code quality and testing standards are maintained.
 
 ## :star: Whats New
-## Project 3
-- Add Income Feature: Apart from adding expenses, users can now add income for different categories like salary, part-time and can be managed just like expenses with single command /add_income.
+## Project 2
 
-- Generate PDF: PDFs can be generated for Income or expenses with /pdf command.
-
-- Multiple currency support: We can see the expenses and budget in different currency with actual currency exchange rates. Currently supported currencies are INR, EUR and CHF.
-
-- upload CSV: User can upload a CSV File to add expenses in bulk.
-
-- AI integration: If you need second opinion on your budget planning then you can chat with AI in app. Chat functionality allows user to chat with AI to receive some information or to summarize the impact on their financial budgeting.
-
-- Calendar functionality: What if you forget to record yesterday’s expense!! Don't worry, now you can select the date for expenses and income. Allows you to record your backdated expenses.
-
-- Code coverage failure resolved
-
-- New Test cases added for new features and to improve code coverage.
+- Scan Receipt: Use AI to extract the amount, date and category from any image of a receipt and add it to the transactions.
+- Email Transaction History: Users can request their complete transaction history with graphs via email for easy access and record-keeping. Users get an analysis about their spends using AI.
+- CSV Transaction History Extraction: Users can download their transaction history in CSV format, providing a versatile data export option for analysis along with charts and images.
+- GitHub Actions Automation: Automated testing, code formatting, and syntax checks have been implemented through Github Actions. A minimum 80% code coverage is required for successful builds, ensuring code quality and testing standards are maintained.
 
 ## What more can be done?
-Please refer to the issue list available [here](https://github.com/anuj672/MyDollarBot-BOTGo/issues) to see what more can be done to make MyDollarBot better. Please refer to the MyDollarBot project present [here](https://github.com/bhaveshittadwar/csc-510-se-group-49/projects) to have a look at the tasks done or in progress
+Please refer to the issue list available [here](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/issues) to see what more can be done to make MyDollarBot better. Please refer to the MyDollarBot project present [here](https://github.com/orgs/CSC510SEFALL2024/projects/1) to have a look at the tasks done or in progress
 
 ## Demo
 
@@ -242,7 +227,7 @@ I want to convert my total daily or monthly expenditure in a different currency.
 3. Choose from the category of day or month
 4. You will get the converted price in that currency
 
-### Send Email 
+### Send Email (Enhanced) 
 
 I want to send myself an email for the monthly expenditure
 
@@ -250,6 +235,7 @@ I want to send myself an email for the monthly expenditure
 2. Enter the `/sendEmail` command.
 3. Type the intended email address
 4. You will get an email with the history file as attachment.
+5. Along with the attachment you will get spend analysis using AI in natural language with improved format and graphs.
 
 ### Chat with AI
 
@@ -266,6 +252,22 @@ You can get a summary of your transactions in PDF format.
 1. Enter the `/pdf` command.
 2. Select the category that you want in the PDF history.
 3. your PDF history will be created and ready to download.
+
+### Download CSV (New)
+
+You can get a summary of your transactions in CSV format.
+
+1. Enter the `/csv` command.
+2. Select the category that you want in the CSV history.
+3. your CSV history will be created and ready to download with graphs and images.
+
+### Scan Receipt (New)
+
+You can add transactions by scanning images of your receipts using AI.
+
+1. Enter the `/scan_receipt` command.
+2. Upload an image of your receipt.
+3. Gemini AI will scan this image and upload the transaction to your history.
 
 ### Add recurring expense
 
@@ -321,7 +323,7 @@ Add/Delete/Show custom categories
    3. Delete a category
 
 ## Discord Chat
-![image](https://github.com/JayProngs/MyDollarBot-BOTGo/assets/142813992/2bce084d-3d99-461c-aa9b-0f7dda486e9c)
+![image](https://github.com/user-attachments/assets/cfeb6ce7-bccd-4342-b5bf-7f7db5afb5ff)
 
 ## Notes:
 You can download and install the Telegram desktop application for your system from the following site: https://desktop.telegram.org/

@@ -84,7 +84,8 @@ def create_spending_charts(df):
         category_chart_path = f"category_spending_{timestamp}.pdf"
         
         # Monthly Spending Plot
-        df['Date'] = pd.to_datetime(df['Date'])
+        df['Date'] = pd.to_datetime(df['Date'], format="%d-%b-%Y", errors='coerce')
+        df.dropna(subset=['Date'], inplace=True)  # Remove rows with invalid dates
         df['Month'] = df['Date'].dt.to_period('M')
         monthly_data = df.groupby('Month')['Amount'].sum()
         
@@ -113,8 +114,9 @@ def create_spending_charts(df):
 # Function to save user data to Excel
 def save_data_to_excel(expense_data, income_data):
     """Save expenses and income to an Excel file with separate sheets."""
-    print(expense_data, "\n\n\n", income_data)
+    # print(expense_data, "\n\n\n", income_data)
     excel_filename = f"user_financial_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+    
     with pd.ExcelWriter(excel_filename) as writer:
         expense_df = pd.DataFrame(expense_data, columns=['Date', 'Category', 'Amount'])
         income_df = pd.DataFrame(income_data, columns=['Date', 'Category', 'Amount'])
@@ -191,7 +193,9 @@ def process_email_input(message, bot):
         </html>
         """
         
-        attachments = [monthly_chart, category_chart, excel_file]  # Include Excel file with the report
+        # Prepare email message and attachments
+        attachments = [file for file in [monthly_chart, category_chart, excel_file] if file]  # Only include non-None attachments
+        # Include Excel file with the report
 
         # Send email with attachments
         send_email(user_email, email_subject, email_message, attachments)

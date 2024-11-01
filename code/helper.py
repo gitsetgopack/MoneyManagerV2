@@ -75,7 +75,9 @@ commands = {
     'DisplayCurrency': 'Display total expenditure in a currency of your choice',
     'chat': 'Chat with the bot',
     'pdf': 'Generate a pdf for Income or History',
-    'savings_tracker': 'tracks savings'
+    'savings_tracker': 'tracks savings',
+    'csv':  'Generate a csv file for Income or Expenses',
+    'scan_receipt': 'Scan a receipt using AI to upload transactions'
 }
 
 dateFormat = '%d-%b-%Y'

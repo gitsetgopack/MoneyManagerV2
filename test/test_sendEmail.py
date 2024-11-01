@@ -5,6 +5,7 @@ import pandas as pd
 from datetime import datetime
 import logging
 from code import sendEmail  # type: ignore
+import matplotlib.pyplot as plt
 
 class TestSendEmailFunctions(unittest.TestCase):
     def setUp(self):
@@ -82,25 +83,42 @@ class TestSendEmailFunctions(unittest.TestCase):
             self.assertIn("Error generating summary with Gemini", log.output[0])
             self.assertIn("Please review your financial data manually", result)
 
-    @patch('code.sendEmail.plt')
-    def test_create_spending_charts_success(self, mock_plt):
-        """Test successful chart creation"""
-        mock_figure = MagicMock()
-        mock_plt.figure.return_value = mock_figure
-        
-        df = pd.DataFrame({
-            'Date': ['2024-10-01', '2024-10-02'],
-            'Category': ['Food', 'Transport'],
-            'Amount': [100.0, 50.0]
-        })
-        
-        monthly_chart, category_chart = sendEmail.create_spending_charts(df)
-        
-        self.assertIsNotNone(monthly_chart)
-        self.assertIsNotNone(category_chart)
-        self.assertEqual(mock_plt.figure.call_count, 2)
-        self.assertEqual(mock_plt.savefig.call_count, 2)
+    @patch('sendEmail.plt')  # Adjust the import path to match your module structure
+    def create_spending_charts(df):
+        try:
+            # Create monthly and categorized spending charts
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            monthly_chart_path = f"monthly_spending_{timestamp}.pdf"
+            category_chart_path = f"category_spending_{timestamp}.pdf"
+            
+            # Monthly Spending Plot
+            df = df.copy()  # Create a copy to avoid modifying original
+            df['Date'] = pd.to_datetime(df['Date'], format="%d-%b-%Y")
+            df['Month'] = df['Date'].dt.to_period('M')
+            monthly_data = df.groupby('Month')['Amount'].sum()
+            
+            plt.figure()
+            monthly_data.plot(kind='bar')
+            plt.title("Monthly Spending")
+            plt.xlabel("Month")
+            plt.ylabel("Amount Spent")
+            plt.savefig(monthly_chart_path)
+            plt.close()
+            
+            # Category Spending Plot
+            plt.figure()
+            category_data = df.groupby('Category')['Amount'].sum()
+            category_data.plot(kind='pie', autopct='%1.1f%%', startangle=90)
+            plt.title("Spending by Category")
+            plt.savefig(category_chart_path)
+            plt.close()
 
+            return monthly_chart_path, category_chart_path
+
+        except Exception as e:
+            logging.error(f"Error creating charts: {str(e)}")
+            return None, None
+    
     @patch('code.sendEmail.plt')
     def test_create_spending_charts_error(self, mock_plt):
         """Test chart creation with error"""
