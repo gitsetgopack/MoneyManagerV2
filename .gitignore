@@ -137,3 +137,5 @@ code/data.csv
 
 #user properties with API keys
 user.properties
+
+myvenv/
