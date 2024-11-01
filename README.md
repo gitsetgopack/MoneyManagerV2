@@ -58,11 +58,8 @@ Please refer to the issue list available [here](https://github.com/CSC510SEFALL2
 
 ## Demo
 
-
 https://github.com/user-attachments/assets/49a748d3-04e2-44be-b013-1e5557a1f4e9
 
-
-https://user-images.githubusercontent.com/72677919/140454147-f879010a-173b-47b9-9cfb-a389171924de.mp4
 
 ## 🚀 Installation Guide for TrackMyDollar BOTGo
 
