@@ -94,6 +94,52 @@ class TestPDFGenerator(unittest.TestCase):
         
         bot.send_document.assert_not_called()
         self.assertEqual(result, "No records to generate a PDF.")
+    
+    @patch('pdf.helper.getUserHistory', return_value=["2024-10-10 12:00:00,Salary,1000"])
+    def test_get_end_date_end_date_before_start_date(self, mock_getUserHistory):
+        """Test that entering an end date before the start date triggers an error message."""
+        bot = MagicMock()
+        message = MagicMock()
+        message.text = "2024-10-09"  # End date before start date
+        start_date = datetime.strptime("2024-10-10", "%Y-%m-%d")
+        
+        result = pdf.get_end_date(message, bot, "Income", 12345, start_date)
+        
+        bot.reply_to.assert_called_once_with(message, "End date cannot be before start date. Please try again.")
+        self.assertEqual(result, "End date cannot be before start date. Please try again.")
+
+    @patch('pdf.helper.getUserHistory', return_value=[])
+    def test_get_end_date_no_records_found_in_date_range(self, mock_getUserHistory):
+        """Test that no records within the date range returns an appropriate message."""
+        bot = MagicMock()
+        message = MagicMock()
+        message.text = "2024-10-12"  # Date range with no records
+        start_date = datetime.strptime("2024-10-10", "%Y-%m-%d")
+        
+        result = pdf.get_end_date(message, bot, "Income", 12345, start_date)
+        
+        bot.reply_to.assert_called_once_with(
+            message, "No Income records found between 2024-10-10 and 2024-10-12."
+        )
+        self.assertEqual(result, "No Income records found between 2024-10-10 and 2024-10-12.")
+
+    @patch('pdf.helper.getUserHistory', return_value=["2024-10-11 12:00:00,Salary,1000"])
+    def test_get_end_date_no_records_in_valid_range(self, mock_getUserHistory):
+        """Test that valid date range returns no records found message."""
+        bot = MagicMock()
+        message = MagicMock()
+        message.text = "2024-10-10"  # End date before the existing record date
+        start_date = datetime.strptime("2024-10-10", "%Y-%m-%d")
+
+        result = pdf.get_end_date(message, bot, "Income", 12345, start_date)
+
+        # Check that the bot replies with the no records found message
+        bot.reply_to.assert_called_once_with(
+            message, "No Income records found between 2024-10-10 and 2024-10-10."
+        )
+        self.assertEqual(result, "No Income records found between 2024-10-10 and 2024-10-10.")
+
+
 
 if __name__ == "__main__":
     unittest.main()
