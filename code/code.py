@@ -19,6 +19,7 @@ import receipt
 import process_csv
 import add_income
 import pdf
+import savings_tracker
 from datetime import datetime
 from jproperties import Properties
 import display_currency
@@ -151,6 +152,11 @@ def command_category(message):
 @bot.message_handler(commands=['scan_receipt'])
 def command_scan_receipt(message):
     scan_receipt.run(message, bot)
+
+
+@bot.message_handler(commands=['savings_tracker'])
+def command_savings_tracker(message):
+    savings_tracker.run(message, bot)
 
 
 # not used

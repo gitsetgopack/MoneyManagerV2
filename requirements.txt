@@ -31,7 +31,7 @@ requests>=2.31.0
 google-generativeai>=0.3.0
 
 # Optional but recommended for better logging
-logging>=0.4.9
+# logging>=0.4.9
 
 openpyxl
 XlsxWriter

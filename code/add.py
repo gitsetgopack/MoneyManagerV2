@@ -107,7 +107,8 @@ def post_date_input(message, bot, date_entered,amount_value,selected_category):
             date_of_entry), str(option[chat_id]), str(amount_value)
         helper.write_json(add_user_record(
             chat_id, "{},{},{}".format(date_str, category_str, amount_str)))
-
+        
+        helper.check_spending_limit(chat_id, amount_value, bot, date_entered)
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
         markup.row(types.KeyboardButton("Yes, upload receipt"))
         markup.row(types.KeyboardButton("No, I'm done"))
