@@ -16,6 +16,7 @@ This video shows only the new features and enhancement of some older features. A
 [![GitHub contributors](https://img.shields.io/github/contributors/CSC510SEFALL2024/MyDollarBot-BOTGo)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/graphs/contributors)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10023576.svg)](https://doi.org/10.5281/zenodo.10023576)
 [![Test and Formatting](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/actions/workflows/test.yml/badge.svg)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/actions/workflows/test.yml)
+![Build Status](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/actions/workflows/test.yml/badge.svg)
 [![codecov](https://codecov.io/gh/CSC510SEFALL2024/MyDollarBot-BOTGo/graph/badge.svg?token=E5235TMYDN)](https://codecov.io/gh/CSC510SEFALL2024/MyDollarBot-BOTGo)
 [![GitHub issues](https://img.shields.io/github/issues/CSC510SEFALL2024/MyDollarBot-BOTGo)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/issues)
 [![GitHub closed issues](https://img.shields.io/github/issues-closed/CSC510SEFALL2024/MyDollarBot-BOTGo)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/issues?q=is%3Aissue+is%3Aclosed)
