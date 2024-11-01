@@ -33,8 +33,16 @@ data_format = {
         'overall': None,
         'category': None,
         'max_per_txn_spend': None
-    }
+    },
+    'max_expenditure_limits': [
+        {
+            'limit': None,          # Maximum spend allowed within time frame
+            'time_frame': None,      # Time period (e.g., "Oct-2023")
+            'current_spending': 0    # Accumulated spending within the time frame
+        }
+    ]
 }
+
 
 income_or_expense_options = {
     'income': 'Income',
@@ -66,7 +74,8 @@ commands = {
     'add_income': 'Add a new income',
     'DisplayCurrency': 'Display total expenditure in a currency of your choice',
     'chat': 'Chat with the bot',
-    'pdf': 'Generate a pdf for Income or History'
+    'pdf': 'Generate a pdf for Income or History',
+    'savings_tracker': 'tracks savings'
 }
 
 dateFormat = '%d-%b-%Y'
@@ -360,3 +369,70 @@ def getUserHistory(chat_id, selectedType):
         return getUserIncomeHistory(chat_id)
     else:
         return getUserExpenseHistory(chat_id)
+
+
+def set_max_expenditure_limit(chat_id, limit, time_frame):
+    data = getUserData(chat_id)
+    existing_spending = calculate_spending_for_time_frame(data['data'], time_frame)
+
+    new_limit = {
+        "limit": limit,
+        "time_frame": time_frame,
+        "current_spending": existing_spending
+    }
+    # Append the new limit entry to the list
+    data['max_expenditure_limits'].append(new_limit)
+    write_json(data)
+
+
+def check_spending_limit(chat_id, amount, bot, expense_date):
+    data = getUserData(chat_id)
+    for limit_data in data.get('max_expenditure_limits', []):
+        if not limit_data['limit']:
+            continue  # Skip if no limit is set
+
+        # Parse the time frame start and end dates
+        start_date_str, end_date_str = limit_data['time_frame'].split(" to ")
+        start_date = datetime.strptime(start_date_str, '%d-%b-%Y')
+        end_date = datetime.strptime(end_date_str, '%d-%b-%Y')
+
+        # Only add the amount if the expense_date is within the time frame
+        if start_date <= expense_date <= end_date:
+            limit = float(limit_data['limit'])
+            limit_data['current_spending'] += float(amount)
+            current_spending = limit_data['current_spending']
+
+            percentage_spent = (current_spending / limit) * 100
+
+            if percentage_spent >= 100:
+                bot.send_message(chat_id, f"⚠️ You've reached 100% of your {limit_data['time_frame']} spending limit!")
+            elif percentage_spent >= 75:
+                bot.send_message(chat_id, f"⚠️ You've reached 75% of your {limit_data['time_frame']} spending limit!")
+            elif percentage_spent >= 50:
+                bot.send_message(chat_id, f"⚠️ You've reached 50% of your {limit_data['time_frame']} spending limit!")
+
+    write_json(data)
+
+
+def calculate_spending_for_time_frame(expenses, time_frame):
+    total_spending = 0
+    for entry in expenses:
+        date_str, category, amount = entry.split(',')
+        expense_date = datetime.strptime(date_str, '%d-%b-%Y %H:%M')
+        
+        # Adjust the following condition to match your time frame format
+        if matches_time_frame(expense_date, time_frame):
+            total_spending += float(amount)
+    
+    return total_spending
+
+def matches_time_frame(expense_date, time_frame):
+    # Parse the time_frame string into a date object
+    frame_date = datetime.strptime(time_frame, '%d-%b-%Y')  # Assumes '02-Oct-2024' format
+    
+    # Check if expense_date matches frame_date exactly (year, month, day)
+    return (
+        expense_date.year == frame_date.year and
+        expense_date.month == frame_date.month and
+        expense_date.day == frame_date.day
+    )

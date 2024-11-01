@@ -1,7 +1,6 @@
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 
 api_token=$(grep "api_token"  user.properties|cut -d'=' -f2)
-
 if [ -z "$api_token" ]
 then
   echo "Api token missing: Execute the following steps to generate Api token"
@@ -24,5 +23,6 @@ fi
 
 if [ -n "$api_token" ]
 then
-  python3 code/code.py
+  python code/code.py
 fi
+read -p "Press Enter to continue..."
