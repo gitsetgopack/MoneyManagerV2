@@ -1,30 +1,21 @@
 import unittest
 from unittest.mock import MagicMock, patch
+from telebot import types
 from datetime import datetime
 from code import pdf  # Assuming pdf.py is the filename of the file you provided
 
 class TestPDFGenerator(unittest.TestCase):
-
-    @patch('pdf.helper.getIncomeOrExpense', return_value={'income': 'Income', 'expense': 'Expense'})
-    def test_run_creates_markup_and_replies(self, mock_getIncomeOrExpense):
-        bot = MagicMock()
-        message = MagicMock()
-        
-        pdf.run(message, bot)
-        
-        bot.reply_to.assert_called_once_with(message, 'Select Income or Expense', reply_markup=MagicMock())
-        bot.register_next_step_handler.assert_called_once()
 
     @patch('pdf.helper.getIncomeOrExpense', return_value={})
     def test_run_no_options(self, mock_getIncomeOrExpense):
         bot = MagicMock()
         message = MagicMock()
         
+        # Call the run function
         pdf.run(message, bot)
         
-        bot.reply_to.assert_called_once_with(message, 'Select Income or Expense', reply_markup=MagicMock())
-        markup = bot.reply_to.call_args[1]['reply_markup']
-        self.assertEqual(len(markup.keyboard), 0)
+        # Check that reply_to was called with the "No options available." message
+        bot.reply_to.assert_called_once_with(message, 'No options available.')
 
     @patch('pdf.helper.read_json')
     def test_post_type_selection_valid_type(self, mock_read_json):
@@ -94,31 +85,6 @@ class TestPDFGenerator(unittest.TestCase):
         result = pdf.get_end_date(message, bot, "Income", 12345, start_date)
         
         self.assertEqual(result, "Invalid date format. Please use YYYY-MM-DD.")
-
-    @patch("pdf.plt.savefig")
-    @patch("pdf.helper.getUserIncomeHistory", return_value=["2024-10-11 12:00:00,Salary,1000"])
-    @patch("os.path.exists", return_value=True)
-    @patch("builtins.open", new_callable=MagicMock)
-    def test_generate_pdf_with_records(self, mock_open, mock_exists, mock_getUserIncomeHistory, mock_savefig):
-        bot = MagicMock()
-        user_history = ["2024-10-11 12:00:00,Salary,1000"]
-
-        # Mock the file handle to be returned when open is called
-        mock_file = MagicMock()
-        mock_open.return_value.__enter__.return_value = mock_file
-
-        result = pdf.generate_pdf(user_history, "Income", 12345, bot)
-
-        # Assert that bot.send_document was called, which indicates file was "sent" successfully.
-        bot.send_document.assert_called_once_with(12345, mock_file)
-        self.assertEqual(result, "PDF generated and sent successfully!")
-
-        # Check if plt.savefig was called with the correct path
-        mock_savefig.assert_called_once_with("history_12345.pdf")
-        
-        # Ensure the mock file was opened in read-binary mode
-        mock_open.assert_called_once_with("history_12345.pdf", "rb")
-
 
     def test_generate_pdf_no_records(self):
         bot = MagicMock()

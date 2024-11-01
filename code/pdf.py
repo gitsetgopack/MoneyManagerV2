@@ -9,6 +9,9 @@ def run(message, bot):
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
     options = helper.getIncomeOrExpense()
     markup.row_width = 2
+    if not options:
+        bot.reply_to(message, "No options available.")
+        return
     for c in options.values():
         markup.add(c)
     msg = bot.reply_to(message, 'Select Income or Expense', reply_markup=markup)
