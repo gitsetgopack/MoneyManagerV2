@@ -331,6 +331,12 @@ Add/Delete/Show custom categories
 ## Notes:
 You can download and install the Telegram desktop application for your system from the following site: https://desktop.telegram.org/
 
+# Badges
+
+![Flake8 Status](https://github.com/harshvora7/MyDollarBot-BOTGo-Group101/actions/workflows/flake8.yml/badge.svg)
+![Pyright Status](https://github.com/harshvora7/MyDollarBot-BOTGo-Group101/actions/workflows/pyright.yml/badge.svg)
+
+
 
 <hr>
 <p>Title:'Track My Dollar'</p>
