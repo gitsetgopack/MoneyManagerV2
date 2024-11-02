@@ -333,8 +333,8 @@ You can download and install the Telegram desktop application for your system fr
 
 # Badges
 
-![Flake8 Status](https://github.com/harshvora7/MyDollarBot-BOTGo-Group101/actions/workflows/flake8.yml/badge.svg)
-![Pyright Status](https://github.com/harshvora7/MyDollarBot-BOTGo-Group101/actions/workflows/pyright.yml/badge.svg)
+[![Flake8 Status](https://github.com/harshvora7/MyDollarBot-BOTGo-Group101/actions/workflows/flake8.yml/badge.svg?branch=main)](https://github.com/harshvora7/MyDollarBot-BOTGo-Group101/actions/workflows/flake8.yml)
+[![Pyright Status](https://github.com/harshvora7/MyDollarBot-BOTGo-Group101/actions/workflows/pyright.yml/badge.svg?branch=main)](https://github.com/harshvora7/MyDollarBot-BOTGo-Group101/actions/workflows/pyright.yml)
 
 
 
