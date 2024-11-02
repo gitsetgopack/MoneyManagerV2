@@ -1,6 +1,6 @@
 # 💰 TrackMyDollar V5.0 - Budget On The Go(BOTGo) 💰
 
-[https://www.youtube.com/watch?v=9fJScubX-cI](https://youtu.be/Kpe4u8LHseg)
+https://github.com/user-attachments/assets/49a748d3-04e2-44be-b013-1e5557a1f4e9
 
 This video shows only the new features and enhancement of some older features. All the other features from Project 3 are working as it is.
 <hr>
@@ -58,7 +58,7 @@ Please refer to the issue list available [here](https://github.com/CSC510SEFALL2
 
 ## Demo
 
-https://github.com/user-attachments/assets/49a748d3-04e2-44be-b013-1e5557a1f4e9
+[Demo Video for new features](https://youtu.be/JJxQsnIiYXI)
 
 
 ## 🚀 Installation Guide for TrackMyDollar BOTGo
