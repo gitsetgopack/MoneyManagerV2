@@ -190,10 +190,10 @@ class TestSendEmailFunctions(unittest.TestCase):
         with patch('code.sendEmail.send_email') as mock_send_email:
             sendEmail.process_email_input(mock_message, mock_bot)
             mock_send_email.assert_called_once()
-            mock_bot.send_message.assert_called_with(    
-                                                        123, 
-                                                        'Email with report sent successfully!'
-                                                    )
+            mock_bot.send_message.assert_called_with(
+                123,
+                'Email with report sent successfully!'
+            )
 
     @patch('code.sendEmail.helper.getUserHistory')
     def test_process_email_input_error(self, mock_get_history):
