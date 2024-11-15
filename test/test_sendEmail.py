@@ -84,7 +84,7 @@ class TestSendEmailFunctions(unittest.TestCase):
             self.assertIn("Please review your financial data manually", result)
 
     @patch('sendEmail.plt')  # Adjust the import path to match your module structure
-    def create_spending_charts(df):
+    def create_spending_charts(df: pd.DataFrame):
         try:
             # Create monthly and categorized spending charts
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -92,7 +92,7 @@ class TestSendEmailFunctions(unittest.TestCase):
             category_chart_path = f"category_spending_{timestamp}.pdf"
             
             # Monthly Spending Plot
-            df = df.copy()  # Create a copy to avoid modifying original
+            df = df.copy()  # type: ignore
             df['Date'] = pd.to_datetime(df['Date'], format="%d-%b-%Y")
             df['Month'] = df['Date'].dt.to_period('M')
             monthly_data = df.groupby('Month')['Amount'].sum()
