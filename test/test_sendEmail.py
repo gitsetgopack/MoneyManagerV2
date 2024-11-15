@@ -213,5 +213,6 @@ class TestSendEmailFunctions(unittest.TestCase):
         mock_bot.send_message.assert_called_once()
         mock_bot.register_next_step_handler.assert_called_once()
 
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
