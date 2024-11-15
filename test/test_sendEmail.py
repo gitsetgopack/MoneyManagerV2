@@ -177,19 +177,22 @@ class TestSendEmailFunctions(unittest.TestCase):
         mock_message.text = "test@example.com"
 
         mock_get_history.side_effect = [
-            [    "2024-10-01 12:00,Salary,1000", 
-                 "2024-10-02 12:00,Bonus,500"
+            [    
+                "2024-10-01 12:00,Salary,1000", 
+                "2024-10-02 12:00,Bonus,500"
             ],  # Income
-            [    "2024-10-01 12:00,Food,100", 
-                 "2024-10-02 12:00,Transport,50"
+            [    
+                "2024-10-01 12:00,Food,100", 
+                "2024-10-02 12:00,Transport,50"
             ]  # Expense
         ]
 
         with patch('code.sendEmail.send_email') as mock_send_email:
             sendEmail.process_email_input(mock_message, mock_bot)
             mock_send_email.assert_called_once()
-            mock_bot.send_message.assert_called_with(    123, 
-                                                         'Email with report sent successfully!'
+            mock_bot.send_message.assert_called_with(    
+                                                        123, 
+                                                        'Email with report sent successfully!'
                                                     )
 
     @patch('code.sendEmail.helper.getUserHistory')
