@@ -11,12 +11,10 @@ assignees: ''
 [Provide a brief summary of the task.]
 
 ## Effort
-- [ ] Small
-- [ ] Medium
-- [ ] Huge
+[Small | Medium | Huge]
 
 ## Acceptance Criteria
-- [ ]
+- [ ] 
 
 ## PR
 [Link the PR(s)]
