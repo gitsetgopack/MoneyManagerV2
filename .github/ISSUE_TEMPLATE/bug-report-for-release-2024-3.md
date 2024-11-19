@@ -2,7 +2,7 @@
 name: Bug report for release/2024.3
 about: Create a report to help us improve
 title: ''
-labels: ''
+labels: bug, release/2024.3
 assignees: ''
 
 ---
