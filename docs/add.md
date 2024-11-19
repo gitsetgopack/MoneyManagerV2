@@ -19,7 +19,7 @@ The code that implements this feature can be found [here](https://github.com/sak
 ## Functions
 
 1. run(message, bot):
-This is the main function used to implement the add feature. It pop ups a menu on the bot asking the user to choose their expense category, after which control is given to post_category_selection(message, bot) for further proccessing. It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the main code.py function.
+This is the main function used to implement the add feature. It pop ups a menu on the bot asking the user to choose their expense category, after which control is given to post_category_selection(message, bot) for further processing. It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the main code.py function.
 
 2. handle_uploaded_receipt(message, bot):
 This function takes two arguments for storing the image uploaded by the user. It requests the user to upload the receipt and if you are not uploading an image it will through an error.
@@ -49,7 +49,7 @@ Sri Athithya Kruth, [19.10.21 21:14]
 Food
 
 dollarbot, [19.10.21 21:14]
-How much did you spend on Food? 
+How much did you spend on Food?
 (Enter numeric values only)
 
 Sri Athithya Kruth, [19.10.21 21:14]

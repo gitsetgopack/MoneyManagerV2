@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Describe the bug](#describe-the-bug)
+- [To Reproduce](#to-reproduce)
+- [Expected behavior](#expected-behavior)
+- [Screenshots](#screenshots)
+- [Additional context](#additional-context)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ---
 name: Bug report for release/2024.3
 about: Create a report to help us improve

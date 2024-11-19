@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [About MyDollarBot's /history Feature](#about-mydollarbots-history-feature)
+- [Location of Code for this Feature](#location-of-code-for-this-feature)
+- [Code Description](#code-description)
+  - [Functions](#functions)
+- [How to run this feature?](#how-to-run-this-feature)
+  - [DATE, CATEGORY, AMOUNT](#date-category-amount)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # About MyDollarBot's /history Feature
 This feature enables the user to view all of their stored records i.e it gives a historical view of all the expenses stored in MyDollarBot.
 
@@ -28,7 +41,7 @@ Vraj Chokshi, [23.11.21 20:53]
 /history
 
 mydollarbot20102021, [23.11.21 20:53]
-Here is your spending history : 
+Here is your spending history :
 DATE, CATEGORY, AMOUNT
 ----------------------
 01-Dec-2021,Transport,100.0

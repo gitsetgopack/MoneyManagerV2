@@ -14,7 +14,7 @@ assignees: ''
 [Small | Medium | Huge]
 
 ## Acceptance Criteria
-- [ ] 
+- [ ]
 
 ## PR
 [Link the PR(s)]

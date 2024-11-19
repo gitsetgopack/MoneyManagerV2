@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [About MyDollarBot's /category Feature](#about-mydollarbots-category-feature)
+- [Location of Code for this Feature](#location-of-code-for-this-feature)
+- [Code Description](#code-description)
+  - [Functions](#functions)
+- [How to run this feature?](#how-to-run-this-feature)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # About MyDollarBot's /category Feature
 This feature enables the user to manage their categories.
 Currently we have the following expense categories set by default:
@@ -18,7 +30,7 @@ The code that implements this feature can be found [here](https://github.com/pri
 ## Functions
 
 1. run(message, bot):
-This is the main function used to implement the category feature. It pop ups a menu on the bot asking the user to choose their operation, after which operation is given to post_operation_selection(message, bot) for further proccessing. It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the main code.py function.
+This is the main function used to implement the category feature. It pop ups a menu on the bot asking the user to choose their operation, after which operation is given to post_operation_selection(message, bot) for further processing. It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the main code.py function.
 
 2. post_operation_selection(message, bot):
  It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the run(message, bot): function in the category.py file. It requests the user to choose an operation from Add/Delete/Show categories and then passes control to category_add(message, bot), category_delete(message, bot), category_view(message, bot) for further processing depends on user's choose.
@@ -27,11 +39,11 @@ This is the main function used to implement the category feature. It pop ups a m
  It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the post_operation_selection(message, bot): function in the category.py file. It takes the new category name entered by the user, and then write it in the file categories.txt.
 
 4. category_delete(message, bot):
- It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the post_operation_selection(message, bot): function in the category.py file. It takes the category name entered by the user, read the file categories.txt and check whether the inputed category is in the file. Write  the categories back to the file categories.txt.
- 
+ It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the post_operation_selection(message, bot): function in the category.py file. It takes the category name entered by the user, read the file categories.txt and check whether the inputted category is in the file. Write  the categories back to the file categories.txt.
+
 5. category_view(message, bot):
  It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the post_operation_selection(message, bot): function in the category.py file. It read the file categories.txt and output the text in chat room.
- 
+
 # How to run this feature?
 Once the project is running(please follow the instructions given in the main README.md for this), please type /category into the telegram bot.
 

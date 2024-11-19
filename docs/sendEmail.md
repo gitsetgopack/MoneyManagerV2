@@ -1,3 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [DollarBot Email Sender](#dollarbot-email-sender)
+  - [Functions and Methods](#functions-and-methods)
+    - [send_email(user_email, subject, message, attachments)](#send_emailuser_email-subject-message-attachments)
+    - [generate_spending_summary(user_data)](#generate_spending_summaryuser_data)
+    - [create_spending_charts(df)](#create_spending_chartsdf)
+    - [save_data_to_excel(expense_data, income_data)](#save_data_to_excelexpense_data-income_data)
+    - [run(message, bot)](#runmessage-bot)
+    - [process_email_input(message, bot)](#process_email_inputmessage-bot)
+  - [Main Workflow](#main-workflow)
+  - [Variables](#variables)
+  - [Dependencies](#dependencies)
+  - [Usage](#usage)
+  - [Testing](#testing)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # DollarBot Email Sender
 
 This document outlines the functionality of the Python script used for sending budget reports via email in the DollarBot application. The script employs the Gmail SMTP server to dispatch emails with attachments of budget reports.

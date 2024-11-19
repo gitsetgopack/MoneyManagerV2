@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [MyDollarBot-BOTGo](#mydollarbot-botgo)
+  - [Getting Started](#getting-started)
+  - [Commands](#commands)
+  - [Usage](#usage)
+  - [Key Features](#key-features)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # MyDollarBot-BOTGo
 
 MyDollarBot-BOTGo is a comprehensive **Telegram bot** designed to help you manage and track your finances. With this bot, you can record expenses, set budgets, categorize spending, and even use AI to scan receipts for quick data entry.

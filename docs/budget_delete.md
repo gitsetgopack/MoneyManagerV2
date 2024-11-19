@@ -1,5 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [About MyDollarBot's budget_delete module](#about-mydollarbots-budget_delete-module)
+- [Location of Code for this Feature](#location-of-code-for-this-feature)
+- [Code Description](#code-description)
+  - [Functions](#functions)
+- [How to run this feature?](#how-to-run-this-feature)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # About MyDollarBot's budget_delete module
-The budget_view module contains all the functions required to implement the display delete/removal feature. In essence, all operations involved in removal and deletion of a budget are taken care of in this module and are implemented here. 
+The budget_view module contains all the functions required to implement the display delete/removal feature. In essence, all operations involved in removal and deletion of a budget are taken care of in this module and are implemented here.
 
 # Location of Code for this Feature
 The code that implements this feature can be found [here](https://github.com/sak007/MyDollarBot-BOTGo/blob/main/code/budget_delete.py)

@@ -1,7 +1,7 @@
 <table border="0">
  <tr>
     <th><b style="font-size:30px">Notes</b></th>
-    <th><b style="font-size:30px">Self Assessment zero (none), one (a litte), two (somewhat), three (a lot)</b></th>
+    <th><b style="font-size:30px">Self Assessment zero (none), one (a little), two (somewhat), three (a lot)</b></th>
     <th><b style="font-size:30px">evidence</b></th>
  </tr>
  <tr>
@@ -33,7 +33,7 @@
     <td>Issues are being closed</td>
     <td>Three</td>
     <td>https://github.com/deekay2310/MyDollarBot/issues?q=is%3Aissue+is%3Aclosed</td>
-  </tr>  
+  </tr>
   <tr>
     <td>DOI badge: exists</td>
     <td>Three</td>

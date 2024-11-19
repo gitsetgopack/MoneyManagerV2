@@ -1,3 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Extract Data and Generate CSV Report](#extract-data-and-generate-csv-report)
+  - [Functions and Methods](#functions-and-methods)
+    - [run(message, bot)](#runmessage-bot)
+    - [Main Workflow](#main-workflow)
+    - [Dependencies](#dependencies)
+  - [Usage](#usage)
+  - [Test](#test)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Extract Data and Generate CSV Report
 
 This document provides an overview of the Python script used to extract data and generate a CSV report. This script is designed to be used in a larger project, and its primary purpose is to extract data and create a CSV report based on that data.

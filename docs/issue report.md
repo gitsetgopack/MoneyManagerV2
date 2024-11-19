@@ -23,10 +23,10 @@ Added a new file add_recurring.py which handles the cases of monthly recurring e
 ## 4) View recurring expenses
 /history command also shows the recurring expenses (in text output and graph output) in this version.
 
-## 5) Add a command for recurring expense 
+## 5) Add a command for recurring expense
 Command /add_recurring is added. It asks for Category, Amount and Duration (number of months) from the use and adds that particular recurring expense to the JSON file.
 
-## 6) Add a new custom category 
+## 6) Add a new custom category
 The name of this should be taken from the user and the new category should be added to the user's data, and be updated in the master list of categories read from the helper module.
 With the command "/category" the bot is able to manage categories now.
 By entering "Add", we can add a custom category.
@@ -46,7 +46,7 @@ We leave the option of removing all data associated with the category, or keepin
 With the command "/category" the bot is able to manage categories now.
 By entering "Delete", we can add a custom category.
 
-## 9) Adding pie chart in the display function 
+## 9) Adding pie chart in the display function
 
 Pie chart along with bar graph was added in the display command.
 
@@ -54,14 +54,14 @@ Pie chart along with bar graph was added in the display command.
 
 /history command will now show the previous transaction history along with month wise transaction. The solution was being discuss before closing the issue.
 
-## 11) Overlapping plots. 
+## 11) Overlapping plots.
 The problem of overlapping plot was solve by adding plt.clf() code in every plotter function.
 
 ## 12) Older name of the application was displayed
 
 The name was changed to :My Dollar Bot, however application name was older one.
 Updated the codes for user experience.
- 
+
 ## 13) Add testcase of category.py
 
 Finished the file test_category.py.

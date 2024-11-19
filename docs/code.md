@@ -1,5 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [About MyDollarBot's code.py file](#about-mydollarbots-codepy-file)
+- [Location of Code for this Feature](#location-of-code-for-this-feature)
+- [Code Description](#code-description)
+  - [Functions](#functions)
+- [How to run this feature?](#how-to-run-this-feature)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # About MyDollarBot's code.py file
-code.py is the main file from where calls to the corresponding .py files for all features are sent. It contains a number of endpoints which redirect to function calls in the corresponding files. 
+code.py is the main file from where calls to the corresponding .py files for all features are sent. It contains a number of endpoints which redirect to function calls in the corresponding files.
 
 # Location of Code for this Feature
 The code that implements this feature can be found [here](https://github.com/prithvish-doshi-17/MyDollarBot-BOTGo/blob/main/code/code.py)

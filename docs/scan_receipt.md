@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [About MyDollarBot's /scanreceipt Feature](#about-mydollarbots-scanreceipt-feature)
+- [Location of Code for this Feature](#location-of-code-for-this-feature)
+- [Code Description](#code-description)
+  - [Functions](#functions)
+- [How to Run This Feature](#how-to-run-this-feature)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 # About MyDollarBot's /scanreceipt Feature
 This feature enables the user to scan a receipt and automatically add an expense entry to their expense tracker. It integrates with an OCR service (Gemini API) to extract key details—like date, amount, and category—from the receipt image.
@@ -11,7 +23,7 @@ The code that implements this feature can be found [here](https://github.com/CSC
 ## Functions
 
 1. **run(message, bot)**:
-   - Initiates the receipt scanning process by prompting the user to send a receipt photo. 
+   - Initiates the receipt scanning process by prompting the user to send a receipt photo.
    - Takes **message** (the user's message) and **bot** (the Telegram bot instance) as arguments.
 
 2. **handle_receipt_image(message, bot)**:

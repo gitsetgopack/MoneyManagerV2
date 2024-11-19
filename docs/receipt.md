@@ -1,3 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [About MyDollarBot's /receipt Feature](#about-mydollarbots-receipt-feature)
+- [Location of Code for this Feature](#location-of-code-for-this-feature)
+  - [Core Descriptions and functions](#core-descriptions-and-functions)
+- [How to run this feature?](#how-to-run-this-feature)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # About MyDollarBot's /receipt Feature
 This feature enables the user to retrieve receipts in an image format of their expenses for a particular date.
 Currently we have the following expense categories set by default:

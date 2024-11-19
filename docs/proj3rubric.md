@@ -22,6 +22,6 @@
 |.5|other automated analysis tools|0.5|Evidence is [here](https://github.com/prithvish-doshi-17/MyDollarBot-BOTGo/blob/main/.travis.yml)|
 |.5|test cases:.a large proportion of the issues related to handling failing cases|0.5|Test cases developed for the new features. Example is [here](https://github.com/prithvish-doshi-17/MyDollarBot-BOTGo/issues/12). Evidence is [here](https://github.com/prithvish-doshi-17/MyDollarBot-BOTGo/blob/main/test/test_add_recurring.py) for adding recurring expenses and [here](https://github.com/prithvish-doshi-17/MyDollarBot-BOTGo/blob/main/test/test_category.py) for adding/deleting custom categories|
 |.5|test cases are routinely executed |0.5|Please see [here](https://github.com/prithvish-doshi-17/MyDollarBot-BOTGo/blob/main/README.md#testing)|
-|1|Documentation describing how this version improves on the older version|1|Please see [here](https://github.com/prithvish-doshi-17/MyDollarBot-BOTGo/blob/main/README.md#whats-new-from-phase-2-to-phase-3)| 
-|3|This version is a little(1), some(2), much(3) improved on the last version.|3|Tutor's assessment| 
+|1|Documentation describing how this version improves on the older version|1|Please see [here](https://github.com/prithvish-doshi-17/MyDollarBot-BOTGo/blob/main/README.md#whats-new-from-phase-2-to-phase-3)|
+|3|This version is a little(1), some(2), much(3) improved on the last version.|3|Tutor's assessment|
 |16| Total|16||

@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [About MyDollarBot's /estimate Feature](#about-mydollarbots-estimate-feature)
+- [Location of Code for this Feature](#location-of-code-for-this-feature)
+- [Code Description](#code-description)
+  - [Functions](#functions)
+- [How to run this feature?](#how-to-run-this-feature)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # About MyDollarBot's /estimate Feature
 This feature enables the user to estimate their expenses for the next month or next day. The option to choose next month or next day pops up on the screen and they can choose their preference to be displayed.
 
@@ -8,7 +20,7 @@ The code that implements this feature can be found [here](https://github.com/sak
 ## Functions
 
 1. run(message, bot):
-This is the main function used to implement the estimate feature. It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the main code.py function. 
+This is the main function used to implement the estimate feature. It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the main code.py function.
 
 It gets the options for the estimate period from the helper.py file's getSpendEstimateOptions() method and then makes the Telegram bot display them for the user to choose along with a message indicating this. It then passes control to the estimate_total() function for further processing.
 
@@ -33,12 +45,10 @@ $: Next day
 Hold on! Calculating...
 
 Here are your estimated spendings for the next day:
-CATEGORIES,AMOUNT 
+CATEGORIES,AMOUNT
 ----------------------
 Food $200.0
 Groceries $100.0
 ```
 
 ![alt text](https://github.com/sak007/MyDollarBot-BOTGo/blob/estimate-feature/docs/estimate.png)
-
-

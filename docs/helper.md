@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [About MyDollarBot's /helper class](#about-mydollarbots-helper-class)
+- [Location of Code for this Feature](#location-of-code-for-this-feature)
+- [Code Description](#code-description)
+  - [Functions](#functions)
+- [How to run this feature?](#how-to-run-this-feature)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # About MyDollarBot's /helper class
 The helper file contains a set of functions that are commonly used for repeated tasks in the various features of MyDollarBot. Since these come up often, we have put them all up here in a separate file for reusability.
 
@@ -29,13 +41,13 @@ This functions returns the spend display options used in the bot. These are defi
 This functions returns the command options used in the bot. These are defined the same file.
 
 8. def getDateFormat():
-This functions returns the date format used in the bot. 
+This functions returns the date format used in the bot.
 
 9. def getTimeFormat():
-This functions returns the time format used in the bot. 
+This functions returns the time format used in the bot.
 
 10. def getMonthFormat():
-This functions returns the month format used in the bot. 
+This functions returns the month format used in the bot.
 
 11. def getplot():
 This functions returns the different plots used in the bot. These are defined the same file.

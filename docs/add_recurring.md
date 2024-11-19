@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [About MyDollarBot's /add_recurring Feature](#about-mydollarbots-add_recurring-feature)
+- [Location of Code for this Feature](#location-of-code-for-this-feature)
+- [Code Description](#code-description)
+  - [Functions](#functions)
+- [How to run this feature?](#how-to-run-this-feature)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # About MyDollarBot's /add_recurring Feature
 This feature enables the user to add a new expense to their expense tracker.
 Currently we have the following expense categories set by default:
@@ -18,7 +30,7 @@ The code that implements this feature can be found [here](https://github.com/pri
 ## Functions
 
 1. run(message, bot):
-This is the main function used to implement the add feature. It pop ups a menu on the bot asking the user to choose their expense category, after which control is given to post_category_selection(message, bot) for further proccessing. It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the main code.py function.
+This is the main function used to implement the add feature. It pop ups a menu on the bot asking the user to choose their expense category, after which control is given to post_category_selection(message, bot) for further processing. It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the main code.py function.
 
 2. post_category_selection(message, bot):
  It takes 2 arguments for processing - **message** which is the message from the user, and **bot** which is the telegram bot object from the run(message, bot): function in the add_recurring.py file. It requests the user to enter the amount they have spent on the expense category chosen and then passes control to post_amount_input(message, bot): for further processing.
@@ -45,7 +57,7 @@ Prithvish Doshi, [28.11.21 16:48]
 Food
 
 dollarbot, [28.11.21 16:48]
-How much did you spend on Food? 
+How much did you spend on Food?
 (Enter numeric values only)
 
 Prithvish Doshi, [28.11.21 16:48]

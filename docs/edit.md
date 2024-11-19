@@ -1,5 +1,5 @@
 # About MyDollarBot's /edit Feature
-This feature enables the user to edit a previously entered expense in the app. The use can change the amount set in the bot with this command. 
+This feature enables the user to edit a previously entered expense in the app. The use can change the amount set in the bot with this command.
 
 Please note that this is still a Work In Progress.
 

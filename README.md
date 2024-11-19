@@ -3,6 +3,27 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Money Manager](#money-manager)
+  - [Project Overview](#project-overview)
+    - [Quality](#quality)
+    - [Standards](#standards)
+    - [Stats](#stats)
+  - [User Friendly](#user-friendly)
+  - [Developer Friendly](#developer-friendly)
+  - [Usage](#usage)
+  - [Tech Stack](#tech-stack)
+  - [Tools](#tools)
+  - [Installation](#installation)
+    - [Pre-requisite Tasks](#pre-requisite-tasks)
+    - [Actual Installation](#actual-installation)
+    - [Testing](#testing)
+    - [Code Coverage](#code-coverage)
+  - [Configuration](#configuration)
+  - [Troubleshooting](#troubleshooting)
+  - [🚀 Future Enhancements](#-future-enhancements)
+  - [Contributing](#contributing)
+  - [LICENSE](#license)
+  - [🤝 Contributors](#-contributors)
+  - [Code of Conduct](#code-of-conduct)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -123,7 +144,7 @@ To get started, you'll need to create a Telegram bot through BotFather:
 2. Send the following command to BotFather:
 ```bash
 /newbot
-``` 
+```
 4. Follow the instructions to:
 - Choose a name for your bot.
 - Select a username ending with "bot" (required by Telegram).
@@ -176,7 +197,7 @@ To check code coverage locally:
 
 ## Configuration
 
-For **users**, no additional configuration is required—just start using MoneyManager! 
+For **users**, no additional configuration is required—just start using MoneyManager!
 
 For **contributors**, we’ve designed the system to be as modular as possible, so that updates to one module won’t impact others. However, there are a few configurable parameters available to help tailor and extend the system:
 
@@ -225,4 +246,3 @@ Please note that we have a [Code of Conduct](CODE_OF_CONDUCT.md) that all contri
 ---
 
 Thank you for using MoneyManager! Follow this page to stay updated on new features and improvements.
-
