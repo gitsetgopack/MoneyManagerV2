@@ -1,0 +1,121 @@
+---
+repos:
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        entry: black .
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  - repo: local
+    hooks:
+      - id: isort
+        name: isort
+        entry: isort .
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  - repo: local
+    hooks:
+      - id: pylint
+        name: pylint
+        entry: pylint .
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  # - repo: https://github.com/pycqa/flake8
+  #   rev: 7.1.1
+  #   hooks:
+  #     - id: flake8
+
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.13.21
+    hooks:
+      - id: typos
+
+  # - repo: https://github.com/markdownlint/markdownlint
+  #   rev: v0.12.0
+  #   hooks:
+  #     - id: markdownlint
+  #       args: ["--config", ".markdownlint.json"]
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.1.0
+    hooks:
+      - id: codespell
+        args: ["-L", "the,their,receive"]  # Ignore common typos inline
+        files: '\.(py|md|yml|yaml|txt|sh|Makefile)$'
+
+  - repo: https://github.com/thlorenz/doctoc
+    rev: v2.0.1
+    hooks:
+      - id: doctoc
+        args: ["--github", "--maxlevel=3"]  # Customize as needed for TOC structure
+
+  # - repo: https://github.com/trufflesecurity/truffleHog
+  #   rev: v3.83.2
+  #   hooks:
+  #     - id: trufflehog
+  #       name: Detect Secrets with TruffleHog
+  #       args: ["--regex", "--entropy=False"]
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks
+        name: Gitleaks Secret Scan
+        args: ["detect", "--no-banner", "--redact"]
+
+  - repo: https://github.com/mrtazz/checkmake
+    rev: 0.2.2
+    hooks:
+      - id: checkmake
+        name: Check Makefile Linting
+        files: ^Makefile$
+
+  - repo: local
+    hooks:
+      - id: bandit
+        name: bandit
+        entry: bandit -r api/*
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  # - repo: https://github.com/pyupio/safety
+  #   rev: 3.2.3
+  #   hooks:
+  #     - id: safety
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: make test
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: mypy api/
+        language: system
+        pass_filenames: false
+        always_run: true
