@@ -115,7 +115,7 @@ def post_date_input(message, bot, date_entered, amount_value, selected_category)
 
         bot.send_message(
             chat_id,
-            "The following income has been recorded: You have recieved ${} for {} on {}".format(
+            "The following income has been recorded: You have received ${} for {} on {}".format(
                 amount_str, selected_category, date_str
             ),
         )

@@ -61,7 +61,6 @@ def test_valid_format_day(mock_telebot, mocker):
 
 @patch("telebot.telebot")
 def test_spending_estimate_working(mock_telebot, mocker):
-
     MOCK_USER_DATA = test_read_json()
     mocker.patch.object(estimate, "helper")
     estimate.helper.getUserExpenseHistory.return_value = MOCK_USER_DATA["894127939"]
@@ -78,7 +77,6 @@ def test_spending_estimate_working(mock_telebot, mocker):
 
 @patch("telebot.telebot")
 def test_spending_estimate_month(mock_telebot, mocker):
-
     MOCK_USER_DATA = test_read_json()
     mocker.patch.object(estimate, "helper")
     estimate.helper.getUserExpenseHistory.return_value = MOCK_USER_DATA["894127939"]

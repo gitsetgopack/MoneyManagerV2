@@ -48,7 +48,6 @@ class TestTokenCreation:
         assert response.json()["detail"] == "Incorrect username or password"
 
     async def test_verify_token_non_existence(self, async_client: AsyncClient):
-
         response = await async_client.post(
             "/users/token/",
             data={"username": "usertestuser", "password": "usertestpassword"},

@@ -107,7 +107,6 @@ def plot_total(message, bot):
     chat_id = message.chat.id
     pyi = message.text
     if pyi == "Bar with budget":
-
         graphing.visualize(total, bud)
         f = open("expenditure.png", "rb")
         bot.send_photo(chat_id, photo=f)

@@ -32,7 +32,7 @@ def test_process_csv_save_file_function(mock_telebot, mocker):
 
 
 @patch("telebot.telebot")
-def test_process_csv_main_fucntion(mock_telebot, mocker):
+def test_process_csv_main_function(mock_telebot, mocker):
     mc = mock_telebot.return_value
     mc.send_message.return_value = True
     mc.get_file.return_value = dict2obj({"file_path": "temp.csv"})

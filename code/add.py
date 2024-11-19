@@ -214,7 +214,6 @@ def handle_receipt_decision(
                 selected_category,
             )
     except Exception as e:
-
         print(f"An exception occurred: {e}")
 
 

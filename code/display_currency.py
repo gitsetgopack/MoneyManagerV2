@@ -200,7 +200,6 @@ def display_budget_by_text(history, budget_data) -> str:
                 + "\n"
             )
         elif isinstance(budget_data, dict):
-
             budget_display += "Budget by Categories in " + str(selection) + " are:\n"
             categ_remaining = {}
             # categorize the budgets by their categories

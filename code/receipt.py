@@ -49,7 +49,6 @@ def process_date_input(message):
         if matching_receipts:
             try:
                 for receipt_path in matching_receipts:
-
                     with open(receipt_path, "rb") as receipt_file:
                         bot.send_photo(chat_id, receipt_file)
             except Exception as e:

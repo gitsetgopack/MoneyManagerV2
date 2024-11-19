@@ -5,7 +5,7 @@ import helper
 from telebot import types
 
 
-# The main funtion of category.py.
+# The main function of category.py.
 # User can start to manage their categories after calling it
 def run(message, bot):
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
@@ -73,7 +73,7 @@ def post_operation_selection(message, bot, selectedType):
         helper.throw_exception(e, message, bot, logging)
 
 
-# Use the funtion to add a new category
+# Use the function to add a new category
 def category_add(message, bot, selectedType):
     chat_id = message.chat.id
     category_name = message.text
@@ -100,7 +100,7 @@ def category_view(message, bot, selectedType):
     bot.send_message(chat_id, "The categories are:\n{}".format(lines))
 
 
-# Use the funtion to delete a category
+# Use the function to delete a category
 def category_delete(message, bot, selectedType):
     chat_id = message.chat.id
     category_name = message.text

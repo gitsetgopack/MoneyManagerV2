@@ -40,7 +40,7 @@ def process_csv_file(message, bot):
             bot.send_message(chat_id, "Sorry Could not upload the csv file.")
 
     except Exception as e:
-        bot.send_message(chat_id, "Error ocurred while processing a file")
+        bot.send_message(chat_id, "Error occurred while processing a file")
 
 
 def save_file(message, bot):

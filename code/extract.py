@@ -7,7 +7,7 @@ from telebot import types
 from telegram import InputFile
 
 
-# The main funtion of category.py.
+# The main function of category.py.
 # User can start to manage their categories after calling it
 def run(message, bot):
     try:
