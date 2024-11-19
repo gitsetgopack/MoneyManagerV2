@@ -1,107 +1,123 @@
-# Contributing to MyDollarBot-BOTGo V5
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-Thank you for your interest in contributing to **MyDollarBot-BOTGo**! We welcome all contributions, including bug reports, feature requests, and code contributions. To ensure the project maintains high standards, please follow the guidelines below.
+- [Contributing to Money Manager](#contributing-to-money-manager)
+  - [Getting Started](#getting-started)
+    - [1. Fork the Repository](#1-fork-the-repository)
+    - [2. Clone Your Fork](#2-clone-your-fork)
+    - [3. Set Up Environment](#3-set-up-environment)
+    - [4. Create a Branch](#4-create-a-branch)
+    - [5. Make Changes](#5-make-changes)
+    - [6. Run Formatters and Linters](#6-run-formatters-and-linters)
+    - [7. Commit Changes](#7-commit-changes)
+    - [8. Push Changes](#8-push-changes)
+    - [9. Submit a Pull Request](#9-submit-a-pull-request)
+  - [Code of Conduct](#code-of-conduct)
+  - [Guidelines](#guidelines)
 
----
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Table of Contents
+# Contributing to Money Manager
 
-- [Getting Started](#getting-started)
-- [Coding Standards](#coding-standards)
-- [Submitting Issues](#submitting-issues)
-- [Creating a Pull Request](#creating-a-pull-request)
-- [Commit Guidelines](#commit-guidelines)
-- [Testing Standards](#testing-standards)
-- [Code Review Process](#code-review-process)
-
----
+Thank you for considering contributing to **MoneyManager**! We welcome all types of contributions, whether you're fixing a bug, adding a feature, improving documentation, or suggesting an idea.
 
 ## Getting Started
 
-1. **Fork the repository** on GitHub to your personal account.
-2. **Clone your forked repository**:
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/MyDollarBot-BOTGo.git
-   ```
+To get started with contributing to this project, please follow these guidelines.
 
-3. Set up the development environment by installing dependencies listed in requirements.txt or the package.json file if using Node.js.
-4. Create a new branch for each feature or bug fix:
-    ```bash
-    git checkout -b feature/your-feature-name
-    ```
+### 1. Fork the Repository
 
-## Coding Standards
-To maintain code readability and consistency, please adhere to the following coding standards:
-* Language: Python (ensure code is compatible with Python 3.8+).
-* Formatting: Use PEP 8 standards for Python code.
-  * Use 4 spaces for indentation, not tabs.
-  * Limit lines to 79 characters.
-* Documentation:
-  * Use descriptive variable names.
-  * Add docstrings to all functions and classes following the Google Python Style Guide.
-  * Document complex logic with inline comments.
-* Naming Conventions:
-  * Variables and functions: `snake_case`
-  * Classes: `PascalCase`
-  * Constants: `UPPER_CASE`
-*  Linting: Run linting using flake8 (Python) or eslint (JavaScript) to catch syntax and style issues before committing:
-    ```bash
-    flake8 your_file.py
-    ```
+Start by forking the main repository on GitHub. This creates a copy of the repository under your GitHub account.
 
-## Submitting Issues
-If you identify any issues or bugs in the project, please submit an issue using the following steps:
+- Navigate to [MoneyManager GitHub Repo](https://github.com/gitsetgopack/MoneyManager)
+- Click the **Fork** button in the top-right corner.
 
-1. Search existing issues to check if it has already been reported.
-2. Provide a detailed description including:
-  * Expected behavior
-  * Actual behavior
-  * Steps to reproduce
-3. Add labels (e.g., `bug`, `enhancement`) to categorize the issue.
+### 2. Clone Your Fork
 
-## Creating a Pull Request
-Before creating a pull request (PR), ensure the following:
+Once you've forked the repository, clone your fork locally:
 
-1. Branch is up-to-date with the main branch:
-    ```bash
-    git pull origin main
-    ```
-2. **Tests are passing**: Run all tests locally to ensure your changes do not break the existing code.
-3. **Include meaningful commit messages** following the commit guidelines.
-4. **Create a PR**:
-    * Go to your forked repository on GitHub.
-    * Click on New Pull Request.
-    * Provide a descriptive title and a summary of your changes.
-5. **Link issues** your PR addresses, if applicable.
-### PR Guidelines
-* One PR should contain only one feature or bug fix.
-* Ensure code follows the Coding Standards.
-* Avoid unrelated changes or formatting in your PR.
+```bash
+git clone https://github.com/your-username/MoneyManager.git
+cd MoneyManager
+```
 
-## Commit Guidelines
-  * Format: <type>(<scope>): <description>
-  * Types:
-  * `feat`: A new feature
-  * `fix`: A bug fix
-  * `docs`: Documentation-only changes
-  * `style`: Changes that do not affect the meaning of the code (white-space, formatting, etc.)
-  * `refactor`: Code change that neither fixes a bug nor adds a feature
-  * `test`: Adding missing or correcting existing tests
-  * `chore`: Other changes that don’t modify src or test files
-* Example:
-    ```bash
-    git commit -m "feat(user-auth): add user login functionality"
-   ```
-### Testing Standards
-* Write unit tests for all new features and bug fixes using pytest (or the chosen testing framework).
-* Test Coverage: Aim to cover at least 90% of new code with tests.
-* Run tests locally before submitting a PR:
-    ```bash
-    pytest
-    ```
+Replace `your-username` with your GitHub username.
 
-## Code Review Process
-1. Reviewers will check your PR for adherence to coding standards, functionality, and testing coverage.
-2. Feedback may be provided in the PR comments; please respond promptly and make any necessary changes.
-3. Final Approval: Once all checks pass and feedback is addressed, your PR will be approved and merged.
-  
+### 3. Set Up Environment
+
+To set up the environment, use the following command to install dependencies:
+
+```bash
+make install
+```
+
+This will install all necessary Python packages and set up the pre-commit hooks.
+
+### 4. Create a Branch
+
+It's good practice to create a new branch for each change. This makes it easier to submit pull requests.
+
+```bash
+git checkout -b feature/new-feature
+```
+
+Replace `feature/new-feature` with a meaningful name for your branch.
+
+### 5. Make Changes
+
+Make your changes to the codebase. Ensure you write unit tests if applicable.
+
+To run tests locally:
+
+```bash
+make test
+```
+
+### 6. Run Formatters and Linters
+
+Before committing, make sure your code is formatted correctly:
+
+```bash
+make fix
+```
+
+This command will run `black` and `isort` to ensure the code style is consistent.
+
+### 7. Commit Changes
+
+Commit your changes with a descriptive commit message:
+
+```bash
+git add .
+git commit -m "Added a new feature to manage categories"
+```
+
+### 8. Push Changes
+
+Push your changes to your forked repository:
+
+```bash
+git push origin feature/new-feature
+```
+
+### 9. Submit a Pull Request
+
+Once you've pushed your changes, go to the main repository on GitHub and submit a pull request (PR) from your forked repository.
+
+- Navigate to your fork on GitHub.
+- Click **Compare & Pull Request**.
+- Provide a clear and concise description of your changes in the PR description.
+
+## Code of Conduct
+
+We expect all contributors to follow our [Code of Conduct](CODE_OF_CONDUCT.md). Please respect others' work and efforts, and let's collaborate effectively to improve **MoneyManager** together.
+
+## Guidelines
+
+- Write clear, concise commit messages.
+- Test your changes thoroughly.
+- Include tests for any new functionality.
+- If you have any questions, please open an issue or contact the maintainers.
+
+Thank you for your contributions and for making **Money Manager** better!
