@@ -1,66 +1,137 @@
-## 🚀 Installation Guide for TrackMyDollar BOTGo
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-Follow these instructions to set up the TrackMyDollar BOTGo on your local system in a few minutes.
+- [MoneyManager Installation Guide](#moneymanager-installation-guide)
+  - [Prerequisites](#prerequisites)
+  - [Installation Steps](#installation-steps)
+  - [Available Make Commands](#available-make-commands)
+  - [Additional Information](#additional-information)
+  - [Troubleshooting](#troubleshooting)
+  - [Running the Project](#running-the-project)
+  - [Running Tests](#running-tests)
 
-### Step 1: Clone Repository
-1. Open a terminal.
-2. Clone this repository to your local system:
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+# MoneyManager Installation Guide
+
+Welcome to the **MoneyManager** project! This guide will help you set up the environment and install dependencies to get started.
+
+## Prerequisites
+
+Before beginning the installation, please ensure you have the following installed:
+
+- **Python** (version 3.8 or higher)
+- **Git** (to clone the repository)
+- **Docker** (for running MongoDB in a Docker container during testing)
+
+## Installation Steps
+
+1. **Clone the Repository**
+
+   Begin by cloning the repository to your local machine:
+
    ```bash
-   git clone https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/tree/addedfeatures101
+   git clone https://github.com/gitsetgopack/MoneyManager.git
+   cd MoneyManager
    ```
 
-### Step 2: Install Dependencies
-1. Navigate to the project directory where the repository was cloned.
-2. Install the required dependencies by running:
-    ```bash
-     pip install -r requirements.txt
-     ```
-### Step 3: Set Up Telegram Bot with BotFather
-1. Open Telegram and search for "BotFather".
-2. Click "Start" and enter the following command:
-    ```bash
-      /newbot
-    ```
-3. Follow the instructions to:
-    * Name your bot.
-    * Choose a username ending with "bot".
-4. Copy the token BotFather provides for accessing the HTTP API.
+2. **Install Dependencies**
 
-### Step 4: Configure API Token
-1. Create a user.properties in the repository folder.
-    ```bash
-    touch user.properties
-    ```
-2. Add the api key from telegram in the user.properties file
-    ```bash
-    api_token=<your_api_token>
-    ```
-### Step 5: Set Up Gemini API Key
-1. Go to the Gemini Developer Console and log in or create an account.
-2. Navigate to the API section and select Create New Project.
-3. Name your project and select the appropriate settings for API access.
-4. Once the project is created, go to the API Keys section within your project dashboard.
-5. Generate a new API key and secret. Make sure to note down the key and secret as they will only be shown once.
-6. Open the `user.properties` file in the project directory and add the Gemini API key and secret as follows:
-     ```bash
-       api_token=<your_telegram_api_token>
-       gemini_api_key=<your_gemini_api_key>
-    ```
+   Run the following command to install all required dependencies:
 
-### Step 6: Run the Bot
-1. From the project directory, execute the following command:
-    ```bash
-      Copy code
-      ./run.sh
-    ```
-    (Or use bash run.sh if needed. If you're on Mac or Linux, you may need to run chmod +x run.sh first.)
-    A successful run will generate a terminal message: "TeleBot: Started polling."
+   ```bash
+   make install
+   ```
 
-### Step 7: Connect to Your Bot on Telegram
-1. In Telegram, search for your bot using the username you created.
-2. Open the bot and type the command:
-    ```bash
-      /start
-    ```
+   This command will:
+   - Upgrade `pip` to the latest version.
+   - Install the required Python packages as specified in the `requirements.txt`.
+   - Install pre-commit hooks.
 
-**You are now ready to track your expenses with TrackMyDollar BOTGo!**
+## Available Make Commands
+
+Here are the commands available in the `Makefile` to help you work with the project:
+
+- **help**: Show this help message, displaying all available commands.
+  ```bash
+  make help
+  ```
+
+- **install**: Install dependencies in the virtual environment.
+  ```bash
+  make install
+  ```
+
+- **run**: Run the FastAPI application using the virtual environment.
+  ```bash
+  make run
+  ```
+
+  This will execute the FastAPI app located at `api/app.py`.
+
+- **test**: Start a MongoDB Docker container, run tests, and clean up after the tests.
+  ```bash
+  make test
+  ```
+
+  This command will:
+  - Start a MongoDB container to simulate a database for testing.
+  - Run all tests using `pytest`.
+  - Stop and remove the MongoDB container after testing is complete.
+
+- **fix**: Run code formatting on the `api` directory using `black` and `isort`.
+  ```bash
+  make fix
+  ```
+
+- **clean**: Clean up Python bytecode files, cache, and MongoDB Docker containers.
+  ```bash
+  make clean
+  ```
+
+  This will:
+  - Stop and remove the `mongo-test` Docker container if it exists.
+  - Remove Python bytecode files (`.pyc`) and caches like `__pycache__`, `.pytest_cache`, and `.mypy_cache`.
+
+- **no_verify_push**: Stage, commit, and push changes with `--no-verify` to skip pre-commit hooks.
+  ```bash
+  make no_verify_push
+  ```
+
+  This command allows you to quickly commit and push changes without running verification checks. It will prompt you for a commit message.
+
+## Additional Information
+
+- **Makefile**: The `Makefile` includes useful commands to set up, run, and test the project. You can inspect it for more details on available commands.
+- **Python Environment**: It’s recommended to create a virtual environment for this project to keep dependencies isolated. Run `python -m venv venv` before `make install` if needed.
+
+## Troubleshooting
+
+- **Python Compatibility**: Ensure Python is in your system’s `PATH` and meets the required version.
+- **Dependency Issues**: If you encounter issues, check the `requirements.txt` file for compatibility, or re-run `make install` after activating a virtual environment.
+- **Docker Issues**: Make sure Docker is installed and running properly before executing commands that require a MongoDB container.
+
+## Running the Project
+
+After installation, you can run the FastAPI server by executing:
+
+```bash
+make run
+```
+
+This command will start the application, and you can access it in your browser at the specified URL (typically `http://127.0.0.1:8000`).
+
+## Running Tests
+
+To run the tests, ensure Docker is running and then use:
+
+```bash
+make test
+```
+
+This command will automatically set up the necessary database for testing purposes.
+
+---
+
+Feel free to reach out if you have any issues setting up **MoneyManager**!
