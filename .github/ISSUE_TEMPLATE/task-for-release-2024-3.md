@@ -1,5 +1,5 @@
 ---
-name: release/2024.3
+name: Task for release/2024.3
 about: Task needs to be completed for release/2024.3
 title: ''
 labels: release/2024.3
@@ -7,22 +7,19 @@ assignees: ''
 
 ---
 
----
-name: "Task"
-about: "Template for general tasks"
-labels: ["task", "small"]
----
-
-**Description:**
+## Description
 [Provide a brief summary of the task.]
 
-**Assignee:**
+## Assignee
 [Assign to a developer.]
 
-**Effort:**
+## Effort
 - [ ] Small
 - [ ] Medium
 - [ ] Huge
 
-**Acceptance Criteria:**
+## Acceptance Criteria
 - [ ]
+
+## PR
+[Link the PR(s)]
