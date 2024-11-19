@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Money Manager](#money-manager) is a tool designed to help you track and manage your finances effectively. With a range of features for visualizing expenses and monitoring account balances, it offers a clear view of your spending patterns and financial health.
+- [Money Manager](#money-manager)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -76,7 +76,7 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 
 ---
 
-## Features
+## User Friendly
 
 - **Expense Tracking**: Add, update, and delete expenses. Track expenses by category, date, and account.
 - **Data Visualization**: View your expenses over time with customizable charts, including:
@@ -86,6 +86,11 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 - **RESTful API**: Access and interact with your financial data programmatically via a FastAPI-powered API.
 - **Testing Suite**: Comprehensive tests to ensure stability and reliability across key functionality.
 - **Multiple Accounts**: Manage multiple accounts like spending and saving.
+
+## Developer Friendly
+
+- Modular Configuration: Simplify setup with a sample_config.py file that supports environment variables for secure, customizable settings like database URIs, API ports, and bot tokens—just rename and update, or export values directly from your environment!
+
 
 ## Usage
 
