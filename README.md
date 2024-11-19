@@ -1,358 +1,223 @@
-# 💰 TrackMyDollar V5.0 - Budget On The Go(BOTGo) 💰
-
-https://github.com/user-attachments/assets/49a748d3-04e2-44be-b013-1e5557a1f4e9
-
-This video shows only the new features and enhancement of some older features. All the other features from Project 3 are working as it is.
-<hr>
-<p align="center">
-<a><img  height=360 width=550 
-  src="https://github.com/deekay2310/MyDollarBot/blob/c56b4afd4fd5bbfffea0d0a4aade58596a5cb678/docs/0001-8711513694_20210926_212845_0000.png" alt="Expense tracking made easy!"></a>
-</p>
-<hr>
-
-![MIT license](https://img.shields.io/badge/License-MIT-green.svg)
-[![Platform](https://img.shields.io/badge/Platform-Telegram-blue)](https://desktop.telegram.org/)
-![GitHub](https://img.shields.io/badge/Language-Python-blue.svg)
-[![GitHub contributors](https://img.shields.io/github/contributors/CSC510SEFALL2024/MyDollarBot-BOTGo)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/graphs/contributors)
-[![DOI](https://img.shields.io/badge/DOI-figshare-blue)](https://doi.org/10.6084/m9.figshare.27383202.v1)
-[![Test and Formatting](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/actions/workflows/test.yml/badge.svg)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/CSC510SEFALL2024/MyDollarBot-BOTGo/graph/badge.svg?token=E5235TMYDN)](https://codecov.io/gh/CSC510SEFALL2024/MyDollarBot-BOTGo)
-[![GitHub issues](https://img.shields.io/github/issues/CSC510SEFALL2024/MyDollarBot-BOTGo)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/issues)
-[![GitHub closed issues](https://img.shields.io/github/issues-closed/CSC510SEFALL2024/MyDollarBot-BOTGo)](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/issues?q=is%3Aissue+is%3Aclosed)
-![GitHub release (with filter)](https://img.shields.io/github/v/release/CSC510SEFALL2024/MyDollarBot-BOTGo)
-![Fork](https://img.shields.io/github/forks/CSC510SEFALL2024/MyDollarBot-BOTGo)
-![Discord](https://img.shields.io/discord/1163591668637896807?color=blueviolet&label=Discord%20Discussion%20Chat)
-
-<hr>
-
-## :money_with_wings: About TrackMyDollar
-
-TrackMyDollar is an easy-to-use Telegram Bot that assists you in recording your daily expenses on a local system without any hassle 
-With simple commands, this bot allows you to:
-- Add/Record a new spending
-- Show the sum of your expenditure for the current day/month
-- Display your spending history
-- Clear/Erase all your records
-- Edit/Change any spending details if you wish to
-- Add a recurring expense 
-- User can add a new category and delete an existing category 
-- User can see the budget value for the total expense 
-- Added pie charts, bar graphs with and without budget lines
-- Scan receipts using AI and add new transactions
-- Send and Email to themselves with spend analysis using AI and spend graphs
-- Export expenses and income to CSV with pivots and charts
-- Deployment on GCP 
-
-
-
-## :star: Whats New
-## Project 2
-
-- Scan Receipt: Use AI to extract the amount, date and category from any image of a receipt and add it to the transactions.
-- Email Transaction History: Users can request their complete transaction history with graphs via email for easy access and record-keeping. Users get an analysis about their spends using AI.
-- CSV Transaction History Extraction: Users can download their transaction history in CSV format, providing a versatile data export option for analysis along with charts and images.
-- GitHub Actions Automation: Automated testing, code formatting, and syntax checks have been implemented through Github Actions. A minimum 80% code coverage is required for successful builds, ensuring code quality and testing standards are maintained.
-
-## What more can be done?
-Please refer to the issue list available [here](https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/issues) to see what more can be done to make MyDollarBot better. Please refer to the MyDollarBot project present [here](https://github.com/orgs/CSC510SEFALL2024/projects/1) to have a look at the tasks done or in progress
-
-## Demo
-
-[Demo Video for new features](https://youtu.be/JJxQsnIiYXI)
-
-
-## 🚀 Installation Guide for TrackMyDollar BOTGo
-
-Follow these instructions to set up the TrackMyDollar BOTGo on your local system in a few minutes.
-
-### Step 1: Clone Repository
-1. Open a terminal.
-2. Clone this repository to your local system:
-   ```bash
-   git clone https://github.com/CSC510SEFALL2024/MyDollarBot-BOTGo/tree/main
-   ```
-
-### Step 2: Install Dependencies
-1. Navigate to the project directory where the repository was cloned.
-2. Install the required dependencies by running:
-    ```bash
-     pip install -r requirements.txt
-     ```
-### Step 3: Set Up Telegram Bot with BotFather
-1. Open Telegram and search for "BotFather".
-2. Click "Start" and enter the following command:
-    ```bash
-      /newbot
-    ```
-3. Follow the instructions to:
-    * Name your bot.
-    * Choose a username ending with "bot".
-4. Copy the token BotFather provides for accessing the HTTP API.
-
-### Step 4: Configure API Token
-1. Create a user.properties in the repository folder.
-    ```bash
-    touch user.properties
-    ```
-2. Add the api key from telegram in the user.properties file
-    ```bash
-    api_token=<your_api_token>
-    ```
-### Step 5: Set Up Gemini API Key
-1. Go to the Gemini Developer Console and log in or create an account.
-2. Navigate to the API section and select Create New Project.
-3. Name your project and select the appropriate settings for API access.
-4. Once the project is created, go to the API Keys section within your project dashboard.
-5. Generate a new API key and secret. Make sure to note down the key and secret as they will only be shown once.
-6. Open the `user.properties` file in the project directory and add the Gemini API key and secret as follows:
-     ```bash
-       api_token=<your_telegram_api_token>
-       gemini_api_key=<your_gemini_api_key>
-    ```
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-### Step 6: Run the Bot
-1. From the project directory, execute the following command:
-    ```bash
-      Copy code
-      ./run.sh
-    ```
-    (Or use bash run.sh if needed. If you're on Mac or Linux, you may need to run chmod +x run.sh first.)
-    A successful run will generate a terminal message: "TeleBot: Started polling."
+- [Money Manager](#money-manager) is a tool designed to help you track and manage your finances effectively. With a range of features for visualizing expenses and monitoring account balances, it offers a clear view of your spending patterns and financial health.
 
-### Step 7: Connect to Your Bot on Telegram
-1. In Telegram, search for your bot using the username you created.
-2. Open the bot and type the command:
-    ```bash
-      /start
-    ```
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-**You are now ready to track your expenses with TrackMyDollar BOTGo!**
+# Money Manager
+<div align="center">
+  <img src="docs/logo/logo.png" alt="Project Logo" width="300"/>
+</div>
 
-## Testing
 
-We use pytest to perform testing on all unit tests together. The command needs to be run from the home directory of the project. The command is:
-```
-python -m pytest test/
-```
+A REST API application for managing expenses. Build your own automation—be it a Telegram bot 🤖, Discord bot, or your own app 📱!
 
-## Code Coverage
+🚨 Spoiler Alert! 🚨 We have built a Telegram bot as a proof of concept! 🤖🎉
 
-Code coverage is part of the build. Every time new code is pushed to the repository, the build is run, and along with it, code coverage is computed. This can be viewed by selecting the build, and then choosing the codecov pop-up on hover.
+<div align="center">
+  <img src="http://ForTheBadge.com/images/badges/built-with-love.svg" alt="built_with_love"/>
+</div>
 
-Locally, we use the coverage package in python for code coverage. The commands to check code coverage in python are as follows:
 
-```
-coverage run -m pytest test/
-coverage report
-```
 
-Please note: A coverage below 80% will cause the build to fail.
 
-## :information_desk_person: Feature Demo
-### Display Menu
+---
 
-Checkout what all actions you can perform in BotGo 
+## Project Overview
 
-1. Enter the `/menu` command.
-2. A list of commands with their description will be displayed.
+https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 
-### Budget
+### Quality
 
-I want to increase/decrease my monthly budget.
+[![badge_pytest_status](https://img.shields.io/badge/PyTest-passing-brightgreen?style=plastic&logo=pytest&logoColor=white)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
+[![badge_code_coverage](https://img.shields.io/badge/coverage-95%25-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
+[![badge_total_tests](https://img.shields.io/badge/tests-111-blue?style=plastic&logo=pytest&logoColor=white)](https://github.com/gitsetgopack/hw2/tree/main/tests)
+[![badge_pylint](https://img.shields.io/badge/pylint-10.00-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
+[![badge_black](https://img.shields.io/badge/black_formatter-passing-brightgreen?style=plastic&labelColor=black)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
+[![badge_mypy](https://img.shields.io/badge/mypy-passing-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
+[![badge_bandit](https://img.shields.io/badge/bandit-passing-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
 
-1. Enter the `/budget` command
-2. Following this user can add/update his/her budget, view current budget, delete the budget, or review per transaction maximum spend limit
+### Standards
 
-### Add Expense
+![black](https://img.shields.io/badge/code%20style-black-black?style=plastic&)
+![license](https://img.shields.io/github/license/gitsetgopack/MoneyManager?style=plastic&)
+![maintained](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=plastic&)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14027400.svg)](https://doi.org/10.5281/zenodo.14027400)
 
-I just spent money and want to mark it as a transaction! 
 
-1. Enter the `/add_expense` command
-2. Click on the category to add
-3. Type in the amount spent
-4. Click on the date of the transaction
-5. Select if you want to upload a receipt
-6. Finally, your transaction will be recoded
+### Stats
 
+![pr_open](https://img.shields.io/github/issues-pr/gitsetgopack/MoneyManager?style=plastic&)
+![pr_close](https://img.shields.io/github/issues-pr-closed/gitsetgopack/MoneyManager?style=plastic&)
+![issue_open](https://img.shields.io/github/issues/gitsetgopack/MoneyManager.svg?style=plastic&)
+![issue_close](https://img.shields.io/github/issues-closed/gitsetgopack/MoneyManager.svg?style=plastic&)
 
-### Add Income
+![commits_since_last_project](https://img.shields.io/github/commits-since/gitsetgopack/MoneyManager/v2023.f.3.svg?style=plastic&)
+![repo_size](https://img.shields.io/github/repo-size/gitsetgopack/MoneyManager?style=plastic&)
+![forks](https://img.shields.io/github/forks/gitsetgopack/MoneyManager?style=plastic&)
+![stars](https://img.shields.io/github/stars/gitsetgopack/MoneyManager?style=plastic&)
+![downloads](https://img.shields.io/github/downloads/gitsetgopack/MoneyManager/total?style=plastic&)
 
-I just earned some money and want to mark it as a transaction! 
+#### Tools & Technologies
 
-1. Enter the `/add_income` command
-2. Click on the category to add
-3. Type in the amount earned
-4. Click on the date of the transaction
-5. Select if you want to upload a receipt
-6. Finally, your transaction will be recoded
+[![Python](https://img.shields.io/badge/python%203.12-3670A0?logo=python&logoColor=ffdd54)](https://www.python.org/downloads/release/python-3121/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009485.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](https://www.docker.com/)
+[![GitHub](https://img.shields.io/badge/github-%23121011.svg?logo=github&logoColor=white)](https://github.com/)
+[![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?logo=githubactions&logoColor=white)](https://github.com/features/actions)
+[![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](https://www.linux.org/)
+[![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
+[![Zoom](https://img.shields.io/badge/Zoom-2D8CFF?logo=zoom&logoColor=white)](https://www.zoom.com/)
+[![DigitalOcean](https://img.shields.io/badge/DigitalOcean-%230167ff.svg?logo=digitalOcean&logoColor=white)]([#](https://www.digitalocean.com/))
+[![ChatGPT](https://img.shields.io/badge/ChatGPT-74aa9c?logo=openai&logoColor=white)](https://chatgpt.com/)
 
-### Delete
+---
 
-Oh no! I entered a transaction but want to delete it! 
+## Features
 
-1. Enter the `/delete` command
-2. This will delete all the transactions made so far.
+- **Expense Tracking**: Add, update, and delete expenses. Track expenses by category, date, and account.
+- **Data Visualization**: View your expenses over time with customizable charts, including:
+  - Monthly and weekly spending trends
+  - Categorical expense breakdowns
+- **Authentication**: Secure access to your data using token-based authentication.
+- **RESTful API**: Access and interact with your financial data programmatically via a FastAPI-powered API.
+- **Testing Suite**: Comprehensive tests to ensure stability and reliability across key functionality.
+- **Multiple Accounts**: Manage multiple accounts like spending and saving.
 
-### Edit
+## Usage
 
-Oh no! I entered a transaction but entered the wrong category!
+MoneyManager allows you to take control of your personal finances, providing insights into where your money goes and helping you make informed financial decisions. Whether you're looking to monitor daily spending or analyze broader trends, MoneyManager has the tools you need to stay on top of your finances.
 
-1. Enter the `/edit` command
-2. Specify the date, category, and value of the transaction
-3. Specify what part of the transaction to edit (either date, category, or value)
-4. Enter in a new value
+## Tech Stack
 
-### Adding transactions from CSV 
+- [![Python](https://img.shields.io/badge/Language-Python%203-blue)](https://www.python.org/)
+  - The entire application, from managing dependencies to testing, is built using Python 3.
 
-I want to add transactions from a CSV my bank gave me, and visalize my spendings
+## Tools
 
+- [![Git](https://img.shields.io/badge/Tool-Git-orange)](https://git-scm.com/)
+- [![GitHub](https://img.shields.io/badge/Tool-GitHub-lightgrey)](https://github.com/)
+- [![GitHub Actions](https://img.shields.io/badge/CI/CD-GitHub%20Actions-blue)](https://github.com/features/actions)
+- [![MongoDB](https://img.shields.io/badge/Database-MongoDB-green)](https://www.mongodb.com/)
+- [![REST API](https://img.shields.io/badge/API-REST-red)](https://restfulapi.net/)
+- [![Docker](https://img.shields.io/badge/Containerization-Docker-blue)](https://www.docker.com/)
+- [![Telegram](https://img.shields.io/badge/Messaging-Telegram-blue)](https://telegram.org/) - Used as a proof of concept (POC) for messaging integration.
 
-1. Drag the .csv file into the telegram chat according to the format provided, and press send
-2. For each transaction, classify the category
-   1. The application will remember these mappings
+Each tool is an essential part of the development and deployment process, enhancing functionality, reliability, and ease of collaboration.
 
-### Download History
+## Installation
 
-I want a CSV file of all my transactions.
+### Pre-requisite Tasks
 
-1. Make sure you have a transaction history.
-2. Enter the `/extract` command.
-3. A CSV file will be sent with your history.
+To get started, you'll need to create a Telegram bot through BotFather:
 
-### See total Expenditure in different currencies
+1. Open the Telegram app (desktop or mobile), search for "BotFather," and click on "Start."
+2. Send the following command to BotFather:
+```bash
+/newbot
+``` 
+4. Follow the instructions to:
+- Choose a name for your bot.
+- Select a username ending with "bot" (required by Telegram).
+5. BotFather will confirm your bot's creation and provide an HTTP API access token—save this token for later.
 
-I want to convert my total daily or monthly expenditure in a different currency.
+### Actual Installation
 
-1. Enter the `/displayCurrency` command
-2. Next, Choose your currency from the options
-3. Choose from the category of day or month
-4. You will get the converted price in that currency
+These instructions guide you through setting up the bot's communication and running it:
 
-### Send Email (Enhanced) 
+1. Clone this repository to your local system.
+2. Open a terminal session in the directory where the project was cloned and install the required dependencies:
+  ```bash
+  pip install -r requirements.txt
+  ```
+3. In the same directory, execute the following bash script to start the Telegram Bot:
+  ```bash
+  ./run.sh
+  ```
+  OR
+  ```bash
+  bash run.sh
+  ```
+4. When prompted, paste the API token you received from BotFather in step 4 of the pre-requisites.
 
-I want to send myself an email for the monthly expenditure
+  A successful run will display the message: "TeleBot: Started polling."
 
-1. Make sure you have a transaction history.
-2. Enter the `/sendEmail` command.
-3. Type the intended email address
-4. You will get an email with the history file as attachment.
-5. Along with the attachment you will get spend analysis using AI in natural language with improved format and graphs.
+5. In the Telegram app, search for your bot using its username, open it, and type /start or /menu to begin using MoneyManager for expense tracking!
 
-### Chat with AI
+### Testing
 
-You can get a second opinion on your spendings by chatting with integrated AI.
+This project uses pytest to test all functionalities of the bot:
 
-1. Enter the `/chat` command.
-2. You will be welcomed by the AI and since your history is already available to it you can ask questions regarding your financial questions
-3. enter `exit` to stop the chat.
+Run the following command from the project's root directory to execute all unit tests:
+  ```bash
+  python -m pytest test/
+  ```
+Currently, the project includes 100+ tests covering all bot functions.
 
-### Download PDF (Enhanced)
+<img width="677" alt="image" src="https://github.com/user-attachments/assets/03d6d77f-7494-424e-bda6-0518ac79b124">
 
-You can get a summary of your transactions in PDF format.
+### Code Coverage
 
-1. Enter the `/pdf` command.
-2. Select the category that you want in the PDF history.
-3. Select a start and end date for the pdf output
-4. your PDF history will be created and ready to download.
+Code coverage is assessed as part of each build. Every time new code is pushed, a build runs, and code coverage is computed.
 
-### Download CSV (New)
+To check code coverage locally:
+  ```bash
+  coverage run -m pytest test/
+  coverage report
+  ```
 
-You can get a summary of your transactions in CSV format.
+## Configuration
 
-1. Enter the `/csv` command.
-2. Select the category that you want in the CSV history.
-3. Select a start and end date for the csv output
-4. your CSV history will be created and ready to download with graphs and images.
+For **users**, no additional configuration is required—just start using MoneyManager! 
 
-### Scan Receipt (New)
+For **contributors**, we’ve designed the system to be as modular as possible, so that updates to one module won’t impact others. However, there are a few configurable parameters available to help tailor and extend the system:
 
-You can add transactions by scanning images of your receipts using AI.
+- Adding and removing categories
+- Adjusting graphing options
+- Modifying the Telegram bot name, etc.
 
-1. Enter the `/scan_receipt` command.
-2. Upload an image of your receipt.
-3. Gemini AI will scan this image and upload the transaction to your history.
+## Troubleshooting
 
-### Add recurring expense
+- **Ensure you have a valid bot token**: You can generate a token by creating a new bot via Telegram’s BotFather.
+- **Verify token placement**: Double-check that the token is correctly added to your bot’s code or configuration.
+- **Check bot permissions**: Confirm that your bot has the necessary permissions for the intended actions.
 
-I have to add an expense will be repeated in the future
+Alternatively, you’re welcome to submit a bug report in our repository. Make sure to follow the steps outlined in [CONTRIBUTING.md](CONTRIBUTING.md) for reporting issues.
 
-1. Enter the  `/add_recurring` command.
-2. Select the category
-3. Enter the amount 
-4. Enter for how many months the expense will be there.
-5. Your recurring expense will be added.
+## 🚀 Future Enhancements
 
-### Spending Estimation
+- **External Integrations**: Explore integrations with platforms like Discord, WhatsApp, and Slack to provide seamless notifications and financial management within users' preferred communication apps.
+- **UI/Website Development**: Develop a user-friendly web interface to enhance accessibility, offering streamlined access to financial data and resources.
+- **Advanced Telegram Bot**: Enhance the current Telegram bot with extensive testing and improvements for greater reliability and comprehensive functionality.
+- **Expanded REST Features**:
+  - Advanced analytics for deeper insights into financial habits.
+  - CSV import/export support for easy data handling.
+  - Group expense tracking with features like bill splitting, real-time updates, and integrated payment options.
 
-Get an estimate of your spending for next day or month
+## Contributing
 
-1. Enter the  `/estimate` command.
-2. Select from following
-   1. Next Day
-   2. Next Month
-3. An Estimate will be provided
+Thank you for your interest in contributing to MoneyManager! Your contributions are greatly appreciated, and this guide will help you get started. For full details on contributing, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file, which provides comprehensive instructions and guidelines.
 
-### Display your transactions
+## LICENSE
 
-Get a tabular and graphical representation of your transactions
+By contributing to MoneyManager, you agree that your contributions will fall under the project’s open-source license. Please take a moment to review and understand the licensing terms before contributing. The specific license details can be found in the [LICENSE](LICENSE) file.
 
-1. Enter the `/display` command.
-2. Select from following category
-   1. Day
-   2. Month
-3. Tabulated data will be provided
-4. Following options can be chosen for graphical representation.
-   1. Bar with budget
-   2. Pie
-   3. Bar without budget
-5. Graph will be displayed according to choice.
+## 🤝 Contributors
 
-### Receipts
+Listed alphabetically:
 
-Display all receipts for the day
+- **Abhishek Rao** ([arao23@ncsu.edu](mailto:arao23@ncsu.edu))
+- **Astha Bhalodiya** ([abhalod@ncsu.edu](mailto:abhalod@ncsu.edu))
+- **Umang Diyora** ([udiyora@ncsu.edu](mailto:udiyora@ncsu.edu))
 
-1. Enter the `/receipt` command.
-2. Enter the date `(YYYY-MM-DD or YYYYMMDD)` in this format to get receipt for that particular day.
+## Code of Conduct
 
-### Category
+Please note that we have a [Code of Conduct](CODE_OF_CONDUCT.md) that all contributors are expected to uphold. This ensures that our community remains welcoming and inclusive for everyone.
 
-Add/Delete/Show custom categories
+---
 
-1. Enter the `/category` command.
-2. Select an option between expense and income in which you want to see the category
-3. You can perform the following operations.
-   1. Show Categories which will display the existing category
-   2. Add a new category
-   3. Delete a category
+Thank you for using MoneyManager! Follow this page to stay updated on new features and improvements.
 
-## Discord Chat
-![image](https://github.com/user-attachments/assets/cfeb6ce7-bccd-4342-b5bf-7f7db5afb5ff)
-
-## Notes:
-You can download and install the Telegram desktop application for your system from the following site: https://desktop.telegram.org/
-
-# Badges
-
-[![Flake8 Status](https://github.com/harshvora7/MyDollarBot-BOTGo-Group101/actions/workflows/flake8.yml/badge.svg?branch=main)](https://github.com/harshvora7/MyDollarBot-BOTGo-Group101/actions/workflows/flake8.yml)
-[![Pyright Status](https://github.com/harshvora7/MyDollarBot-BOTGo-Group101/actions/workflows/pyright.yml/badge.svg?branch=main)](https://github.com/harshvora7/MyDollarBot-BOTGo-Group101/actions/workflows/pyright.yml)
-
-
-
-<hr>
-<p>Title:'Track My Dollar'</p>
-<p>Version: '4.5'</p>
-<p>Authors(Iteration 6):
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/AnuragGorkar"><img src="https://avatars.githubusercontent.com/u/56599642?s=400&u=351897f9422f135c4df24317d3fc8a28796f58bc&v=4" width="75px;" alt=""/><br /><sub><b>Anurag Gorkar</b></sub></a></td>
-    <td align="center"><a href="https://github.com/aryansharma2k2"><img src="https://avatars.githubusercontent.com/u/118040810?v=4" width="75px;" alt=""/><br /><sub><b>Aryan Iguva</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/harshvora7"><img src="https://avatars.githubusercontent.com/u/45733155?v=4" width="75px;" alt=""/><br /><sub><b>Harsh Vora</b></sub></a><br /></td>
-  </tr>
-</table>
-<p>Description: 'An easy to use Telegram Bot to track everyday expenses'</p>
-
-<p>Authors(Iteration 5):'Jayesh, Harsh, Sagar, Soham'</p>
-<p>Authors(Iteration 4):'Anuj, Bhavesh, Jash, Vaibhavi'</p>
-<p>Authors(Iteration 3):'Vraj, Alex, Leo, Prithvish, Seeya'</p>
-<p>Authors(Iteration 2):'Athithya, Subramanian, Ashok, Zunaid, Rithik'</p>
-<p>Authors(Iteration 1):'Dev, Prakruthi, Radhika, Rohan, Sunidhi'</p>
