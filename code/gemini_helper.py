@@ -10,13 +10,14 @@ from io import BytesIO
 
 configs = Properties()
 
-with open('user.properties', 'rb') as read_prop:
+with open("user.properties", "rb") as read_prop:
     configs.load(read_prop)
 
-api_token = str(configs.get('api_token').data)
-gemini_api_key = str(configs.get('gemini_api_key').data)
+api_token = str(configs.get("api_token").data)
+gemini_api_key = str(configs.get("gemini_api_key").data)
 
 _gemini_model = None
+
 
 def initialize_gemini():
     """Initialize Gemini AI model"""
@@ -25,6 +26,7 @@ def initialize_gemini():
         genai.configure(api_key=gemini_api_key)
         _gemini_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
     return _gemini_model
+
 
 def process_receipt_image(file_url):
     """Process receipt image using Gemini AI"""
@@ -38,7 +40,7 @@ def process_receipt_image(file_url):
         current_date = datetime.now()
 
         # Format it to YYYY-MM-DD
-        formatted_date = current_date.strftime('%Y-%m-%d')
+        formatted_date = current_date.strftime("%Y-%m-%d")
 
         print(helper.getSpendCategories())
         prompt = (
@@ -55,31 +57,35 @@ def process_receipt_image(file_url):
             "Ensure there are no extra characters, spaces, or formatting issues outside the JSON structure."
         )
 
-            
         response = model.generate_content([prompt, img])
         response_text = response.text.strip()
         print("Gemini response text:", response_text)
-        
+
         # Ensure response is JSON-compatible
         if not (response_text.startswith("{") and response_text.endswith("}")):
-            return None, "Invalid response format from Gemini. Ensure output is JSON-compatible."
+            return (
+                None,
+                "Invalid response format from Gemini. Ensure output is JSON-compatible.",
+            )
 
-        
         try:
             # Attempt fallback parsing using ast.literal_eval
             result = ast.literal_eval(response_text)
             # print("Parsed using ast.literal_eval:", result)
         except (ValueError, SyntaxError):
-            return None, "Image cannot be processed. Please upload again or try with a different image."
-                
+            return (
+                None,
+                "Image cannot be processed. Please upload again or try with a different image.",
+            )
+
         # Validate parsed data structure
-        if not result.get('is_receipt', False):
+        if not result.get("is_receipt", False):
             return None, "Image does not appear to be a receipt"
-        
+
         # Validate and correct the category if needed
-        if result['category'] not in helper.getSpendCategories():
-            result['category'] = 'Miscellaneous'
-        
+        if result["category"] not in helper.getSpendCategories():
+            result["category"] = "Miscellaneous"
+
         return result, None
 
     except Exception as e:

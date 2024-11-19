@@ -10,7 +10,7 @@ def run(message, bot):
     markup.row_width = 2
     for c in options.values():
         markup.add(c)
-    msg = bot.reply_to(message, 'Select Income or Expense', reply_markup=markup)
+    msg = bot.reply_to(message, "Select Income or Expense", reply_markup=markup)
     bot.register_next_step_handler(msg, post_type_selection, bot)
 
 

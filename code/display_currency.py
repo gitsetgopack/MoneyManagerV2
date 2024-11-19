@@ -10,9 +10,9 @@ total = ""
 bud = ""
 c = CurrencyRates()
 try:
-    DOLLARS_TO_RUPEES = c.get_rate('USD', 'INR')
-    DOLLARS_TO_EUROS = c.get_rate('USD', 'EUR')
-    DOLLARS_TO_SWISS_FRANC = c.get_rate('USD', 'CHF')
+    DOLLARS_TO_RUPEES = c.get_rate("USD", "INR")
+    DOLLARS_TO_EUROS = c.get_rate("USD", "EUR")
+    DOLLARS_TO_SWISS_FRANC = c.get_rate("USD", "CHF")
 except:
     DOLLARS_TO_RUPEES = 84
     DOLLARS_TO_EUROS = 0.95
@@ -63,7 +63,9 @@ def run_display(message, bot):
     for mode in helper.getSpendDisplayOptions():
         markup.add(mode)
     # markup.add('Day', 'Month')
-    msg = bot.reply_to(message, 'Please select a category to see details', reply_markup=markup)
+    msg = bot.reply_to(
+        message, "Please select a category to see details", reply_markup=markup
+    )
     bot.register_next_step_handler(msg, display_total_currency, bot)
 
 
@@ -75,7 +77,9 @@ def display_total_currency(message, bot):
         DayWeekMonth = message.text
 
         if DayWeekMonth not in helper.getSpendDisplayOptions():
-            raise Exception("Sorry I can't show spendings for \"{}\"!".format(DayWeekMonth))
+            raise Exception(
+                'Sorry I can\'t show spendings for "{}"!'.format(DayWeekMonth)
+            )
 
         history = helper.getUserExpenseHistory(chat_id)
         if history is None:
@@ -90,28 +94,37 @@ def display_total_currency(message, bot):
         elif helper.isCategoryBudgetAvailable(chat_id):
             budgetData = helper.getCategoryBudget(chat_id)
 
-        if DayWeekMonth == 'Day':
+        if DayWeekMonth == "Day":
             query = datetime.now().today().strftime(helper.getDateFormat())
             # query all that contains today's date
-            queryResult = [value for index, value in enumerate(history) if str(query) in value]
-        elif DayWeekMonth == 'Month':
+            queryResult = [
+                value for index, value in enumerate(history) if str(query) in value
+            ]
+        elif DayWeekMonth == "Month":
             query = datetime.now().today().strftime(helper.getMonthFormat())
             # query all that contains today's date
-            queryResult = [value for index, value in enumerate(history) if str(query) in value]
+            queryResult = [
+                value for index, value in enumerate(history) if str(query) in value
+            ]
 
         total_text = calculate_spendings(queryResult)
         total = total_text
         bud = budgetData
         spending_text = display_budget_by_text(history, budgetData)
         if len(total_text) == 0:
-            spending_text += "----------------------\nYou have no spendings for {}!".format(DayWeekMonth)
+            spending_text += (
+                "----------------------\nYou have no spendings for {}!".format(
+                    DayWeekMonth
+                )
+            )
             bot.send_message(chat_id, spending_text)
         else:
             spending_text += "\n----------------------\nHere are your total spendings for the {}:\nCATEGORIES\tAMOUNT \n----------------------\n{}".format(
-                DayWeekMonth.lower(), total_text)
+                DayWeekMonth.lower(), total_text
+            )
             bot.send_message(chat_id, spending_text)
     except Exception as e:
-        bot.reply_to(message, 'Oh no! ' + str(e))
+        bot.reply_to(message, "Oh no! " + str(e))
 
 
 def calculate_spendings(queryResult):
@@ -119,7 +132,7 @@ def calculate_spendings(queryResult):
 
     for row in queryResult:
         # date,cat,money
-        s = row.split(',')
+        s = row.split(",")
         # cat
         cat = s[1]
         if cat in total_dict:
@@ -147,10 +160,14 @@ def display_budget_by_text(history, budget_data) -> str:
     try:
         query = datetime.now().today().strftime(helper.getMonthFormat())
         # query all expense history that contains today's date
-        queryResult = [value for index, value in enumerate(history) if str(query) in value]
+        queryResult = [
+            value for index, value in enumerate(history) if str(query) in value
+        ]
         total_text = calculate_spendings(queryResult)
         budget_display = ""
-        total_text_split = [line for line in total_text.split('\n') if line.strip() != '']
+        total_text_split = [
+            line for line in total_text.split("\n") if line.strip() != ""
+        ]
 
         if isinstance(budget_data, str):
             # if budget is string denoting it is overall budget
@@ -159,31 +176,56 @@ def display_budget_by_text(history, budget_data) -> str:
             total_expense = 0
             # sum all expense
             for expense in total_text_split:
-                a = expense.split(' ')
-                amount = a[1].replace("$", "").replace("₹", "").replace("€", "", ).replace("₣", "")
+                a = expense.split(" ")
+                amount = (
+                    a[1]
+                    .replace("$", "")
+                    .replace("₹", "")
+                    .replace(
+                        "€",
+                        "",
+                    )
+                    .replace("₣", "")
+                )
                 total_expense += float(amount)
             # calculate the remaining budget
-            remaining = round(budget_val - total_expense,2)
+            remaining = round(budget_val - total_expense, 2)
             # set the return message
-            budget_display += "Overall Budget is: " + str(
-                budget_val) + "\n----------------------\nRemaining Budget is " + str(
-                remaining) + "\n"
+            budget_display += (
+                "Overall Budget is: "
+                + str(budget_val)
+                + "\n----------------------\nRemaining Budget is "
+                + str(remaining)
+                + "\n"
+            )
         elif isinstance(budget_data, dict):
 
             budget_display += "Budget by Categories in " + str(selection) + " are:\n"
             categ_remaining = {}
             # categorize the budgets by their categories
             for key in budget_data.keys():
-                budget_display += key + ":" + str(round(rate*float(budget_data[key]),2)) + "\n"
-                categ_remaining[key] = round(rate*float(budget_data[key]),2)
+                budget_display += (
+                    key + ":" + str(round(rate * float(budget_data[key]), 2)) + "\n"
+                )
+                categ_remaining[key] = round(rate * float(budget_data[key]), 2)
                 print(categ_remaining)
                 print(budget_data[key])
             #  calculate the remaining budgets by categories
             for i in total_text_split:
                 # the expense text is in the format like "Food $100"
-                a = i.split(' ')
-                a[1] = a[1].replace("$", "").replace("₹", "").replace("€", "").replace("₣", "")
-                categ_remaining[a[0]] = categ_remaining[a[0]] - float(a[1]) if a[0] in categ_remaining else -float(a[1])
+                a = i.split(" ")
+                a[1] = (
+                    a[1]
+                    .replace("$", "")
+                    .replace("₹", "")
+                    .replace("€", "")
+                    .replace("₣", "")
+                )
+                categ_remaining[a[0]] = (
+                    categ_remaining[a[0]] - float(a[1])
+                    if a[0] in categ_remaining
+                    else -float(a[1])
+                )
             budget_display += "----------------------\nCurrent remaining budget is: \n"
             # show the remaining budgets
             for key in categ_remaining.keys():

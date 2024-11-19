@@ -10,7 +10,8 @@ def run(message, bot):
     history = helper.getUserExpenseHistory(chat_id)
     if history is None:
         bot.send_message(
-            chat_id, "Oops! Looks like you do not have any spending records!")
+            chat_id, "Oops! Looks like you do not have any spending records!"
+        )
     else:
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
         markup.row_width = 2
@@ -18,8 +19,8 @@ def run(message, bot):
             markup.add(mode)
         # markup.add('Day', 'Month')
         msg = bot.reply_to(
-            message, 'Please select the period to estimate',
-            reply_markup=markup)
+            message, "Please select the period to estimate", reply_markup=markup
+        )
         bot.register_next_step_handler(msg, estimate_total, bot)
 
 
@@ -30,24 +31,23 @@ def estimate_total(message, bot):
 
         if DayWeekMonth not in helper.getSpendEstimateOptions():
             raise Exception(
-                "Sorry I can't show an estimate for \"{}\"!".format(
-                    DayWeekMonth))
+                'Sorry I can\'t show an estimate for "{}"!'.format(DayWeekMonth)
+            )
 
         history = helper.getUserExpenseHistory(chat_id)
         if history is None:
-            raise Exception(
-                "Oops! Looks like you do not have any spending records!")
+            raise Exception("Oops! Looks like you do not have any spending records!")
 
         bot.send_message(chat_id, "Hold on! Calculating...")
         # show the bot "typing" (max. 5 secs)
-        bot.send_chat_action(chat_id, 'typing')
+        bot.send_chat_action(chat_id, "typing")
         time.sleep(0.5)
 
         total_text = ""
         days_to_estimate = 0
-        if DayWeekMonth == 'Next day':
+        if DayWeekMonth == "Next day":
             days_to_estimate = 1
-        elif DayWeekMonth == 'Next month':
+        elif DayWeekMonth == "Next month":
             days_to_estimate = 30
             # query all that contains today's date
         # query all that contains all history
@@ -75,7 +75,7 @@ def calculate_estimate(queryResult, days_to_estimate):
     days_data_available = {}
     for row in queryResult:
         # date,cat,money
-        s = row.split(',')
+        s = row.split(",")
         # cat
         cat = s[1]
         date_str = s[0][0:11]
