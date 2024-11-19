@@ -79,17 +79,17 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 ## User Friendly
 
 - **Expense Tracking**: Add, update, and delete expenses. Track expenses by category, date, and account.
+- **Authentication**: Secure access to your data using token-based authentication.
+- **RESTful API**: Access and interact with your financial data programmatically via a FastAPI-powered API.
 - **Data Visualization**: View your expenses over time with customizable charts, including:
   - Monthly and weekly spending trends
   - Categorical expense breakdowns
-- **Authentication**: Secure access to your data using token-based authentication.
-- **RESTful API**: Access and interact with your financial data programmatically via a FastAPI-powered API.
-- **Testing Suite**: Comprehensive tests to ensure stability and reliability across key functionality.
 - **Multiple Accounts**: Manage multiple accounts like spending and saving.
+- **Testing Suite**: Comprehensive tests to ensure stability and reliability across key functionality.
 
 ## Developer Friendly
 
-- Modular Configuration: Simplify setup with a sample_config.py file that supports environment variables for secure, customizable settings like database URIs, API ports, and bot tokens—just rename and update, or export values directly from your environment!
+- **Modular Configuration**: Simplify setup with a sample_config.py file that supports environment variables for secure, customizable settings like database URIs, API ports, and bot tokens—just rename and update, or export values directly from your environment!
 
 
 ## Usage
