@@ -1,9 +1,9 @@
-import os
 import json
-from unittest.mock import patch
-from telebot import types
+import os
 from code import display
+from unittest.mock import patch
 
+from telebot import types
 
 # @patch('telebot.telebot')
 # def test_run(mock_telebot, mocker):

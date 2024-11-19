@@ -1,6 +1,6 @@
 import unittest
-from unittest.mock import patch, Mock
-from code.budget_max import run, post_max_budget
+from code.budget_max import post_max_budget, run
+from unittest.mock import Mock, patch
 
 # Sample data for testing
 EXAMPLE_USER_DATA = {"123": {"budget": {"max_per_txn_spend": 50}}}

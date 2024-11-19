@@ -1,17 +1,18 @@
 import logging
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email import encoders
 import os
+import smtplib
 import threading
-import extract
-import pandas as pd
-import matplotlib.pyplot as plt
 from datetime import datetime
-import helper
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+import extract
 import gemini_helper
+import helper
+import matplotlib.pyplot as plt
+import pandas as pd
 
 extract_complete = threading.Event()
 

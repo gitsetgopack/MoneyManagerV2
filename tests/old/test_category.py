@@ -1,11 +1,9 @@
-import os
 import json
-from unittest.mock import Mock
-from unittest.mock import patch
-from telebot import types
+import os
 from code import category
-from unittest.mock import ANY
+from unittest.mock import ANY, Mock, patch
 
+from telebot import types
 
 dateFormat = "%d-%b-%Y"
 timeFormat = "%H:%M"

@@ -1,12 +1,13 @@
-import os
 import json
-from telebot import types
-from unittest.mock import patch, mock_open, ANY, MagicMock
-import pytest
-from datetime import datetime
+import os
 
 # Import the module containing get_csv functionality
 from code import get_csv
+from datetime import datetime
+from unittest.mock import ANY, MagicMock, mock_open, patch
+
+import pytest
+from telebot import types
 
 
 def create_message(text, chat_id=11):

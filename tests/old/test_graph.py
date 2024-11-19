@@ -1,7 +1,7 @@
+import os
+import time
 from code import graphing
 from unittest.mock import ANY
-import time
-import os
 
 dummy_total_text_none = ""
 dummy_total_text_data = """Food $10.0

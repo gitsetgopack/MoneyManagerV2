@@ -6,6 +6,7 @@ import datetime
 from typing import Optional
 
 from bson import ObjectId
+from config import MONGO_URI, TOKEN_ALGORITHM, TOKEN_SECRET_KEY
 from fastapi import APIRouter, Depends, Header, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import jwt
@@ -13,7 +14,6 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 
 from api.utils.auth import verify_token
-from config import MONGO_URI, TOKEN_ALGORITHM, TOKEN_SECRET_KEY
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30 * 24 * 60
 

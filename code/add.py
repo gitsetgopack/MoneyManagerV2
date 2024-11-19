@@ -1,11 +1,12 @@
-from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
-import helper
 import logging
-from telebot import types, telebot
-from datetime import datetime
-from jproperties import Properties
-import requests
 import os
+from datetime import datetime
+
+import helper
+import requests
+from jproperties import Properties
+from telebot import telebot, types
+from telegram_bot_calendar import LSTEP, DetailedTelegramCalendar
 
 option = {}
 

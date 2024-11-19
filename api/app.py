@@ -5,10 +5,10 @@ This module defines the main FastAPI application for Money Manager.
 from contextlib import asynccontextmanager
 
 import uvicorn
+from config import API_BIND_HOST, API_BIND_PORT
 from fastapi import FastAPI
 
 from api.routers import accounts, analytics, categories, expenses, users
-from config import API_BIND_HOST, API_BIND_PORT
 
 
 @asynccontextmanager

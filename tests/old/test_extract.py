@@ -1,6 +1,6 @@
 import unittest
-from unittest.mock import patch, Mock
 from code.extract import run
+from unittest.mock import Mock, patch
 
 
 @patch(

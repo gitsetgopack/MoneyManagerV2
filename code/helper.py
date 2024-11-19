@@ -1,6 +1,6 @@
-import re
 import json
 import os
+import re
 from datetime import datetime
 
 choices = ["Date", "Category", "Cost"]

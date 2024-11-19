@@ -1,7 +1,7 @@
 import unittest
-from unittest.mock import Mock, patch, MagicMock
-from datetime import datetime
 from code import scan_receipt  # Adjust import to match your actual module structure
+from datetime import datetime
+from unittest.mock import MagicMock, Mock, patch
 
 
 class TestReceiptProcessor(unittest.TestCase):

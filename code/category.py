@@ -1,7 +1,8 @@
-import helper
 import logging
-from telebot import types
 import time
+
+import helper
+from telebot import types
 
 
 # The main funtion of category.py.

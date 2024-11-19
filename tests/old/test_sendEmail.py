@@ -1,11 +1,12 @@
-import unittest
-from unittest.mock import patch, MagicMock
-import os
-import pandas as pd
-from datetime import datetime
 import logging
+import os
+import unittest
 from code import sendEmail  # type: ignore
+from datetime import datetime
+from unittest.mock import MagicMock, patch
+
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 class TestSendEmailFunctions(unittest.TestCase):

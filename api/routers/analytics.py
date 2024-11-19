@@ -10,12 +10,12 @@ from datetime import datetime, timedelta
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from config import MONGO_URI
 from fastapi import APIRouter, Header, HTTPException
 from fastapi.responses import HTMLResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from api.utils.auth import verify_token
-from config import MONGO_URI
 
 # MongoDB setup
 client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URI)

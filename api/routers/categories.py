@@ -3,11 +3,10 @@ This module provides endpoints for managing categories of a particular user.
 """
 
 from bson import ObjectId
+from config import MONGO_URI
 from fastapi import APIRouter, Header, HTTPException
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
-
-from config import MONGO_URI
 
 from .users import verify_token
 

@@ -1,8 +1,7 @@
-from unittest.mock import Mock
-from unittest.mock import ANY
-from unittest.mock import patch
-from telebot import types
 from code import budget
+from unittest.mock import ANY, Mock, patch
+
+from telebot import types
 
 
 @patch("telebot.telebot")
