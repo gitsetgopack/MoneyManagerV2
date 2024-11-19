@@ -7,6 +7,7 @@
     - [Quality](#quality)
     - [Standards](#standards)
     - [Stats](#stats)
+      - [Tools \& Technologies](#tools--technologies)
   - [User Friendly](#user-friendly)
   - [Developer Friendly](#developer-friendly)
   - [Usage](#usage)
@@ -111,6 +112,7 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 ## Developer Friendly
 
 - **Modular Configuration**: Simplify setup with a sample_config.py file that supports environment variables for secure, customizable settings like database URIs, API ports, and bot tokens—just rename and update, or export values directly from your environment!
+- **Stable Release(master) Branch**: We have Pre-commit running as github workflows which allows only the tested, formatted, linted, checked, code to push to the release branches
 
 
 ## Usage
