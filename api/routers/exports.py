@@ -66,7 +66,15 @@ async def data_to_xlsx(token: str = Header(None)) -> Response:
     if expenses_sheet is not None:
         expenses_sheet.title = "Expenses"
         expenses_sheet.append(
-            ["date", "amount", "currency", "category", "description", "account_name", "_id"]
+            [
+                "date",
+                "amount",
+                "currency",
+                "category",
+                "description",
+                "account_name",
+                "_id",
+            ]
         )
         for expense in expenses:
             expenses_sheet.append(
@@ -101,7 +109,9 @@ async def data_to_xlsx(token: str = Header(None)) -> Response:
         categories_sheet.append(["name", "monthly_budget"])
         if user and "categories" in user:
             for category_name, category_data in user["categories"].items():
-                categories_sheet.append([category_name, category_data["monthly_budget"]])
+                categories_sheet.append(
+                    [category_name, category_data["monthly_budget"]]
+                )
 
     output = BytesIO()
     workbook.save(output)
@@ -116,7 +126,9 @@ async def data_to_xlsx(token: str = Header(None)) -> Response:
 
 
 @router.get("/csv")
-async def data_to_csv(token: str = Header(None), export_type: ExportType = Query(...)) -> Response:
+async def data_to_csv(
+    token: str = Header(None), export_type: ExportType = Query(...)
+) -> Response:
     """
     Export expenses, accounts, or categories for a user to a CSV file.
 
