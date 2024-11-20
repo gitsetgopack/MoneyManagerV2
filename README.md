@@ -7,7 +7,6 @@
     - [Quality](#quality)
     - [Standards](#standards)
     - [Stats](#stats)
-      - [Tools \& Technologies](#tools--technologies)
   - [User Friendly](#user-friendly)
   - [Developer Friendly](#developer-friendly)
   - [Usage](#usage)
