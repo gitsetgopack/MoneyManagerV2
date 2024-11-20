@@ -4,12 +4,12 @@ from unittest.mock import patch
 
 import pytest
 from bson import ObjectId
-from config import MONGO_URI
 from fastapi import HTTPException
 from httpx import AsyncClient
 from motor.motor_asyncio import AsyncIOMotorClient
 
 import api.routers.expenses
+from config import MONGO_URI
 
 # MongoDB setup
 client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URI)
