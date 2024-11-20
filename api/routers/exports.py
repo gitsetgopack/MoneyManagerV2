@@ -7,6 +7,11 @@ from api.utils.auth import verify_token
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import MONGO_URI
 from openpyxl import Workbook
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+from reportlab.lib import colors
+from reportlab.platypus.tables import CellStyle
 
 router = APIRouter(prefix="/exports", tags=["Export"])
 
@@ -143,4 +148,126 @@ async def data_to_csv(token: str = Header(None), export_type: ExportType = Query
 
     response = Response(content=output.getvalue(), media_type="text/csv")
     response.headers["Content-Disposition"] = f"attachment; filename={export_type.value}.csv"
+    return response
+
+@router.get("/pdf")
+async def data_to_pdf(token: str = Header(None)):
+    """
+    Export all expenses, accounts, and categories for a user to a PDF file.
+
+    Args:
+        token (str): Authentication token.
+
+    Returns:
+        Response: PDF file containing expenses, accounts, and categories data.
+    """
+    user_id = await verify_token(token)
+    expenses = await expenses_collection.find({"user_id": user_id}).to_list(1000)
+    accounts = await accounts_collection.find({"user_id": user_id}).to_list(100)
+    user = await users_collection.find_one({"_id": ObjectId(user_id)})
+
+    if not expenses and not accounts and not user:
+        raise HTTPException(status_code=404, detail="No data found")
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    # Table of Contents
+    elements.append(Paragraph("Table of Contents", styles['Title']))
+    elements.append(Spacer(1, 12))
+    elements.append(Paragraph("1. Expenses", styles['Normal']))
+    elements.append(Paragraph("2. Accounts", styles['Normal']))
+    elements.append(Paragraph("3. Categories", styles['Normal']))
+    elements.append(PageBreak())
+
+    # Helper function to wrap text in table cells
+    def wrap_text(data):
+        wrapped_data = []
+        for row in data:
+            wrapped_row = []
+            for cell in row:
+                wrapped_row.append(Paragraph(str(cell), styles['Normal']))
+            wrapped_data.append(wrapped_row)
+        return wrapped_data
+
+    # Expenses
+    elements.append(Paragraph("Expenses", styles['Title']))
+    elements.append(Spacer(1, 12))
+    expenses_data = [["Date", "Amount", "Currency", "Category", "Description", "Account Name", "ID"]]
+    for expense in expenses:
+        expenses_data.append([
+            expense["date"].isoformat() if expense.get("date") else "",
+            expense["amount"],
+            expense["currency"],
+            expense["category"],
+            expense.get("description", ""),
+            expense["account_name"],
+            str(expense["_id"])
+        ])
+    expenses_table = Table(wrap_text(expenses_data), colWidths=[60, 60, 60, 60, 120, 80, 80])
+    expenses_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+    elements.append(expenses_table)
+    elements.append(PageBreak())
+
+    # Accounts
+    elements.append(Paragraph("Accounts", styles['Title']))
+    elements.append(Spacer(1, 12))
+    accounts_data = [["Name", "Balance", "Currency", "ID"]]
+    for account in accounts:
+        accounts_data.append([
+            account["name"],
+            account["balance"],
+            account["currency"],
+            str(account["_id"])
+        ])
+    accounts_table = Table(wrap_text(accounts_data), colWidths=[100, 100, 100, 100])
+    accounts_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+    elements.append(accounts_table)
+    elements.append(PageBreak())
+
+    # Categories
+    elements.append(Paragraph("Categories", styles['Title']))
+    elements.append(Spacer(1, 12))
+    categories_data = [["Name", "Monthly Budget"]]
+    if user and "categories" in user:
+        for category_name, category_data in user["categories"].items():
+            categories_data.append([
+                category_name,
+                category_data["monthly_budget"]
+            ])
+    categories_table = Table(wrap_text(categories_data), colWidths=[200, 200])
+    categories_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+    elements.append(categories_table)
+
+    doc.build(elements)
+    buffer.seek(0)
+
+    response = Response(content=buffer.getvalue(), media_type="application/pdf")
+    response.headers["Content-Disposition"] = "attachment; filename=data.pdf"
     return response
