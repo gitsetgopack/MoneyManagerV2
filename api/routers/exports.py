@@ -1,15 +1,17 @@
 import csv
 from enum import Enum
 from io import BytesIO, StringIO
+from typing import Any, Dict, List, Optional
 
 from bson import ObjectId
 from fastapi import APIRouter, Header, HTTPException, Query, Response
 from motor.motor_asyncio import AsyncIOMotorClient
 from openpyxl import Workbook
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import (
+from openpyxl.worksheet.worksheet import Worksheet
+from reportlab.lib import colors  # type: ignore
+from reportlab.lib.pagesizes import letter  # type: ignore
+from reportlab.lib.styles import getSampleStyleSheet  # type: ignore
+from reportlab.platypus import (  # type: ignore
     PageBreak,
     Paragraph,
     SimpleDocTemplate,
@@ -17,7 +19,7 @@ from reportlab.platypus import (
     Table,
     TableStyle,
 )
-from reportlab.platypus.tables import CellStyle
+from reportlab.platypus.tables import CellStyle  # type: ignore
 
 from api.utils.auth import verify_token
 from config import MONGO_URI
@@ -39,7 +41,7 @@ class ExportType(str, Enum):
 
 
 @router.get("/xlsx")
-async def data_to_xlsx(token: str = Header(None)):
+async def data_to_xlsx(token: str = Header(None)) -> Response:
     """
     Export all expenses, accounts, and categories for a user to an XLSX file.
 
@@ -60,43 +62,46 @@ async def data_to_xlsx(token: str = Header(None)):
     workbook = Workbook()
 
     # Write expenses
-    expenses_sheet = workbook.active
-    expenses_sheet.title = "Expenses"
-    expenses_sheet.append(
-        ["date", "amount", "currency", "category", "description", "account_name", "_id"]
-    )
-    for expense in expenses:
+    expenses_sheet: Optional[Worksheet] = workbook.active
+    if expenses_sheet is not None:
+        expenses_sheet.title = "Expenses"
         expenses_sheet.append(
-            [
-                expense["date"].isoformat() if expense.get("date") else "",
-                expense["amount"],
-                expense["currency"],
-                expense["category"],
-                expense.get("description", ""),
-                expense["account_name"],
-                str(expense["_id"]),
-            ]
+            ["date", "amount", "currency", "category", "description", "account_name", "_id"]
         )
+        for expense in expenses:
+            expenses_sheet.append(
+                [
+                    expense["date"].isoformat() if expense.get("date") else "",
+                    expense["amount"],
+                    expense["currency"],
+                    expense["category"],
+                    expense.get("description", ""),
+                    expense["account_name"],
+                    str(expense["_id"]),
+                ]
+            )
 
     # Write accounts
-    accounts_sheet = workbook.create_sheet(title="Accounts")
-    accounts_sheet.append(["name", "balance", "currency", "_id"])
-    for account in accounts:
-        accounts_sheet.append(
-            [
-                account["name"],
-                account["balance"],
-                account["currency"],
-                str(account["_id"]),
-            ]
-        )
+    accounts_sheet: Optional[Worksheet] = workbook.create_sheet(title="Accounts")
+    if accounts_sheet is not None:
+        accounts_sheet.append(["name", "balance", "currency", "_id"])
+        for account in accounts:
+            accounts_sheet.append(
+                [
+                    account["name"],
+                    account["balance"],
+                    account["currency"],
+                    str(account["_id"]),
+                ]
+            )
 
     # Write categories
-    categories_sheet = workbook.create_sheet(title="Categories")
-    categories_sheet.append(["name", "monthly_budget"])
-    if user and "categories" in user:
-        for category_name, category_data in user["categories"].items():
-            categories_sheet.append([category_name, category_data["monthly_budget"]])
+    categories_sheet: Optional[Worksheet] = workbook.create_sheet(title="Categories")
+    if categories_sheet is not None:
+        categories_sheet.append(["name", "monthly_budget"])
+        if user and "categories" in user:
+            for category_name, category_data in user["categories"].items():
+                categories_sheet.append([category_name, category_data["monthly_budget"]])
 
     output = BytesIO()
     workbook.save(output)
@@ -111,7 +116,7 @@ async def data_to_xlsx(token: str = Header(None)):
 
 
 @router.get("/csv")
-async def data_to_csv(token: str = Header(None), export_type: ExportType = Query(...)):
+async def data_to_csv(token: str = Header(None), export_type: ExportType = Query(...)) -> Response:
     """
     Export expenses, accounts, or categories for a user to a CSV file.
 
@@ -183,7 +188,7 @@ async def data_to_csv(token: str = Header(None), export_type: ExportType = Query
 
 
 @router.get("/pdf")
-async def data_to_pdf(token: str = Header(None)):
+async def data_to_pdf(token: str = Header(None)) -> Response:
     """
     Export all expenses, accounts, and categories for a user to a PDF file.
 
