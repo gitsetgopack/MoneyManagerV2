@@ -55,6 +55,7 @@ repos:
     hooks:
       - id: doctoc
         args: ["--github", "--maxlevel=3"]  # Customize as needed for TOC structure
+        exclude: .github/
 
   # - repo: https://github.com/trufflesecurity/truffleHog
   #   rev: v3.83.2
