@@ -6,7 +6,7 @@ from api.utils.auth import verify_token
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import MONGO_URI
 
-router = APIRouter(prefix="/export", tags=["Export"])
+router = APIRouter(prefix="/exports", tags=["Export"])
 
 # MongoDB setup
 client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URI)
@@ -14,7 +14,7 @@ db = client.mmdb
 expenses_collection = db.expenses
 
 @router.get("/expenses/csv")
-async def export_expenses_to_csv(token: str = Header(None)):
+async def expenses_to_csv(token: str = Header(None)):
     """
     Export all expenses for a user to a CSV file.
 
