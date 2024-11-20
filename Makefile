@@ -8,7 +8,7 @@ install: ## Install dependencies in the virtual environment
 	pip install -r requirements.txt
 	pre-commit install
 
-run: ## Run the FastAPI app using the virtual environment
+api: ## Run the FastAPI app using the virtual environment
 	python api/app.py
 
 test: ## Start MongoDB Docker container, run tests, and clean up
@@ -33,4 +33,4 @@ no_verify_push: ## Stage, commit & push with --no-verify
 	git commit -a -m "$$msg" --no-verify
 	git push
 
-.PHONY: all help install run test fix clean no_verify_push
+.PHONY: all help install api test fix clean no_verify_push
