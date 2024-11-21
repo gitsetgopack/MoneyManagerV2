@@ -70,6 +70,7 @@ jobs:
       - name: Run pytest
         continue-on-error: true
         run: |
+          cp config_sample.py config.py
           echo "PYTEST_EXIT_CODE=0" >> $GITHUB_ENV
           pytest --cov-report=json:tmp/coverage.json --junitxml=tmp/pytest_output.xml || echo "PYTEST_EXIT_CODE=$?" >> $GITHUB_ENV
 
