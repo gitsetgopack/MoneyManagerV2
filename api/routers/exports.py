@@ -1,12 +1,16 @@
+"""
+This module contains the API routes for exporting data in various formats.
+"""
+
 import csv
 import datetime
 import os
 from enum import Enum
 from io import BytesIO, StringIO
-from typing import Any, Dict, List, Optional
+from typing import Optional
 
 from bson import ObjectId
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, Response
+from fastapi import APIRouter, Header, HTTPException, Query, Response
 from motor.motor_asyncio import AsyncIOMotorClient
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -24,7 +28,6 @@ from reportlab.platypus import (  # type: ignore
     Table,
     TableStyle,
 )
-from reportlab.platypus.tables import CellStyle  # type: ignore
 
 from api.utils.auth import verify_token
 from config.config import MONGO_URI, TIME_ZONE
@@ -40,15 +43,17 @@ users_collection = db.users
 
 
 class ExportType(str, Enum):
-    expenses = "expenses"
-    accounts = "accounts"
-    categories = "categories"
+    """Enum for export types."""
+    EXPENSES = "expenses"
+    ACCOUNTS = "accounts"
+    CATEGORIES = "categories"
 
 
 # Utility function to fetch data
 async def fetch_data(
     user_id: str, from_date: Optional[datetime.date], to_date: Optional[datetime.date]
 ):
+    """Fetch data from the database based on user ID and date range."""
     if from_date and to_date and from_date > to_date:
         raise HTTPException(
             status_code=422,
@@ -184,7 +189,7 @@ async def data_to_csv(
     output = StringIO()
     writer = csv.writer(output)
 
-    if export_type == ExportType.expenses:
+    if export_type == ExportType.EXPENSES:
         if not expenses:
             raise HTTPException(status_code=404, detail="No expenses found")
         writer.writerow(
@@ -210,7 +215,7 @@ async def data_to_csv(
                     str(expense["_id"]),
                 ]
             )
-    elif export_type == ExportType.accounts:
+    elif export_type == ExportType.ACCOUNTS:
         if not accounts:
             raise HTTPException(status_code=404, detail="No accounts found")
         writer.writerow(["name", "balance", "currency", "_id"])
@@ -223,7 +228,7 @@ async def data_to_csv(
                     str(account["_id"]),
                 ]
             )
-    elif export_type == ExportType.categories:
+    elif export_type == ExportType.CATEGORIES:
         if not user or "categories" not in user:
             raise HTTPException(status_code=404, detail="No categories found")
         writer.writerow(["name", "monthly_budget"])
@@ -431,9 +436,13 @@ async def data_to_pdf(
 
     # Footer with date of export, "Money Manager V2", and page number
     def footer(canvas, doc):
+        """Footer with date of export, 'Money Manager V2', and page number."""
         canvas.saveState()
         tz = timezone(TIME_ZONE)
-        footer_text = f"Money Manager V2 - Exported on {datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')}"
+        footer_text = (
+            f"Money Manager V2 - Exported on "
+            f"{datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')}"
+        )
         canvas.setFont("Helvetica", 9)
         canvas.drawString(inch, 0.75 * inch, footer_text)
         canvas.drawRightString(7.5 * inch, 0.75 * inch, f"Page {doc.page}")
