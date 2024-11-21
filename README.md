@@ -4,10 +4,11 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Money Manager](#money-manager)
+  - [Badges](#badges)
     - [Quality](#quality)
     - [Standards](#standards)
     - [Stats](#stats)
-      - [Tools \& Technologies](#tools--technologies)
+    - [Tools \& Technologies](#tools--technologies)
   - [User Friendly](#user-friendly)
   - [Developer Friendly](#developer-friendly)
   - [Usage](#usage)
@@ -15,9 +16,6 @@
     - [Pre-requisite Tasks](#pre-requisite-tasks)
     - [Actual Installation](#actual-installation)
     - [Testing](#testing)
-    - [Code Coverage](#code-coverage)
-  - [Configuration](#configuration)
-  - [Troubleshooting](#troubleshooting)
   - [🚀 Future Enhancements](#-future-enhancements)
   - [Contributing](#contributing)
   - [LICENSE](#license)
@@ -39,11 +37,7 @@ A REST API application for managing expenses. Build your own automation—be it 
 
 🚨 Spoiler Alert! 🚨 We have built a Telegram bot as a proof of concept! 🤖🎉
 
-
----
-
-
-https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
+## Badges
 
 ### Quality
 
@@ -76,7 +70,7 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 ![stars](https://img.shields.io/github/stars/gitsetgopack/MoneyManager?style=plastic&)
 ![downloads](https://img.shields.io/github/downloads/gitsetgopack/MoneyManager/total?style=plastic&)
 
-#### Tools & Technologies
+### Tools & Technologies
 
 [![Python](https://img.shields.io/badge/python%203.12-3670A0?logo=python&logoColor=ffdd54)](https://www.python.org/downloads/release/python-3121/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
@@ -91,9 +85,13 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 [![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
 <!-- [![Zoom](https://img.shields.io/badge/Zoom-2D8CFF?logo=zoom&logoColor=white)](https://www.zoom.com/) -->
 
+
 ---
 
 ## User Friendly
+
+
+https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 
 - **Expense Tracking**: Add, update, and delete expenses. Track expenses by category, date, and account.
 - **Authentication**: Secure access to your data using token-based authentication.
@@ -157,43 +155,16 @@ These instructions guide you through setting up the bot's communication and runn
 
 ### Testing
 
-This project uses pytest to test all functionalities of the bot:
+This project uses pytest to test all core functionalities:
 
 Run the following command from the project's root directory to execute all unit tests:
   ```bash
-  python -m pytest test/
+  make test
   ```
-Currently, the project includes 100+ tests covering all bot functions.
+Currently, the project includes 150+ tests covering all core functionality.
 
 <img width="677" alt="image" src="https://github.com/user-attachments/assets/03d6d77f-7494-424e-bda6-0518ac79b124">
 
-### Code Coverage
-
-Code coverage is assessed as part of each build. Every time new code is pushed, a build runs, and code coverage is computed.
-
-To check code coverage locally:
-  ```bash
-  coverage run -m pytest test/
-  coverage report
-  ```
-
-## Configuration
-
-For **users**, no additional configuration is required—just start using MoneyManager!
-
-For **contributors**, we’ve designed the system to be as modular as possible, so that updates to one module won’t impact others. However, there are a few configurable parameters available to help tailor and extend the system:
-
-- Adding and removing categories
-- Adjusting graphing options
-- Modifying the Telegram bot name, etc.
-
-## Troubleshooting
-
-- **Ensure you have a valid bot token**: You can generate a token by creating a new bot via Telegram’s BotFather.
-- **Verify token placement**: Double-check that the token is correctly added to your bot’s code or configuration.
-- **Check bot permissions**: Confirm that your bot has the necessary permissions for the intended actions.
-
-Alternatively, you’re welcome to submit a bug report in our repository. Make sure to follow the steps outlined in [CONTRIBUTING.md](CONTRIBUTING.md) for reporting issues.
 
 ## 🚀 Future Enhancements
 
@@ -215,12 +186,11 @@ By contributing to MoneyManager, you agree that your contributions will fall und
 
 ## 🤝 Contributors
 
-Listed alphabetically:
 
 - **Abhishek Rao** ([arao23@ncsu.edu](mailto:arao23@ncsu.edu))
-- **Astha Bhalodiya** ([abhalod@ncsu.edu](mailto:abhalod@ncsu.edu))
 - **Umang Diyora** ([udiyora@ncsu.edu](mailto:udiyora@ncsu.edu))
 
+- **Astha Bhalodiya** ([abhalod@ncsu.edu](mailto:abhalod@ncsu.edu))
 ## Code of Conduct
 
 Please note that we have a [Code of Conduct](CODE_OF_CONDUCT.md) that all contributors are expected to uphold. This ensures that our community remains welcoming and inclusive for everyone.
