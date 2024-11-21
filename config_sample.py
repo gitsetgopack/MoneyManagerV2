@@ -17,3 +17,5 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", None)
 TELEGRAM_BOT_API_BASE_URL = os.getenv(
     "TELEGRAM_BOT_API_BASE_URL", "http://localhost:9999"
 )
+
+TIME_ZONE = os.getenv("TIME_ZONE", "America/New_York")

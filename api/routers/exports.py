@@ -20,9 +20,12 @@ from reportlab.platypus import (  # type: ignore
     TableStyle,
 )
 from reportlab.platypus.tables import CellStyle  # type: ignore
+from reportlab.lib.units import inch  # type: ignore
+from datetime import datetime
+from pytz import timezone  # type: ignore
 
 from api.utils.auth import verify_token
-from config import MONGO_URI
+from config import MONGO_URI, TIME_ZONE
 
 router = APIRouter(prefix="/exports", tags=["Export"])
 
@@ -334,7 +337,16 @@ async def data_to_pdf(token: str = Header(None)) -> Response:
     )
     elements.append(categories_table)
 
-    doc.build(elements)
+    # Footer with date of export and "Money Manager V2"
+    def footer(canvas, doc):
+        canvas.saveState()
+        tz = timezone(TIME_ZONE)
+        footer_text = f"Money Manager V2 - Exported on {datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')}"
+        canvas.setFont('Helvetica', 9)
+        canvas.drawString(inch, 0.75 * inch, footer_text)
+        canvas.restoreState()
+
+    doc.build(elements, onFirstPage=footer, onLaterPages=footer)
     buffer.seek(0)
 
     response = Response(content=buffer.getvalue(), media_type="application/pdf")
