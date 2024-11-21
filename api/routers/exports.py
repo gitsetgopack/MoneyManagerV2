@@ -44,6 +44,7 @@ users_collection = db.users
 
 class ExportType(str, Enum):
     """Enum for export types."""
+
     EXPENSES = "expenses"
     ACCOUNTS = "accounts"
     CATEGORIES = "categories"
@@ -79,6 +80,7 @@ async def fetch_data(
 
     return expenses, accounts, user
 
+
 def write_expenses_to_sheet(sheet: Worksheet, expenses: list):
     """Write expenses data to the given worksheet."""
     sheet.append(
@@ -97,6 +99,7 @@ def write_expenses_to_sheet(sheet: Worksheet, expenses: list):
             ]
         )
 
+
 def write_accounts_to_sheet(sheet: Worksheet, accounts: list):
     """Write accounts data to the given worksheet."""
     sheet.append(["name", "balance", "currency", "_id"])
@@ -110,11 +113,13 @@ def write_accounts_to_sheet(sheet: Worksheet, accounts: list):
             ]
         )
 
+
 def write_categories_to_sheet(sheet: Worksheet, categories: dict):
     """Write categories data to the given worksheet."""
     sheet.append(["name", "monthly_budget"])
     for category_name, category_data in categories.items():
         sheet.append([category_name, category_data["monthly_budget"]])
+
 
 @router.get("/xlsx")
 async def data_to_xlsx(
@@ -166,15 +171,18 @@ async def data_to_xlsx(
     response.headers["Content-Disposition"] = "attachment; filename=data.xlsx"
     return response
 
+
 def create_paragraph(text: str, style: ParagraphStyle) -> Paragraph:
     """Create a paragraph with the given text and style."""
     return Paragraph(text, style)
+
 
 def create_table(data: list, col_widths: list, styles: TableStyle) -> Table:
     """Create a table with the given data, column widths, and styles."""
     table = Table(data, colWidths=col_widths)
     table.setStyle(styles)
     return table
+
 
 @router.get("/csv")
 async def data_to_csv(
@@ -317,14 +325,18 @@ async def data_to_pdf(
     """
     elements.append(create_paragraph(app_description, centered_style))
     elements.append(Spacer(1, 18))
-    elements.append(create_paragraph(f"PDF Report for - {user['username']}", styles["Title"]))
+    elements.append(
+        create_paragraph(f"PDF Report for - {user['username']}", styles["Title"])
+    )
     elements.append(Spacer(1, 36))
 
     # Table of Contents
     toc = [
         create_paragraph("<link href='#expenses'>1. Expenses</link>", styles["Normal"]),
         create_paragraph("<link href='#accounts'>2. Accounts</link>", styles["Normal"]),
-        create_paragraph("<link href='#categories'>3. Categories</link>", styles["Normal"]),
+        create_paragraph(
+            "<link href='#categories'>3. Categories</link>", styles["Normal"]
+        ),
     ]
     elements.append(create_paragraph("Table of Contents", styles["Title"]))
     elements.append(Spacer(1, 12))
@@ -373,7 +385,8 @@ async def data_to_pdf(
             ]
         )
     expenses_table = create_table(
-        wrap_text(expenses_data), [60, 60, 60, 60, 120, 80, 80],
+        wrap_text(expenses_data),
+        [60, 60, 60, 60, 120, 80, 80],
         TableStyle(
             [
                 ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
@@ -384,7 +397,7 @@ async def data_to_pdf(
                 ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
                 ("GRID", (0, 0), (-1, -1), 1, colors.black),
             ]
-        )
+        ),
     )
     elements.append(expenses_table)
     elements.append(PageBreak())
@@ -403,7 +416,8 @@ async def data_to_pdf(
             ]
         )
     accounts_table = create_table(
-        wrap_text(accounts_data), [100, 100, 100, 100],
+        wrap_text(accounts_data),
+        [100, 100, 100, 100],
         TableStyle(
             [
                 ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
@@ -414,20 +428,23 @@ async def data_to_pdf(
                 ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
                 ("GRID", (0, 0), (-1, -1), 1, colors.black),
             ]
-        )
+        ),
     )
     elements.append(accounts_table)
     elements.append(PageBreak())
 
     # Categories
-    elements.append(create_paragraph("<a name='categories'/>Categories", styles["Title"]))
+    elements.append(
+        create_paragraph("<a name='categories'/>Categories", styles["Title"])
+    )
     elements.append(Spacer(1, 12))
     categories_data = [["Name", "Monthly Budget"]]
     if user and "categories" in user:
         for category_name, category_data in user["categories"].items():
             categories_data.append([category_name, category_data["monthly_budget"]])
     categories_table = create_table(
-        wrap_text(categories_data), [200, 200],
+        wrap_text(categories_data),
+        [200, 200],
         TableStyle(
             [
                 ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
@@ -438,7 +455,7 @@ async def data_to_pdf(
                 ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
                 ("GRID", (0, 0), (-1, -1), 1, colors.black),
             ]
-        )
+        ),
     )
     elements.append(categories_table)
 
