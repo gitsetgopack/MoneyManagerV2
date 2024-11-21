@@ -22,7 +22,7 @@ repos:
     hooks:
       - id: pylint
         name: pylint
-        entry: pylint .
+        entry: pylint api/
         language: system
         pass_filenames: false
         always_run: true

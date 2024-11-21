@@ -7,7 +7,7 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 
 from api.app import app
-from config import TOKEN_ALGORITHM, TOKEN_SECRET_KEY
+from config.config import TOKEN_ALGORITHM, TOKEN_SECRET_KEY
 
 
 @pytest.mark.anyio

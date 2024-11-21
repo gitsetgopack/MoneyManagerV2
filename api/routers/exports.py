@@ -27,7 +27,7 @@ from reportlab.platypus import (  # type: ignore
 from reportlab.platypus.tables import CellStyle  # type: ignore
 
 from api.utils.auth import verify_token
-from config import MONGO_URI, TIME_ZONE
+from config.config import MONGO_URI, TIME_ZONE
 
 router = APIRouter(prefix="/exports", tags=["Exports"])
 

@@ -12,7 +12,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 
 from api.utils.auth import verify_token
-from config import MONGO_URI
+from config.config import MONGO_URI
 
 currency_converter = CurrencyConverter()
 
