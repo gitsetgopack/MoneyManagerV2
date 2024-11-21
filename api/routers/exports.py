@@ -1,30 +1,30 @@
 import csv
+import datetime
 import os
 from enum import Enum
 from io import BytesIO, StringIO
 from typing import Any, Dict, List, Optional
 
 from bson import ObjectId
-from fastapi import APIRouter, Header, HTTPException, Query, Response, Depends
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Response
 from motor.motor_asyncio import AsyncIOMotorClient
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
+from pytz import timezone  # type: ignore
 from reportlab.lib import colors  # type: ignore
 from reportlab.lib.pagesizes import letter  # type: ignore
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle  # type: ignore
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet  # type: ignore
+from reportlab.lib.units import inch  # type: ignore
 from reportlab.platypus import (  # type: ignore
+    Image,
     PageBreak,
     Paragraph,
     SimpleDocTemplate,
     Spacer,
     Table,
     TableStyle,
-    Image
 )
 from reportlab.platypus.tables import CellStyle  # type: ignore
-from reportlab.lib.units import inch  # type: ignore
-import datetime
-from pytz import timezone  # type: ignore
 
 from api.utils.auth import verify_token
 from config import MONGO_URI, TIME_ZONE
@@ -46,11 +46,18 @@ class ExportType(str, Enum):
 
 
 # Utility function to fetch data
-async def fetch_data(user_id: str, from_date: Optional[datetime.date], to_date: Optional[datetime.date]):
+async def fetch_data(
+    user_id: str, from_date: Optional[datetime.date], to_date: Optional[datetime.date]
+):
     if from_date and to_date and from_date > to_date:
-        raise HTTPException(status_code=422, detail="Invalid date range: 'from_date' must be before 'to_date'")
+        raise HTTPException(
+            status_code=422,
+            detail="Invalid date range: 'from_date' must be before 'to_date'",
+        )
 
-    from_dt = datetime.datetime.combine(from_date, datetime.time.min) if from_date else None
+    from_dt = (
+        datetime.datetime.combine(from_date, datetime.time.min) if from_date else None
+    )
     to_dt = datetime.datetime.combine(to_date, datetime.time.max) if to_date else None
 
     query = {"user_id": user_id}
@@ -67,11 +74,12 @@ async def fetch_data(user_id: str, from_date: Optional[datetime.date], to_date: 
 
     return expenses, accounts, user
 
+
 @router.get("/xlsx")
 async def data_to_xlsx(
     token: str = Header(None),
     from_date: Optional[datetime.date] = Query(None),
-    to_date: Optional[datetime.date] = Query(None)
+    to_date: Optional[datetime.date] = Query(None),
 ) -> Response:
     """
     Export all expenses, accounts, and categories for a user to an XLSX file.
@@ -159,7 +167,7 @@ async def data_to_csv(
     token: str = Header(None),
     export_type: ExportType = Query(...),
     from_date: Optional[datetime.date] = Query(None),
-    to_date: Optional[datetime.date] = Query(None)
+    to_date: Optional[datetime.date] = Query(None),
 ) -> Response:
     """
     Export expenses, accounts, or categories for a user to a CSV file.
@@ -233,7 +241,7 @@ async def data_to_csv(
 async def data_to_pdf(
     token: str = Header(None),
     from_date: Optional[datetime.date] = Query(None),
-    to_date: Optional[datetime.date] = Query(None)
+    to_date: Optional[datetime.date] = Query(None),
 ) -> Response:
     """
     Export all expenses, accounts, and categories for a user to a PDF file within a date range.
@@ -253,7 +261,12 @@ async def data_to_pdf(
         raise HTTPException(status_code=404, detail="No data found")
 
     buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter, title=f"MM PDF Export - {user['username']}", lang='en-gb')
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter,
+        title=f"MM PDF Export - {user['username']}",
+        lang="en-gb",
+    )
     styles = getSampleStyleSheet()
     elements = []
 
@@ -275,14 +288,16 @@ async def data_to_pdf(
     # Add heading, logo, application description, and TOC on the first page
     elements.append(Paragraph("MONEY MANAGER", title_style))
     elements.append(Spacer(1, 12))
-    logo_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../docs/logo/logo.png"))
+    logo_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "../../docs/logo/logo.png")
+    )
     logo = Image(logo_path)
     logo.drawHeight = 3.0 * inch * logo.drawHeight / logo.drawWidth
     logo.drawWidth = 3.0 * inch
     elements.append(logo)
     elements.append(Spacer(1, 18))
     app_description = """
-    <b>Money Manager</b> is a comprehensive financial management tool designed to help you track your expenses, manage your accounts, and set budgets for various categories. 
+    <b>Money Manager</b> is a comprehensive financial management tool designed to help you track your expenses, manage your accounts, and set budgets for various categories.
     With our application, you can easily export your financial data in various formats including XLSX, CSV, and PDF.
     """
     elements.append(Paragraph(app_description, centered_style))
@@ -419,7 +434,7 @@ async def data_to_pdf(
         canvas.saveState()
         tz = timezone(TIME_ZONE)
         footer_text = f"Money Manager V2 - Exported on {datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')}"
-        canvas.setFont('Helvetica', 9)
+        canvas.setFont("Helvetica", 9)
         canvas.drawString(inch, 0.75 * inch, footer_text)
         canvas.drawRightString(7.5 * inch, 0.75 * inch, f"Page {doc.page}")
         canvas.restoreState()

@@ -1,7 +1,9 @@
-import pytest, datetime
-from httpx import AsyncClient
+import datetime
 from unittest.mock import patch
+
+import pytest
 from bson import ObjectId  # Import ObjectId
+from httpx import AsyncClient
 
 from api.app import app
 
@@ -49,11 +51,16 @@ class TestCategoryCreation:
         )
         assert response.status_code == 422, response.json()
 
-    @patch("api.routers.categories.verify_token", return_value="507f1f77bcf86cd799439011")
-    async def test_create_category_user_not_found(self, mock_verify_token, async_client_auth: AsyncClient, mock_db_user_not_found):
+    @patch(
+        "api.routers.categories.verify_token", return_value="507f1f77bcf86cd799439011"
+    )
+    async def test_create_category_user_not_found(
+        self, mock_verify_token, async_client_auth: AsyncClient, mock_db_user_not_found
+    ):
         # Simulate user not found scenario
         response = await async_client_auth.post(
-            "/categories/", json={"name": "NonExistentUserCategory", "monthly_budget": 100.0}
+            "/categories/",
+            json={"name": "NonExistentUserCategory", "monthly_budget": 100.0},
         )
         assert response.status_code == 404, response.json()
         assert response.json()["detail"] == "User not found"
@@ -165,9 +172,15 @@ class TestCategoryUpdate:
         assert response.status_code == 400, response.json()
         assert response.json()["detail"] == "Monthly budget must be positive"
 
-
-    @patch("api.routers.categories.verify_token", return_value="507f1f77bcf86cd799439011")
-    async def test_update_category_not_found(self, mock_verify_token, async_client_auth: AsyncClient, mock_db_category_not_found):
+    @patch(
+        "api.routers.categories.verify_token", return_value="507f1f77bcf86cd799439011"
+    )
+    async def test_update_category_not_found(
+        self,
+        mock_verify_token,
+        async_client_auth: AsyncClient,
+        mock_db_category_not_found,
+    ):
         # Simulate category not found scenario
         response = await async_client_auth.put(
             "/categories/NonExistentCategory", json={"monthly_budget": 200.0}
@@ -176,9 +189,7 @@ class TestCategoryUpdate:
         assert response.json()["detail"] == "Category not found"
 
     async def test_update_category_missing_budget(self, async_client_auth: AsyncClient):
-        response = await async_client_auth.put(
-            "/categories/Entertainment", json={}
-        )
+        response = await async_client_auth.put("/categories/Entertainment", json={})
         assert response.status_code == 422
 
 
@@ -217,7 +228,6 @@ class TestGetCategories:
         assert response.status_code == 200, response.json()
         assert isinstance(response.json()["categories"], dict)
         assert len(response.json()["categories"]) >= 10
-        
 
 
 @pytest.mark.anyio
@@ -240,8 +250,15 @@ class TestCategoryDeletion:
         response = await async_client_auth.delete("/categories/ENTERTAINMENT")
         assert response.status_code == 404, response.json()
 
-    @patch("api.routers.categories.verify_token", return_value="507f1f77bcf86cd799439011")
-    async def test_delete_category_not_found(self, mock_verify_token, async_client_auth: AsyncClient, mock_db_category_not_found):
+    @patch(
+        "api.routers.categories.verify_token", return_value="507f1f77bcf86cd799439011"
+    )
+    async def test_delete_category_not_found(
+        self,
+        mock_verify_token,
+        async_client_auth: AsyncClient,
+        mock_db_category_not_found,
+    ):
         # Simulate category not found scenario
         response = await async_client_auth.delete("/categories/NonExistentCategory")
         assert response.status_code == 404, response.json()
