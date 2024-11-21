@@ -47,6 +47,9 @@ class ExportType(str, Enum):
 
 # Utility function to fetch data
 async def fetch_data(user_id: str, from_date: Optional[datetime.date], to_date: Optional[datetime.date]):
+    if from_date and to_date and from_date > to_date:
+        raise HTTPException(status_code=422, detail="Invalid date range: 'from_date' must be before 'to_date'")
+
     from_dt = datetime.datetime.combine(from_date, datetime.time.min) if from_date else None
     to_dt = datetime.datetime.combine(to_date, datetime.time.max) if to_date else None
 
