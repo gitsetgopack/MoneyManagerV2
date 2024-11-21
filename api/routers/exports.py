@@ -23,7 +23,7 @@ from reportlab.platypus import (  # type: ignore
 )
 from reportlab.platypus.tables import CellStyle  # type: ignore
 from reportlab.lib.units import inch  # type: ignore
-from datetime import datetime
+import datetime
 from pytz import timezone  # type: ignore
 
 from api.utils.auth import verify_token
@@ -205,18 +205,38 @@ async def data_to_csv(
 
 
 @router.get("/pdf")
-async def data_to_pdf(token: str = Header(None)) -> Response:
+async def data_to_pdf(
+    token: str = Header(None),
+    from_date: Optional[datetime.date] = Query(None),
+    to_date: Optional[datetime.date] = Query(None)
+) -> Response:
     """
-    Export all expenses, accounts, and categories for a user to a PDF file.
+    Export all expenses, accounts, and categories for a user to a PDF file within a date range.
 
     Args:
         token (str): Authentication token.
+        from_date (datetime.date, optional): Start date for filtering expenses (inclusive).
+        to_date (datetime.date, optional): End date for filtering expenses (inclusive).
 
     Returns:
         Response: PDF file containing expenses, accounts, and categories data.
     """
     user_id = await verify_token(token)
-    expenses = await expenses_collection.find({"user_id": user_id}).to_list(1000)
+    
+    # Convert date objects to datetime objects
+    from_dt = datetime.datetime.combine(from_date, datetime.time.min) if from_date else None
+    to_dt = datetime.datetime.combine(to_date, datetime.time.max) if to_date else None
+
+    # Build the query for expenses
+    query = {"user_id": user_id}
+    if from_dt and to_dt:
+        query["date"] = {"$gte": from_dt, "$lte": to_dt}
+    elif from_dt:
+        query["date"] = {"$gte": from_dt}
+    elif to_dt:
+        query["date"] = {"$lte": to_dt}
+
+    expenses = await expenses_collection.find(query).to_list(1000)
     accounts = await accounts_collection.find({"user_id": user_id}).to_list(100)
     user = await users_collection.find_one({"_id": ObjectId(user_id)})
 
@@ -376,7 +396,7 @@ async def data_to_pdf(token: str = Header(None)) -> Response:
     def footer(canvas, doc):
         canvas.saveState()
         tz = timezone(TIME_ZONE)
-        footer_text = f"Money Manager V2 - Exported on {datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')}"
+        footer_text = f"Money Manager V2 - Exported on {datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')}"
         canvas.setFont('Helvetica', 9)
         canvas.drawString(inch, 0.75 * inch, footer_text)
         canvas.drawRightString(7.5 * inch, 0.75 * inch, f"Page {doc.page}")
