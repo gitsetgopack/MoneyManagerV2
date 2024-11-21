@@ -33,6 +33,7 @@ jobs:
 
       - name: Run pre-commit
         run: |
+          cp config_sample.py config.py
           pre-commit run --all-files
 
   update-badges:
