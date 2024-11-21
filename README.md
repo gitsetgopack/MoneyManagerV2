@@ -34,7 +34,8 @@
 
 A REST API application for managing expenses. Build your own automation—be it a Telegram bot 🤖, Discord bot, or your own app 📱!
 
-🚨 Spoiler Alert! 🚨 We have built a Telegram bot as a proof of concept! 🤖🎉
+🚨 Spoiler Alert! 🚨
+> We have built a Telegram bot as a proof of concept! 🎉
 
 ## 🏅 Badges
 
