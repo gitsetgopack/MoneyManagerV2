@@ -3,30 +3,30 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Money Manager](#money-manager)
-  - [Badges](#badges)
-    - [Quality](#quality)
-    - [Standards](#standards)
-    - [Stats](#stats)
-    - [Tools \& Technologies](#tools--technologies)
-  - [User Friendly](#user-friendly)
-  - [Developer Friendly](#developer-friendly)
-  - [Usage](#usage)
-  - [Installation](#installation)
-    - [Pre-requisite Tasks](#pre-requisite-tasks)
-    - [Developer Installation](#developer-installation)
-    - [Testing](#testing)
+- [💰 Money Manager](#-money-manager)
+  - [🏅 Badges](#-badges)
+    - [✅ Quality](#-quality)
+    - [📏 Standards](#-standards)
+    - [📊 Stats](#-stats)
+    - [🛠️ Tools \& Technologies](#️-tools--technologies)
+  - [👥 User Friendly](#-user-friendly)
+  - [👨‍💻 Developer Friendly](#-developer-friendly)
+  - [📈 Usage](#-usage)
+  - [🛠️ Installation](#️-installation)
+    - [📋 Pre-requisite Tasks](#-pre-requisite-tasks)
+    - [🛠️ Developer Installation](#️-developer-installation)
+    - [🧪 Testing](#-testing)
   - [🚀 Future Enhancements](#-future-enhancements)
-  - [Contributing](#contributing)
-  - [LICENSE](#license)
+  - [🤝 Contributing](#-contributing)
+  - [📜 LICENSE](#-license)
   - [🤝 Contributors](#-contributors)
-  - [Code of Conduct](#code-of-conduct)
-  - [Issues or Bug Reports](#issues-or-bug-reports)
+  - [📜 Code of Conduct](#-code-of-conduct)
+  - [🐞 Issues or Bug Reports](#-issues-or-bug-reports)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 </details>
 
-# Money Manager
+# 💰 Money Manager
 <div align="center">
   <img src="docs/logo/logo.png" alt="Project Logo" width="300"/>
   <img src="http://ForTheBadge.com/images/badges/built-with-love.svg">
@@ -37,9 +37,9 @@ A REST API application for managing expenses. Build your own automation—be it 
 
 🚨 Spoiler Alert! 🚨 We have built a Telegram bot as a proof of concept! 🤖🎉
 
-## Badges
+## 🏅 Badges
 
-### Quality
+### ✅ Quality
 
 [![badge_pytest_status](https://img.shields.io/badge/PyTest-passing-brightgreen?style=plastic&logo=pytest&logoColor=white)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
 [![badge_code_coverage](https://img.shields.io/badge/coverage-95%25-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
@@ -49,7 +49,7 @@ A REST API application for managing expenses. Build your own automation—be it 
 [![badge_mypy](https://img.shields.io/badge/mypy-passing-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
 [![badge_bandit](https://img.shields.io/badge/bandit-passing-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
 
-### Standards
+### 📏 Standards
 
 ![black](https://img.shields.io/badge/code%20style-black-black?style=plastic&)
 ![license](https://img.shields.io/github/license/gitsetgopack/MoneyManager?style=plastic&)
@@ -57,7 +57,7 @@ A REST API application for managing expenses. Build your own automation—be it 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14027400.svg)](https://doi.org/10.5281/zenodo.14027400)
 
 
-### Stats
+### 📊 Stats
 
 ![pr_open](https://img.shields.io/github/issues-pr/gitsetgopack/MoneyManager?style=plastic&)
 ![pr_close](https://img.shields.io/github/issues-pr-closed/gitsetgopack/MoneyManager?style=plastic&)
@@ -70,7 +70,7 @@ A REST API application for managing expenses. Build your own automation—be it 
 ![stars](https://img.shields.io/github/stars/gitsetgopack/MoneyManager?style=plastic&)
 ![downloads](https://img.shields.io/github/downloads/gitsetgopack/MoneyManager/total?style=plastic&)
 
-### Tools & Technologies
+### 🛠️ Tools & Technologies
 
 [![Python](https://img.shields.io/badge/python%203.12-3670A0?logo=python&logoColor=ffdd54)](https://www.python.org/downloads/release/python-3121/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
@@ -88,7 +88,7 @@ A REST API application for managing expenses. Build your own automation—be it 
 
 ---
 
-## User Friendly
+## 👥 User Friendly
 
 
 https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
@@ -102,21 +102,21 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 - **Multiple Accounts**: Manage multiple accounts like spending and saving.
 - **Testing Suite**: Comprehensive tests to ensure stability and reliability across key functionality.
 
-## Developer Friendly
+## 👨‍💻 Developer Friendly
 
 - **Modular Configuration**: Simplify setup with a sample_config.py file that supports environment variables for secure, customizable settings like database URIs, API ports, and bot tokens—just rename and update, or export values directly from your environment!
 - **Stable Release(master) Branch**: We have Pre-commit running as github workflows which allows only the tested, formatted, linted, checked, code to push to the release branches
 - **Comprehensive Test Suite**: With over 150 testcases in unit test suite, developer can easily extend and follow Test Driven Developement.
 - **>95% Code coverage**: Well, almost all the lines of the code is covered in the unit test suite. Extend without worrying about what'll break the current functionality.
 
-## Usage
+## 📈 Usage
 
 MoneyManager allows you to take control of your personal finances, providing insights into where your money goes and helping you make informed financial decisions. Whether you're looking to monitor daily spending or analyze broader trends, MoneyManager has the tools you need to stay on top of your finances.
 
 
-## Installation
+## 🛠️ Installation
 
-### Pre-requisite Tasks
+### 📋 Pre-requisite Tasks
 
 To get started, you'll need to create a Telegram bot through BotFather:
 
@@ -129,7 +129,7 @@ To get started, you'll need to create a Telegram bot through BotFather:
 - Receive your token: Once you set the details, BotFather will provide you with a unique access token, which is crucial for coding your bot's functionality.
 
 
-### Developer Installation
+### 🛠️ Developer Installation
 
 These instructions guide you through setting up the bot's communication and running it:
 
@@ -141,7 +141,7 @@ These instructions guide you through setting up the bot's communication and runn
 3. Rename the `sample_config.py` to `config.py`
 4. Fill in the configurations, such as Mongo DB URL `MONGO_URI`, previosuly created telegram token `TELEGRAM_BOT_TOKEN`, and many more knobs.
 
-### Testing
+### 🧪 Testing
 
 This project uses pytest and mongodb (docker) to test all core functionalities:
 
@@ -164,11 +164,11 @@ Currently, the project includes 150+ tests covering all core functionality.
   - CSV import/export support for easy data handling.
   - Group expense tracking with features like bill splitting, real-time updates, and integrated payment options.
 
-## Contributing
+## 🤝 Contributing
 
 Thank you for your interest in contributing to MoneyManager! Your contributions are greatly appreciated, and this guide will help you get started. For full details on contributing, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file, which provides comprehensive instructions and guidelines.
 
-## LICENSE
+## 📜 LICENSE
 
 By contributing to MoneyManager, you agree that your contributions will fall under the project’s open-source license. Please take a moment to review and understand the licensing terms before contributing. The specific license details can be found in the [LICENSE](LICENSE) file.
 
@@ -178,11 +178,11 @@ By contributing to MoneyManager, you agree that your contributions will fall und
 - **Umang Diyora** ([udiyora@ncsu.edu](mailto:udiyora@ncsu.edu))
 
 - **Astha Bhalodiya** ([abhalod@ncsu.edu](mailto:abhalod@ncsu.edu))
-## Code of Conduct
+## 📜 Code of Conduct
 
 Please note that we have a [Code of Conduct](CODE_OF_CONDUCT.md) that all contributors are expected to uphold. This ensures that our community remains welcoming and inclusive for everyone.
 
-## Issues or Bug Reports
+## 🐞 Issues or Bug Reports
 ![discord](https://img.shields.io/badge/Discord-%235865F2.svg?&logo=discord&logoColor=white&link=https%3A%2F%2Fdiscord.gg%2FwCHuTY5B22)
 * You can join the discord chat using this invite link for quicker response
 * But, you are also allowed to open an bug issue
