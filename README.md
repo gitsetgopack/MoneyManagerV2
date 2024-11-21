@@ -1,17 +1,16 @@
+
+<details><summary><b>Table of Contents<b></summary>
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Money Manager](#money-manager)
-  - [Project Overview](#project-overview)
     - [Quality](#quality)
     - [Standards](#standards)
     - [Stats](#stats)
+      - [Tools \& Technologies](#tools--technologies)
   - [User Friendly](#user-friendly)
   - [Developer Friendly](#developer-friendly)
   - [Usage](#usage)
-  - [Tech Stack](#tech-stack)
-  - [Tools](#tools)
   - [Installation](#installation)
     - [Pre-requisite Tasks](#pre-requisite-tasks)
     - [Actual Installation](#actual-installation)
@@ -24,12 +23,15 @@
   - [LICENSE](#license)
   - [🤝 Contributors](#-contributors)
   - [Code of Conduct](#code-of-conduct)
+  - [Issues or Bug Reports](#issues-or-bug-reports)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+</details>
 
 # Money Manager
 <div align="center">
   <img src="docs/logo/logo.png" alt="Project Logo" width="300"/>
+  <img src="http://ForTheBadge.com/images/badges/built-with-love.svg">
 </div>
 
 
@@ -37,16 +39,9 @@ A REST API application for managing expenses. Build your own automation—be it 
 
 🚨 Spoiler Alert! 🚨 We have built a Telegram bot as a proof of concept! 🤖🎉
 
-<div align="center">
-  <img src="http://ForTheBadge.com/images/badges/built-with-love.svg" alt="built_with_love"/>
-</div>
-
-
-
 
 ---
 
-## Project Overview
 
 https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 
@@ -90,10 +85,11 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 [![GitHub](https://img.shields.io/badge/github-%23121011.svg?logo=github&logoColor=white)](https://github.com/)
 [![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?logo=githubactions&logoColor=white)](https://github.com/features/actions)
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](https://www.linux.org/)
-[![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
-[![Zoom](https://img.shields.io/badge/Zoom-2D8CFF?logo=zoom&logoColor=white)](https://www.zoom.com/)
-[![DigitalOcean](https://img.shields.io/badge/DigitalOcean-%230167ff.svg?logo=digitalOcean&logoColor=white)]([#](https://www.digitalocean.com/))
+[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?logo=telegram&logoColor=white)](https://telegram.org/)
+[![DigitalOcean](https://img.shields.io/badge/DigitalOcean-%230167ff.svg?logo=digitalOcean&logoColor=white)](https://www.digitalocean.com/)
 [![ChatGPT](https://img.shields.io/badge/ChatGPT-74aa9c?logo=openai&logoColor=white)](https://chatgpt.com/)
+[![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
+<!-- [![Zoom](https://img.shields.io/badge/Zoom-2D8CFF?logo=zoom&logoColor=white)](https://www.zoom.com/) -->
 
 ---
 
@@ -113,27 +109,12 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 - **Modular Configuration**: Simplify setup with a sample_config.py file that supports environment variables for secure, customizable settings like database URIs, API ports, and bot tokens—just rename and update, or export values directly from your environment!
 - **Stable Release(master) Branch**: We have Pre-commit running as github workflows which allows only the tested, formatted, linted, checked, code to push to the release branches
 
-
+https://discord.gg/wCHuTY5B22
 ## Usage
 
 MoneyManager allows you to take control of your personal finances, providing insights into where your money goes and helping you make informed financial decisions. Whether you're looking to monitor daily spending or analyze broader trends, MoneyManager has the tools you need to stay on top of your finances.
 
-## Tech Stack
 
-- [![Python](https://img.shields.io/badge/Language-Python%203-blue)](https://www.python.org/)
-  - The entire application, from managing dependencies to testing, is built using Python 3.
-
-## Tools
-
-- [![Git](https://img.shields.io/badge/Tool-Git-orange)](https://git-scm.com/)
-- [![GitHub](https://img.shields.io/badge/Tool-GitHub-lightgrey)](https://github.com/)
-- [![GitHub Actions](https://img.shields.io/badge/CI/CD-GitHub%20Actions-blue)](https://github.com/features/actions)
-- [![MongoDB](https://img.shields.io/badge/Database-MongoDB-green)](https://www.mongodb.com/)
-- [![REST API](https://img.shields.io/badge/API-REST-red)](https://restfulapi.net/)
-- [![Docker](https://img.shields.io/badge/Containerization-Docker-blue)](https://www.docker.com/)
-- [![Telegram](https://img.shields.io/badge/Messaging-Telegram-blue)](https://telegram.org/) - Used as a proof of concept (POC) for messaging integration.
-
-Each tool is an essential part of the development and deployment process, enhancing functionality, reliability, and ease of collaboration.
 
 ## Installation
 
@@ -243,6 +224,13 @@ Listed alphabetically:
 ## Code of Conduct
 
 Please note that we have a [Code of Conduct](CODE_OF_CONDUCT.md) that all contributors are expected to uphold. This ensures that our community remains welcoming and inclusive for everyone.
+
+## Issues or Bug Reports
+![discord](https://img.shields.io/badge/Discord-%235865F2.svg?&logo=discord&logoColor=white&link=https%3A%2F%2Fdiscord.gg%2FwCHuTY5B22)
+* You can join the discord chat using this invite link for quicker response
+* But, you are also allowed to open an bug issue
+
+
 
 ---
 
