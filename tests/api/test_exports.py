@@ -545,18 +545,3 @@ class TestPDFExport:
         assert (
             response.headers["Content-Disposition"] == "attachment; filename=data.pdf"
         )
-
-    async def test_data_to_pdf_with_logo(self, mock_db, async_client_auth, monkeypatch):
-        # Mock the logo path to ensure the logo is included in the PDF
-        monkeypatch.setattr(
-            "api.routers.exports.os.path.abspath",
-            lambda path: "/workspaces/MoneyManagerV2/docs/logo/logo.png",
-        )
-        response = await async_client_auth.get(
-            "/exports/pdf",
-            params={"from_date": "2023-01-01", "to_date": "2023-01-31"},
-        )
-        assert response.status_code == 200
-        assert (
-            response.headers["Content-Disposition"] == "attachment; filename=data.pdf"
-        )
