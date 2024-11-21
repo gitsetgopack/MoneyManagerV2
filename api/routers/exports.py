@@ -1,4 +1,5 @@
 import csv
+import os
 from enum import Enum
 from io import BytesIO, StringIO
 from typing import Any, Dict, List, Optional
@@ -10,7 +11,7 @@ from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from reportlab.lib import colors  # type: ignore
 from reportlab.lib.pagesizes import letter  # type: ignore
-from reportlab.lib.styles import getSampleStyleSheet  # type: ignore
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle  # type: ignore
 from reportlab.platypus import (  # type: ignore
     PageBreak,
     Paragraph,
@@ -18,6 +19,7 @@ from reportlab.platypus import (  # type: ignore
     Spacer,
     Table,
     TableStyle,
+    Image
 )
 from reportlab.platypus.tables import CellStyle  # type: ignore
 from reportlab.lib.units import inch  # type: ignore
@@ -226,6 +228,39 @@ async def data_to_pdf(token: str = Header(None)) -> Response:
     styles = getSampleStyleSheet()
     elements = []
 
+    # Define a custom style for the title
+    title_style = ParagraphStyle(
+        name="Title",
+        parent=styles["Title"],
+        fontSize=32,  # Increase font size
+        spaceAfter=12,
+    )
+
+    # Define a custom style for the centered description
+    centered_style = ParagraphStyle(
+        name="Centered",
+        parent=styles["Normal"],
+        alignment=1,  # Center alignment
+    )
+
+    # Add heading, logo, application description, and TOC on the first page
+    elements.append(Paragraph("MONEY MANAGER", title_style))
+    elements.append(Spacer(1, 12))
+    logo_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../docs/logo/logo.png"))
+    logo = Image(logo_path)
+    logo.drawHeight = 3.0 * inch * logo.drawHeight / logo.drawWidth
+    logo.drawWidth = 3.0 * inch
+    elements.append(logo)
+    elements.append(Spacer(1, 18))
+    app_description = """
+    <b>Money Manager</b> is a comprehensive financial management tool designed to help you track your expenses, manage your accounts, and set budgets for various categories. 
+    With our application, you can easily export your financial data in various formats including XLSX, CSV, and PDF.
+    """
+    elements.append(Paragraph(app_description, centered_style))
+    elements.append(Spacer(1, 18))
+    elements.append(Paragraph(f"PDF Report for - {user['username']}", styles["Title"]))
+    elements.append(Spacer(1, 36))
+
     # Table of Contents
     toc = [
         Paragraph("<link href='#expenses'>1. Expenses</link>", styles["Normal"]),
@@ -337,13 +372,14 @@ async def data_to_pdf(token: str = Header(None)) -> Response:
     )
     elements.append(categories_table)
 
-    # Footer with date of export and "Money Manager V2"
+    # Footer with date of export, "Money Manager V2", and page number
     def footer(canvas, doc):
         canvas.saveState()
         tz = timezone(TIME_ZONE)
         footer_text = f"Money Manager V2 - Exported on {datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')}"
         canvas.setFont('Helvetica', 9)
         canvas.drawString(inch, 0.75 * inch, footer_text)
+        canvas.drawRightString(7.5 * inch, 0.75 * inch, f"Page {doc.page}")
         canvas.restoreState()
 
     doc.build(elements, onFirstPage=footer, onLaterPages=footer)
