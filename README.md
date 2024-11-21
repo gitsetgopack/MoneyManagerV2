@@ -1,4 +1,4 @@
-
+*
 <details><summary><b>Table of Contents<b></summary>
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -14,7 +14,7 @@
   - [Usage](#usage)
   - [Installation](#installation)
     - [Pre-requisite Tasks](#pre-requisite-tasks)
-    - [Actual Installation](#actual-installation)
+    - [Developer Installation](#developer-installation)
     - [Testing](#testing)
   - [🚀 Future Enhancements](#-future-enhancements)
   - [Contributing](#contributing)
@@ -106,12 +106,12 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 
 - **Modular Configuration**: Simplify setup with a sample_config.py file that supports environment variables for secure, customizable settings like database URIs, API ports, and bot tokens—just rename and update, or export values directly from your environment!
 - **Stable Release(master) Branch**: We have Pre-commit running as github workflows which allows only the tested, formatted, linted, checked, code to push to the release branches
+- **Comprehensive Test Suite**: With over 150 testcases in unit test suite, developer can easily extend and follow Test Driven Developement.
+- **>95% Code coverage**: Well, almost all the lines of the code is covered in the unit test suite. Extend without worrying about what'll break the current functionality.
 
-https://discord.gg/wCHuTY5B22
 ## Usage
 
 MoneyManager allows you to take control of your personal finances, providing insights into where your money goes and helping you make informed financial decisions. Whether you're looking to monitor daily spending or analyze broader trends, MoneyManager has the tools you need to stay on top of your finances.
-
 
 
 ## Installation
@@ -120,42 +120,30 @@ MoneyManager allows you to take control of your personal finances, providing ins
 
 To get started, you'll need to create a Telegram bot through BotFather:
 
-1. Open the Telegram app (desktop or mobile), search for "BotFather," and click on "Start."
-2. Send the following command to BotFather:
-```bash
-/newbot
-```
-4. Follow the instructions to:
-- Choose a name for your bot.
-- Select a username ending with "bot" (required by Telegram).
-5. BotFather will confirm your bot's creation and provide an HTTP API access token—save this token for later.
+- Open Telegram: Launch the Telegram app and log in to your account. 
+- Find BotFather: Search for "@BotFather" in the Telegram search bar and start a conversation with it. 
+- Create a new bot: Send the command "/newbot" to BotFather. 
+- Set bot details:
+  - Bot Name: Enter a descriptive name for your bot. 
+  - Bot Username: Choose a unique username, which must end with "bot". 
+- Receive your token: Once you set the details, BotFather will provide you with a unique access token, which is crucial for coding your bot's functionality.
 
-### Actual Installation
+
+### Developer Installation
 
 These instructions guide you through setting up the bot's communication and running it:
 
 1. Clone this repository to your local system.
-2. Open a terminal session in the directory where the project was cloned and install the required dependencies:
+2. From the root of the cloned repository:
   ```bash
-  pip install -r requirements.txt
+  make install
   ```
-3. In the same directory, execute the following bash script to start the Telegram Bot:
-  ```bash
-  ./run.sh
-  ```
-  OR
-  ```bash
-  bash run.sh
-  ```
-4. When prompted, paste the API token you received from BotFather in step 4 of the pre-requisites.
-
-  A successful run will display the message: "TeleBot: Started polling."
-
-5. In the Telegram app, search for your bot using its username, open it, and type /start or /menu to begin using MoneyManager for expense tracking!
+3. Rename the `sample_config.py` to `config.py`
+4. Fill in the configurations, such as Mongo DB URL `MONGO_URI`, previosuly created telegram token `TELEGRAM_BOT_TOKEN`, and many more knobs.
 
 ### Testing
 
-This project uses pytest to test all core functionalities:
+This project uses pytest and mongodb (docker) to test all core functionalities:
 
 Run the following command from the project's root directory to execute all unit tests:
   ```bash
@@ -186,8 +174,7 @@ By contributing to MoneyManager, you agree that your contributions will fall und
 
 ## 🤝 Contributors
 
-
-- **Abhishek Rao** ([arao23@ncsu.edu](mailto:arao23@ncsu.edu))
+- **Abhishek Rao** ([GitHub](https://github.com/abhira0) | [arao23@ncsu.edu](mailto:arao23@ncsu.edu))
 - **Umang Diyora** ([udiyora@ncsu.edu](mailto:udiyora@ncsu.edu))
 
 - **Astha Bhalodiya** ([abhalod@ncsu.edu](mailto:abhalod@ncsu.edu))
@@ -201,7 +188,7 @@ Please note that we have a [Code of Conduct](CODE_OF_CONDUCT.md) that all contri
 * But, you are also allowed to open an bug issue
 
 
-
 ---
 
 Thank you for using MoneyManager! Follow this page to stay updated on new features and improvements.
+*
