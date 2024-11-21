@@ -5,7 +5,7 @@ from io import BytesIO, StringIO
 from typing import Any, Dict, List, Optional
 
 from bson import ObjectId
-from fastapi import APIRouter, Header, HTTPException, Query, Response
+from fastapi import APIRouter, Header, HTTPException, Query, Response, Depends
 from motor.motor_asyncio import AsyncIOMotorClient
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -29,7 +29,7 @@ from pytz import timezone  # type: ignore
 from api.utils.auth import verify_token
 from config import MONGO_URI, TIME_ZONE
 
-router = APIRouter(prefix="/exports", tags=["Export"])
+router = APIRouter(prefix="/exports", tags=["Exports"])
 
 # MongoDB setup
 client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URI)
@@ -45,8 +45,31 @@ class ExportType(str, Enum):
     categories = "categories"
 
 
+# Utility function to fetch data
+async def fetch_data(user_id: str, from_date: Optional[datetime.date], to_date: Optional[datetime.date]):
+    from_dt = datetime.datetime.combine(from_date, datetime.time.min) if from_date else None
+    to_dt = datetime.datetime.combine(to_date, datetime.time.max) if to_date else None
+
+    query = {"user_id": user_id}
+    if from_dt and to_dt:
+        query["date"] = {"$gte": from_dt, "$lte": to_dt}
+    elif from_dt:
+        query["date"] = {"$gte": from_dt}
+    elif to_dt:
+        query["date"] = {"$lte": to_dt}
+
+    expenses = await expenses_collection.find(query).to_list(1000)
+    accounts = await accounts_collection.find({"user_id": user_id}).to_list(100)
+    user = await users_collection.find_one({"_id": ObjectId(user_id)})
+
+    return expenses, accounts, user
+
 @router.get("/xlsx")
-async def data_to_xlsx(token: str = Header(None)) -> Response:
+async def data_to_xlsx(
+    token: str = Header(None),
+    from_date: Optional[datetime.date] = Query(None),
+    to_date: Optional[datetime.date] = Query(None)
+) -> Response:
     """
     Export all expenses, accounts, and categories for a user to an XLSX file.
 
@@ -57,9 +80,7 @@ async def data_to_xlsx(token: str = Header(None)) -> Response:
         Response: XLSX file containing expenses, accounts, and categories data.
     """
     user_id = await verify_token(token)
-    expenses = await expenses_collection.find({"user_id": user_id}).to_list(1000)
-    accounts = await accounts_collection.find({"user_id": user_id}).to_list(100)
-    user = await users_collection.find_one({"_id": ObjectId(user_id)})
+    expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
 
     if not expenses and not accounts and not user:
         raise HTTPException(status_code=404, detail="No data found")
@@ -132,7 +153,10 @@ async def data_to_xlsx(token: str = Header(None)) -> Response:
 
 @router.get("/csv")
 async def data_to_csv(
-    token: str = Header(None), export_type: ExportType = Query(...)
+    token: str = Header(None),
+    export_type: ExportType = Query(...),
+    from_date: Optional[datetime.date] = Query(None),
+    to_date: Optional[datetime.date] = Query(None)
 ) -> Response:
     """
     Export expenses, accounts, or categories for a user to a CSV file.
@@ -145,11 +169,11 @@ async def data_to_csv(
         Response: CSV file containing the selected data.
     """
     user_id = await verify_token(token)
+    expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
     output = StringIO()
     writer = csv.writer(output)
 
     if export_type == ExportType.expenses:
-        expenses = await expenses_collection.find({"user_id": user_id}).to_list(1000)
         if not expenses:
             raise HTTPException(status_code=404, detail="No expenses found")
         writer.writerow(
@@ -176,7 +200,6 @@ async def data_to_csv(
                 ]
             )
     elif export_type == ExportType.accounts:
-        accounts = await accounts_collection.find({"user_id": user_id}).to_list(100)
         if not accounts:
             raise HTTPException(status_code=404, detail="No accounts found")
         writer.writerow(["name", "balance", "currency", "_id"])
@@ -190,7 +213,6 @@ async def data_to_csv(
                 ]
             )
     elif export_type == ExportType.categories:
-        user = await users_collection.find_one({"_id": ObjectId(user_id)})
         if not user or "categories" not in user:
             raise HTTPException(status_code=404, detail="No categories found")
         writer.writerow(["name", "monthly_budget"])
@@ -222,23 +244,7 @@ async def data_to_pdf(
         Response: PDF file containing expenses, accounts, and categories data.
     """
     user_id = await verify_token(token)
-    
-    # Convert date objects to datetime objects
-    from_dt = datetime.datetime.combine(from_date, datetime.time.min) if from_date else None
-    to_dt = datetime.datetime.combine(to_date, datetime.time.max) if to_date else None
-
-    # Build the query for expenses
-    query = {"user_id": user_id}
-    if from_dt and to_dt:
-        query["date"] = {"$gte": from_dt, "$lte": to_dt}
-    elif from_dt:
-        query["date"] = {"$gte": from_dt}
-    elif to_dt:
-        query["date"] = {"$lte": to_dt}
-
-    expenses = await expenses_collection.find(query).to_list(1000)
-    accounts = await accounts_collection.find({"user_id": user_id}).to_list(100)
-    user = await users_collection.find_one({"_id": ObjectId(user_id)})
+    expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
 
     if not expenses and not accounts and not user:
         raise HTTPException(status_code=404, detail="No data found")
