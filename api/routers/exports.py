@@ -305,6 +305,19 @@ async def data_to_pdf(
     # Expenses
     elements.append(Paragraph("<a name='expenses'/>Expenses", styles["Title"]))
     elements.append(Spacer(1, 12))
+    if from_date and to_date:
+        if from_date == to_date:
+            date_range_text = f"Date: {from_date}"
+        else:
+            date_range_text = f"Date Range: {from_date} to {to_date}"
+    elif from_date:
+        date_range_text = f"Date Range: From {from_date}"
+    elif to_date:
+        date_range_text = f"Date Range: To {to_date}"
+    else:
+        date_range_text = "Date Range: All"
+    elements.append(Paragraph(date_range_text, styles["Normal"]))
+    elements.append(Spacer(1, 12))
     expenses_data = [
         ["Date", "Amount", "Currency", "Category", "Description", "Account Name", "ID"]
     ]
