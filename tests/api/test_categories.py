@@ -58,6 +58,18 @@ class TestCategoryCreation:
         assert response.status_code == 404, response.json()
         assert response.json()["detail"] == "User not found"
 
+    async def test_create_category_missing_name(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.post(
+            "/categories/", json={"monthly_budget": 150.0}
+        )
+        assert response.status_code == 422
+
+    async def test_create_category_missing_budget(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.post(
+            "/categories/", json={"name": "Entertainment"}
+        )
+        assert response.status_code == 422
+
 
 @pytest.mark.anyio
 class TestCategoryCases:
@@ -163,6 +175,12 @@ class TestCategoryUpdate:
         assert response.status_code == 404, response.json()
         assert response.json()["detail"] == "Category not found"
 
+    async def test_update_category_missing_budget(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.put(
+            "/categories/Entertainment", json={}
+        )
+        assert response.status_code == 422
+
 
 @pytest.mark.anyio
 class TestGetCategories:
@@ -228,6 +246,10 @@ class TestCategoryDeletion:
         response = await async_client_auth.delete("/categories/NonExistentCategory")
         assert response.status_code == 404, response.json()
         assert response.json()["detail"] == "Category not found"
+
+    async def test_delete_category_invalid_name(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.delete("/categories/invalid_name")
+        assert response.status_code == 404
 
 
 @pytest.mark.anyio
