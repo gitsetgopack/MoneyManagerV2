@@ -304,6 +304,13 @@ class TestXLSXExport:
         assert response.status_code == 200
         assert response.headers["Content-Disposition"] == "attachment; filename=data.xlsx"
 
+    async def test_data_to_xlsx_invalid_date_range(self, mock_db, async_client_auth):
+        response = await async_client_auth.get(
+            "/exports/xlsx",
+            params={"from_date": "2023-01-31", "to_date": "2023-01-01"},
+        )
+        assert response.status_code == 422
+
 @pytest.mark.anyio
 class TestCSVExport:
     async def test_data_to_csv_expenses(self, mock_db, async_client_auth):
@@ -385,6 +392,13 @@ class TestCSVExport:
         )
         assert response.status_code == 404
         assert response.json()["detail"] == "No categories found"
+
+    async def test_data_to_csv_invalid_date_range(self, mock_db, async_client_auth):
+        response = await async_client_auth.get(
+            "/exports/csv",
+            params={"export_type": "expenses", "from_date": "2023-01-31", "to_date": "2023-01-01"},
+        )
+        assert response.status_code == 422
 
 @pytest.mark.anyio
 class TestPDFExport:
