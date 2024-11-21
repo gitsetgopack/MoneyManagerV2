@@ -224,11 +224,14 @@ async def data_to_pdf(token: str = Header(None)) -> Response:
     elements = []
 
     # Table of Contents
+    toc = [
+        Paragraph("<link href='#expenses'>1. Expenses</link>", styles["Normal"]),
+        Paragraph("<link href='#accounts'>2. Accounts</link>", styles["Normal"]),
+        Paragraph("<link href='#categories'>3. Categories</link>", styles["Normal"]),
+    ]
     elements.append(Paragraph("Table of Contents", styles["Title"]))
     elements.append(Spacer(1, 12))
-    elements.append(Paragraph("1. Expenses", styles["Normal"]))
-    elements.append(Paragraph("2. Accounts", styles["Normal"]))
-    elements.append(Paragraph("3. Categories", styles["Normal"]))
+    elements.extend(toc)
     elements.append(PageBreak())
 
     # Helper function to wrap text in table cells
@@ -242,7 +245,7 @@ async def data_to_pdf(token: str = Header(None)) -> Response:
         return wrapped_data
 
     # Expenses
-    elements.append(Paragraph("Expenses", styles["Title"]))
+    elements.append(Paragraph("<a name='expenses'/>Expenses", styles["Title"]))
     elements.append(Spacer(1, 12))
     expenses_data = [
         ["Date", "Amount", "Currency", "Category", "Description", "Account Name", "ID"]
@@ -279,7 +282,7 @@ async def data_to_pdf(token: str = Header(None)) -> Response:
     elements.append(PageBreak())
 
     # Accounts
-    elements.append(Paragraph("Accounts", styles["Title"]))
+    elements.append(Paragraph("<a name='accounts'/>Accounts", styles["Title"]))
     elements.append(Spacer(1, 12))
     accounts_data = [["Name", "Balance", "Currency", "ID"]]
     for account in accounts:
@@ -309,7 +312,7 @@ async def data_to_pdf(token: str = Header(None)) -> Response:
     elements.append(PageBreak())
 
     # Categories
-    elements.append(Paragraph("Categories", styles["Title"]))
+    elements.append(Paragraph("<a name='categories'/>Categories", styles["Title"]))
     elements.append(Spacer(1, 12))
     categories_data = [["Name", "Monthly Budget"]]
     if user and "categories" in user:
