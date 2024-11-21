@@ -219,7 +219,7 @@ async def data_to_pdf(token: str = Header(None)) -> Response:
         raise HTTPException(status_code=404, detail="No data found")
 
     buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    doc = SimpleDocTemplate(buffer, pagesize=letter, title=f"MM PDF Export - {user['username']}", lang='en-gb')
     styles = getSampleStyleSheet()
     elements = []
 
