@@ -216,6 +216,7 @@ class TestUserUpdate:
         assert response.json()["message"] == "User updated successfully"
         assert "updated_user" in response.json()
 
+
 @pytest.mark.anyio
 class TestUserUnauthenticated:
     async def test_login_with_nonexistent_user(self, async_client: AsyncClient):

@@ -216,14 +216,24 @@ class TestExpenseAdd:
     async def test_missing_amount(self, async_client_auth: AsyncClient):
         response = await async_client_auth.post(
             "/expenses/",
-            json={"currency": "USD", "category": "Food", "description": "Grocery shopping", "account_name": "Checking"},
+            json={
+                "currency": "USD",
+                "category": "Food",
+                "description": "Grocery shopping",
+                "account_name": "Checking",
+            },
         )
         assert response.status_code == 422
 
     async def test_missing_currency(self, async_client_auth: AsyncClient):
         response = await async_client_auth.post(
             "/expenses/",
-            json={"amount": 1.0, "category": "Food", "description": "Grocery shopping", "account_name": "Checking"},
+            json={
+                "amount": 1.0,
+                "category": "Food",
+                "description": "Grocery shopping",
+                "account_name": "Checking",
+            },
         )
         assert response.status_code == 422
 
@@ -542,7 +552,13 @@ class TestExpenseUpdate:
         # First, add an expense
         add_response = await async_client_auth.post(
             "/expenses/",
-            json={"amount": 1.0, "currency": "USD", "category": "Transport", "description": "Taxi fare", "account_name": "Checking"},
+            json={
+                "amount": 1.0,
+                "currency": "USD",
+                "category": "Transport",
+                "description": "Taxi fare",
+                "account_name": "Checking",
+            },
         )
         assert add_response.status_code == 200, add_response.json()
         expense_id = add_response.json()["expense"]["_id"]
@@ -608,7 +624,9 @@ class TestExpenseDelete:
         assert response.json()["detail"] == "Account not found"
 
     async def test_delete_expense_invalid_id(self, async_client_auth: AsyncClient):
-        invalid_expense_id = "507f1f77bcf86cd799439011"  # Valid ObjectId format but non-existent
+        invalid_expense_id = (
+            "507f1f77bcf86cd799439011"  # Valid ObjectId format but non-existent
+        )
         response = await async_client_auth.delete(f"/expenses/{invalid_expense_id}")
         assert response.status_code == 404
         assert response.json()["detail"] == "Expense not found"

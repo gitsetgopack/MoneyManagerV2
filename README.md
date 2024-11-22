@@ -7,14 +7,14 @@
     - [✅ Quality](#-quality)
     - [📏 Standards](#-standards)
     - [📊 Stats](#-stats)
-    - [🛠️ Tools \& Technologies](#️-tools--technologies)
+    - [🛠️ Tools & Technologies](#-tools--technologies)
   - [👥 User Friendly](#-user-friendly)
-  - [👨‍💻 Developer Friendly](#-developer-friendly)
+  - [👨‍💻 Developer Friendly](#%E2%80%8D-developer-friendly)
   - [📈 Usage](#-usage)
-  - [🛠️ Installation](#️-installation)
+  - [🛠️ Installation](#-installation)
     - [📋 Pre-requisite Tasks](#-pre-requisite-tasks)
-    - [🛠️ Developer Installation](#️-developer-installation)
-    - [🧪 Testing](#-testing)
+    - [🛠️ Developer Installation](#-developer-installation)
+    - [🧪 Testing](#%F0%9F%A7%AA-testing)
   - [🚀 Future Enhancements](#-future-enhancements)
   - [🤝 Contributing](#-contributing)
   - [📜 LICENSE](#-license)
@@ -106,7 +106,7 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 
 - **Modular Configuration**: Simplify setup with a sample_config.py file that supports environment variables for secure, customizable settings like database URIs, API ports, and bot tokens—just rename and update, or export values directly from your environment!
 - **Stable Release(master) Branch**: We have Pre-commit running as github workflows which allows only the tested, formatted, linted, checked, code to push to the release branches
-- **Comprehensive Test Suite**: With over 150 testcases in unit test suite, developer can easily extend and follow Test Driven Developement.
+- **Comprehensive Test Suite**: With over 150 testcases in unit test suite, developer can easily extend and follow Test Driven Development.
 - **>95% Code coverage**: Well, almost all the lines of the code is covered in the unit test suite. Extend without worrying about what'll break the current functionality.
 
 ## 📈 Usage
@@ -120,12 +120,12 @@ MoneyManager allows you to take control of your personal finances, providing ins
 
 To get started, you'll need to create a Telegram bot through BotFather:
 
-- Open Telegram: Launch the Telegram app and log in to your account. 
-- Find BotFather: Search for "@BotFather" in the Telegram search bar and start a conversation with it. 
-- Create a new bot: Send the command "/newbot" to BotFather. 
+- Open Telegram: Launch the Telegram app and log in to your account.
+- Find BotFather: Search for "@BotFather" in the Telegram search bar and start a conversation with it.
+- Create a new bot: Send the command "/newbot" to BotFather.
 - Set bot details:
-  - Bot Name: Enter a descriptive name for your bot. 
-  - Bot Username: Choose a unique username, which must end with "bot". 
+  - Bot Name: Enter a descriptive name for your bot.
+  - Bot Username: Choose a unique username, which must end with "bot".
 - Receive your token: Once you set the details, BotFather will provide you with a unique access token, which is crucial for coding your bot's functionality.
 
 
@@ -139,7 +139,7 @@ These instructions guide you through setting up the bot's communication and runn
   make install
   ```
 3. Rename the `sample_config.py` to `config.py`
-4. Fill in the configurations, such as Mongo DB URL `MONGO_URI`, previosuly created telegram token `TELEGRAM_BOT_TOKEN`, and many more knobs.
+4. Fill in the configurations, such as Mongo DB URL `MONGO_URI`, previously created telegram token `TELEGRAM_BOT_TOKEN`, and many more knobs.
 
 ### 🧪 Testing
 

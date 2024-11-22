@@ -1,9 +1,9 @@
 import datetime
 from typing import Optional
 
-from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_EXECUTED # type: ignore
+from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_EXECUTED  # type: ignore
 from apscheduler.schedulers.background import BackgroundScheduler  # type: ignore
-from apscheduler.triggers.interval import IntervalTrigger # type: ignore
+from apscheduler.triggers.interval import IntervalTrigger  # type: ignore
 from bson import ObjectId
 from fastapi import APIRouter, BackgroundTasks, Header, HTTPException
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -94,7 +94,7 @@ async def create_recurring_expense(user_id, expense_data, account_name):
 async def add_recurring_expense(
     expense: RecurringExpenseCreate,
     token: str = Header(None),
-    background_tasks: BackgroundTasks = None,
+    background_tasks: Optional[BackgroundTasks] = None,
 ):
     """
     Add a recurring expense that will be triggered periodically based on the start date and frequency.
