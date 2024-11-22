@@ -19,3 +19,4 @@ pandas-stubs
 reportlab
 python-telegram-bot
 requests
+apscheduler>=3.8.0,<4.0.0

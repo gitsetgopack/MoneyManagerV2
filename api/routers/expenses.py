@@ -6,13 +6,13 @@ import datetime
 from typing import Optional
 
 from bson import ObjectId
-from config import MONGO_URI
 from currency_converter import CurrencyConverter  # type: ignore
 from fastapi import APIRouter, Header, HTTPException
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 
 from api.utils.auth import verify_token
+from config import MONGO_URI
 
 currency_converter = CurrencyConverter()
 
