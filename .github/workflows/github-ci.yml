@@ -19,12 +19,19 @@ jobs:
 
       - name: Cache pip
         uses: actions/cache@v3
-        id: cache-pip
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+
+      - name: Cache virtual environment
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v3
@@ -32,8 +39,9 @@ jobs:
           python-version: "3.12"
 
       - name: Install requirements
-        if: steps.cache-pip.outputs.cache-hit != 'true'
         run: |
+          python -m venv .venv
+          source .venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
@@ -44,6 +52,7 @@ jobs:
       - name: Run pre-commit
         run: |
           cp config/config_sample.py config/config.py
+          source .venv/bin/activate
           pre-commit run --all-files || true
 
   update-badges:
@@ -57,12 +66,19 @@ jobs:
 
       - name: Cache pip
         uses: actions/cache@v3
-        id: cache-pip
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+
+      - name: Cache virtual environment
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v3
@@ -73,19 +89,21 @@ jobs:
         run: |
           mkdir tmp
           sudo apt-get install -y libxml2-utils
-          if [ steps.cache-pip.outputs.cache-hit != 'true' ]; then
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
-          fi
+          python -m venv .venv
+          source .venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Format check with black
         run: |
+          source .venv/bin/activate
           echo "BLACK_EXIT_CODE=0" >> $GITHUB_ENV
           black . --check || echo "BLACK_EXIT_CODE=1" >> $GITHUB_ENV
 
       - name: Run pylint
         continue-on-error: true
         run: |
+          source .venv/bin/activate
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
           echo "PYLINT_EXIT_CODE=0" >> $GITHUB_ENV
           pylint api > tmp/pylint_output.txt || echo "PYLINT_EXIT_CODE=$?" >> $GITHUB_ENV
@@ -95,18 +113,21 @@ jobs:
         continue-on-error: true
         run: |
           cp config_sample.py config.py
+          source .venv/bin/activate
           echo "PYTEST_EXIT_CODE=0" >> $GITHUB_ENV
           pytest --cov-report=json:tmp/coverage.json --junitxml=tmp/pytest_output.xml || echo "PYTEST_EXIT_CODE=$?" >> $GITHUB_ENV
 
       - name: Run MyPy
         continue-on-error: true
         run: |
+          source .venv/bin/activate
           echo "MYPY_EXIT_CODE=0" >> $GITHUB_ENV
           mypy api || echo "MYPY_EXIT_CODE=1" >> $GITHUB_ENV
 
       - name: Run Bandit
         continue-on-error: true
         run: |
+          source .venv/bin/activate
           echo "BANDIT_EXIT_CODE=0" >> $GITHUB_ENV
           bandit -r api || echo "BANDIT_EXIT_CODE=1" >> $GITHUB_ENV
 
