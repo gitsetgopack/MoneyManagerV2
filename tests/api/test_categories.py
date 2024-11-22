@@ -1,7 +1,27 @@
-import pytest
+import pytest, datetime
 from httpx import AsyncClient
+from unittest.mock import patch
+from bson import ObjectId  # Import ObjectId
 
 from api.app import app
+
+
+@pytest.fixture
+def mock_db_user_not_found(monkeypatch):
+    class MockCollection:
+        async def find_one(self, query):
+            return None
+
+    monkeypatch.setattr("api.routers.categories.users_collection", MockCollection())
+
+
+@pytest.fixture
+def mock_db_category_not_found(monkeypatch):
+    class MockCollection:
+        async def find_one(self, query):
+            return {"_id": ObjectId("507f1f77bcf86cd799439011")}
+
+    monkeypatch.setattr("api.routers.categories.users_collection", MockCollection())
 
 
 @pytest.mark.anyio
@@ -28,6 +48,27 @@ class TestCategoryCreation:
             "/categories/", json={"name": "InvalidCategory"}
         )
         assert response.status_code == 422, response.json()
+
+    @patch("api.routers.categories.verify_token", return_value="507f1f77bcf86cd799439011")
+    async def test_create_category_user_not_found(self, mock_verify_token, async_client_auth: AsyncClient, mock_db_user_not_found):
+        # Simulate user not found scenario
+        response = await async_client_auth.post(
+            "/categories/", json={"name": "NonExistentUserCategory", "monthly_budget": 100.0}
+        )
+        assert response.status_code == 404, response.json()
+        assert response.json()["detail"] == "User not found"
+
+    async def test_create_category_missing_name(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.post(
+            "/categories/", json={"monthly_budget": 150.0}
+        )
+        assert response.status_code == 422
+
+    async def test_create_category_missing_budget(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.post(
+            "/categories/", json={"name": "Entertainment"}
+        )
+        assert response.status_code == 422
 
 
 @pytest.mark.anyio
@@ -125,6 +166,22 @@ class TestCategoryUpdate:
         assert response.json()["detail"] == "Monthly budget must be positive"
 
 
+    @patch("api.routers.categories.verify_token", return_value="507f1f77bcf86cd799439011")
+    async def test_update_category_not_found(self, mock_verify_token, async_client_auth: AsyncClient, mock_db_category_not_found):
+        # Simulate category not found scenario
+        response = await async_client_auth.put(
+            "/categories/NonExistentCategory", json={"monthly_budget": 200.0}
+        )
+        assert response.status_code == 404, response.json()
+        assert response.json()["detail"] == "Category not found"
+
+    async def test_update_category_missing_budget(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.put(
+            "/categories/Entertainment", json={}
+        )
+        assert response.status_code == 422
+
+
 @pytest.mark.anyio
 class TestGetCategories:
     async def test_get_all_categories(self, async_client_auth: AsyncClient):
@@ -160,6 +217,7 @@ class TestGetCategories:
         assert response.status_code == 200, response.json()
         assert isinstance(response.json()["categories"], dict)
         assert len(response.json()["categories"]) >= 10
+        
 
 
 @pytest.mark.anyio
@@ -181,6 +239,17 @@ class TestCategoryDeletion:
         # Delete a category using a different case to ensure case insensitivity
         response = await async_client_auth.delete("/categories/ENTERTAINMENT")
         assert response.status_code == 404, response.json()
+
+    @patch("api.routers.categories.verify_token", return_value="507f1f77bcf86cd799439011")
+    async def test_delete_category_not_found(self, mock_verify_token, async_client_auth: AsyncClient, mock_db_category_not_found):
+        # Simulate category not found scenario
+        response = await async_client_auth.delete("/categories/NonExistentCategory")
+        assert response.status_code == 404, response.json()
+        assert response.json()["detail"] == "Category not found"
+
+    async def test_delete_category_invalid_name(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.delete("/categories/invalid_name")
+        assert response.status_code == 404
 
 
 @pytest.mark.anyio

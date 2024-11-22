@@ -59,6 +59,20 @@ class TestAccountCreation:
         )
         assert response.status_code == 422  # Unprocessable Entity
 
+    async def test_create_account_missing_name(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.post(
+            "/accounts/",
+            json={"balance": 1000.0, "currency": "USD"},
+        )
+        assert response.status_code == 422
+
+    async def test_create_account_missing_balance(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.post(
+            "/accounts/",
+            json={"name": "Investment", "currency": "USD"},
+        )
+        assert response.status_code == 422
+
 
 @pytest.mark.anyio
 class TestAccountGet:
@@ -178,6 +192,21 @@ class TestAccountUpdate:
         )
         assert response.status_code == 200  # Bad Request
 
+    async def test_update_account_missing_balance(self, async_client_auth: AsyncClient):
+        # Create an account first
+        create_response = await async_client_auth.post(
+            "/accounts/",
+            json={"name": "Investment", "balance": 1000.0, "currency": "USD"},
+        )
+        account_id = create_response.json()["account_id"]
+
+        # Attempt to update the account with missing balance
+        response = await async_client_auth.put(
+            f"/accounts/{account_id}",
+            json={"currency": "EUR"},
+        )
+        assert response.status_code == 200
+
 
 @pytest.mark.anyio
 class TestAccountNameConstraints:
@@ -235,6 +264,12 @@ class TestAccountDelete:
         Test deleting a non-existent account.
         """
         invalid_account_id = str(ObjectId())
+        response = await async_client_auth.delete(f"/accounts/{invalid_account_id}")
+        assert response.status_code == 404
+        assert response.json()["detail"] == "Account not found"
+
+    async def test_delete_account_invalid_id(self, async_client_auth: AsyncClient):
+        invalid_account_id = "507f1f77bcf86cd799439011"  # Valid ObjectId format but non-existent
         response = await async_client_auth.delete(f"/accounts/{invalid_account_id}")
         assert response.status_code == 404
         assert response.json()["detail"] == "Account not found"

@@ -199,6 +199,34 @@ class TestExpenseAdd:
         )
         assert response.status_code == 422, response.json()
 
+    async def test_invalid_account_type(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.post(
+            "/expenses/",
+            json={
+                "amount": 50.0,
+                "currency": "USD",
+                "category": "Food",
+                "description": "Grocery shopping",
+                "account_name": "InvalidAccount",
+            },
+        )
+        assert response.status_code == 400
+        assert response.json()["detail"] == "Invalid account type"
+
+    async def test_missing_amount(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.post(
+            "/expenses/",
+            json={"currency": "USD", "category": "Food", "description": "Grocery shopping", "account_name": "Checking"},
+        )
+        assert response.status_code == 422
+
+    async def test_missing_currency(self, async_client_auth: AsyncClient):
+        response = await async_client_auth.post(
+            "/expenses/",
+            json={"amount": 1.0, "category": "Food", "description": "Grocery shopping", "account_name": "Checking"},
+        )
+        assert response.status_code == 422
+
 
 @pytest.mark.anyio
 class TestExpenseGet:
@@ -462,6 +490,70 @@ class TestExpenseUpdate:
         )
         assert response.status_code == 422, response.json()
 
+    async def test_no_fields_to_update(self, async_client_auth: AsyncClient):
+        # First, add an expense
+        add_response = await async_client_auth.post(
+            "/expenses/",
+            json={
+                "amount": 30.0,
+                "currency": "USD",
+                "category": "Transport",
+                "description": "Taxi fare",
+                "account_name": "Checking",
+            },
+        )
+        assert add_response.status_code == 200, add_response.json()
+        expense_id = add_response.json()["expense"]["_id"]
+
+        # Attempt to update the expense with no fields
+        response = await async_client_auth.put(f"/expenses/{expense_id}", json={})
+        assert response.status_code == 400
+        assert response.json()["detail"] == "No fields to update"
+
+    async def test_account_not_found(self, async_client_auth: AsyncClient):
+        # First, add an expense
+        add_response = await async_client_auth.post(
+            "/expenses/",
+            json={
+                "amount": 30.0,
+                "currency": "USD",
+                "category": "Transport",
+                "description": "Taxi fare",
+                "account_name": "Checking",
+            },
+        )
+        assert add_response.status_code == 200, add_response.json()
+        expense_id = add_response.json()["expense"]["_id"]
+
+        # Manually set an invalid account name
+        await expenses_collection.update_one(
+            {"_id": ObjectId(expense_id)}, {"$set": {"account_name": "InvalidAccount"}}
+        )
+
+        # Attempt to update the expense
+        response = await async_client_auth.put(
+            f"/expenses/{expense_id}",
+            json={"amount": 40.0},
+        )
+        assert response.status_code == 404
+        assert response.json()["detail"] == "Account not found"
+
+    async def test_update_missing_amount(self, async_client_auth: AsyncClient):
+        # First, add an expense
+        add_response = await async_client_auth.post(
+            "/expenses/",
+            json={"amount": 1.0, "currency": "USD", "category": "Transport", "description": "Taxi fare", "account_name": "Checking"},
+        )
+        assert add_response.status_code == 200, add_response.json()
+        expense_id = add_response.json()["expense"]["_id"]
+
+        # Update the expense
+        response = await async_client_auth.put(
+            f"/expenses/{expense_id}",
+            json={"currency": "EUR"},
+        )
+        assert response.status_code == 200
+
 
 @pytest.mark.anyio
 class TestExpenseDelete:
@@ -470,7 +562,7 @@ class TestExpenseDelete:
         add_response = await async_client_auth.post(
             "/expenses/",
             json={
-                "amount": 20.0,
+                "amount": 1.0,
                 "currency": "USD",
                 "category": "Shopping",
                 "description": "Book purchase",
@@ -487,6 +579,37 @@ class TestExpenseDelete:
 
     async def test_specific_404(self, async_client_auth: AsyncClient):
         response = await async_client_auth.delete("/expenses/507f1f77bcf86cd799439011")
+        assert response.status_code == 404
+        assert response.json()["detail"] == "Expense not found"
+
+    async def test_account_not_found_on_delete(self, async_client_auth: AsyncClient):
+        # First, add an expense
+        add_response = await async_client_auth.post(
+            "/expenses/",
+            json={
+                "amount": 1.0,
+                "currency": "USD",
+                "category": "Shopping",
+                "description": "Book purchase",
+                "account_name": "Checking",
+            },
+        )
+        assert add_response.status_code == 200, add_response.json()
+        expense_id = add_response.json()["expense"]["_id"]
+
+        # Manually set an invalid account name
+        await expenses_collection.update_one(
+            {"_id": ObjectId(expense_id)}, {"$set": {"account_name": "InvalidAccount"}}
+        )
+
+        # Attempt to delete the expense
+        response = await async_client_auth.delete(f"/expenses/{expense_id}")
+        assert response.status_code == 404
+        assert response.json()["detail"] == "Account not found"
+
+    async def test_delete_expense_invalid_id(self, async_client_auth: AsyncClient):
+        invalid_expense_id = "507f1f77bcf86cd799439011"  # Valid ObjectId format but non-existent
+        response = await async_client_auth.delete(f"/expenses/{invalid_expense_id}")
         assert response.status_code == 404
         assert response.json()["detail"] == "Expense not found"
 

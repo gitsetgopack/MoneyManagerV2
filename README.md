@@ -1,57 +1,45 @@
+<details><summary><b>Table of Contents<b></summary>
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Money Manager](#money-manager)
-  - [Project Overview](#project-overview)
-    - [Quality](#quality)
-    - [Standards](#standards)
-    - [Stats](#stats)
-      - [Tools \& Technologies](#tools--technologies)
-  - [User Friendly](#user-friendly)
-  - [Developer Friendly](#developer-friendly)
-  - [Usage](#usage)
-  - [Tech Stack](#tech-stack)
-  - [Tools](#tools)
-  - [Installation](#installation)
-    - [Pre-requisite Tasks](#pre-requisite-tasks)
-    - [Actual Installation](#actual-installation)
-    - [Testing](#testing)
-    - [Code Coverage](#code-coverage)
-  - [Configuration](#configuration)
-  - [Troubleshooting](#troubleshooting)
+- [💰 Money Manager](#-money-manager)
+  - [🏅 Badges](#-badges)
+    - [✅ Quality](#-quality)
+    - [📏 Standards](#-standards)
+    - [📊 Stats](#-stats)
+    - [🛠️ Tools \& Technologies](#️-tools--technologies)
+  - [👥 User Friendly](#-user-friendly)
+  - [👨‍💻 Developer Friendly](#-developer-friendly)
+  - [📈 Usage](#-usage)
+  - [🛠️ Installation](#️-installation)
+    - [📋 Pre-requisite Tasks](#-pre-requisite-tasks)
+    - [🛠️ Developer Installation](#️-developer-installation)
+    - [🧪 Testing](#-testing)
   - [🚀 Future Enhancements](#-future-enhancements)
-  - [Contributing](#contributing)
-  - [LICENSE](#license)
+  - [🤝 Contributing](#-contributing)
+  - [📜 LICENSE](#-license)
   - [🤝 Contributors](#-contributors)
-  - [Code of Conduct](#code-of-conduct)
+  - [📜 Code of Conduct](#-code-of-conduct)
+  - [🐞 Issues or Bug Reports](#-issues-or-bug-reports)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+</details>
 
-# Money Manager
+# 💰 Money Manager
 <div align="center">
   <img src="docs/logo/logo.png" alt="Project Logo" width="300"/>
+  <img src="http://ForTheBadge.com/images/badges/built-with-love.svg">
 </div>
 
 
 A REST API application for managing expenses. Build your own automation—be it a Telegram bot 🤖, Discord bot, or your own app 📱!
 
-🚨 Spoiler Alert! 🚨 We have built a Telegram bot as a proof of concept! 🤖🎉
+🚨 Spoiler Alert! 🚨
+> We have built a Telegram bot as a proof of concept! 🎉
 
-<div align="center">
-  <img src="http://ForTheBadge.com/images/badges/built-with-love.svg" alt="built_with_love"/>
-</div>
+## 🏅 Badges
 
-
-
-
----
-
-## Project Overview
-
-https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
-
-### Quality
+### ✅ Quality
 
 [![badge_pytest_status](https://img.shields.io/badge/PyTest-passing-brightgreen?style=plastic&logo=pytest&logoColor=white)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
 [![badge_code_coverage](https://img.shields.io/badge/coverage-95%25-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
@@ -61,7 +49,7 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 [![badge_mypy](https://img.shields.io/badge/mypy-passing-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
 [![badge_bandit](https://img.shields.io/badge/bandit-passing-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManager/actions/runs/11639575982)
 
-### Standards
+### 📏 Standards
 
 ![black](https://img.shields.io/badge/code%20style-black-black?style=plastic&)
 ![license](https://img.shields.io/github/license/gitsetgopack/MoneyManager?style=plastic&)
@@ -69,7 +57,7 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14027400.svg)](https://doi.org/10.5281/zenodo.14027400)
 
 
-### Stats
+### 📊 Stats
 
 ![pr_open](https://img.shields.io/github/issues-pr/gitsetgopack/MoneyManager?style=plastic&)
 ![pr_close](https://img.shields.io/github/issues-pr-closed/gitsetgopack/MoneyManager?style=plastic&)
@@ -82,7 +70,7 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 ![stars](https://img.shields.io/github/stars/gitsetgopack/MoneyManager?style=plastic&)
 ![downloads](https://img.shields.io/github/downloads/gitsetgopack/MoneyManager/total?style=plastic&)
 
-#### Tools & Technologies
+### 🛠️ Tools & Technologies
 
 [![Python](https://img.shields.io/badge/python%203.12-3670A0?logo=python&logoColor=ffdd54)](https://www.python.org/downloads/release/python-3121/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
@@ -91,14 +79,19 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 [![GitHub](https://img.shields.io/badge/github-%23121011.svg?logo=github&logoColor=white)](https://github.com/)
 [![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?logo=githubactions&logoColor=white)](https://github.com/features/actions)
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](https://www.linux.org/)
-[![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
-[![Zoom](https://img.shields.io/badge/Zoom-2D8CFF?logo=zoom&logoColor=white)](https://www.zoom.com/)
-[![DigitalOcean](https://img.shields.io/badge/DigitalOcean-%230167ff.svg?logo=digitalOcean&logoColor=white)]([#](https://www.digitalocean.com/))
+[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?logo=telegram&logoColor=white)](https://telegram.org/)
+[![DigitalOcean](https://img.shields.io/badge/DigitalOcean-%230167ff.svg?logo=digitalOcean&logoColor=white)](https://www.digitalocean.com/)
 [![ChatGPT](https://img.shields.io/badge/ChatGPT-74aa9c?logo=openai&logoColor=white)](https://chatgpt.com/)
+[![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
+<!-- [![Zoom](https://img.shields.io/badge/Zoom-2D8CFF?logo=zoom&logoColor=white)](https://www.zoom.com/) -->
+
 
 ---
 
-## User Friendly
+## 👥 User Friendly
+
+
+https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 
 - **Expense Tracking**: Add, update, and delete expenses. Track expenses by category, date, and account.
 - **Authentication**: Secure access to your data using token-based authentication.
@@ -109,111 +102,57 @@ https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
 - **Multiple Accounts**: Manage multiple accounts like spending and saving.
 - **Testing Suite**: Comprehensive tests to ensure stability and reliability across key functionality.
 
-## Developer Friendly
+## 👨‍💻 Developer Friendly
 
 - **Modular Configuration**: Simplify setup with a sample_config.py file that supports environment variables for secure, customizable settings like database URIs, API ports, and bot tokens—just rename and update, or export values directly from your environment!
 - **Stable Release(master) Branch**: We have Pre-commit running as github workflows which allows only the tested, formatted, linted, checked, code to push to the release branches
+- **Comprehensive Test Suite**: With over 150 testcases in unit test suite, developer can easily extend and follow Test Driven Developement.
+- **>95% Code coverage**: Well, almost all the lines of the code is covered in the unit test suite. Extend without worrying about what'll break the current functionality.
 
-
-## Usage
+## 📈 Usage
 
 MoneyManager allows you to take control of your personal finances, providing insights into where your money goes and helping you make informed financial decisions. Whether you're looking to monitor daily spending or analyze broader trends, MoneyManager has the tools you need to stay on top of your finances.
 
-## Tech Stack
 
-- [![Python](https://img.shields.io/badge/Language-Python%203-blue)](https://www.python.org/)
-  - The entire application, from managing dependencies to testing, is built using Python 3.
+## 🛠️ Installation
 
-## Tools
-
-- [![Git](https://img.shields.io/badge/Tool-Git-orange)](https://git-scm.com/)
-- [![GitHub](https://img.shields.io/badge/Tool-GitHub-lightgrey)](https://github.com/)
-- [![GitHub Actions](https://img.shields.io/badge/CI/CD-GitHub%20Actions-blue)](https://github.com/features/actions)
-- [![MongoDB](https://img.shields.io/badge/Database-MongoDB-green)](https://www.mongodb.com/)
-- [![REST API](https://img.shields.io/badge/API-REST-red)](https://restfulapi.net/)
-- [![Docker](https://img.shields.io/badge/Containerization-Docker-blue)](https://www.docker.com/)
-- [![Telegram](https://img.shields.io/badge/Messaging-Telegram-blue)](https://telegram.org/) - Used as a proof of concept (POC) for messaging integration.
-
-Each tool is an essential part of the development and deployment process, enhancing functionality, reliability, and ease of collaboration.
-
-## Installation
-
-### Pre-requisite Tasks
+### 📋 Pre-requisite Tasks
 
 To get started, you'll need to create a Telegram bot through BotFather:
 
-1. Open the Telegram app (desktop or mobile), search for "BotFather," and click on "Start."
-2. Send the following command to BotFather:
-```bash
-/newbot
-```
-4. Follow the instructions to:
-- Choose a name for your bot.
-- Select a username ending with "bot" (required by Telegram).
-5. BotFather will confirm your bot's creation and provide an HTTP API access token—save this token for later.
+- Open Telegram: Launch the Telegram app and log in to your account. 
+- Find BotFather: Search for "@BotFather" in the Telegram search bar and start a conversation with it. 
+- Create a new bot: Send the command "/newbot" to BotFather. 
+- Set bot details:
+  - Bot Name: Enter a descriptive name for your bot. 
+  - Bot Username: Choose a unique username, which must end with "bot". 
+- Receive your token: Once you set the details, BotFather will provide you with a unique access token, which is crucial for coding your bot's functionality.
 
-### Actual Installation
+
+### 🛠️ Developer Installation
 
 These instructions guide you through setting up the bot's communication and running it:
 
 1. Clone this repository to your local system.
-2. Open a terminal session in the directory where the project was cloned and install the required dependencies:
+2. From the root of the cloned repository:
   ```bash
-  pip install -r requirements.txt
+  make install
   ```
-3. In the same directory, execute the following bash script to start the Telegram Bot:
-  ```bash
-  ./run.sh
-  ```
-  OR
-  ```bash
-  bash run.sh
-  ```
-4. When prompted, paste the API token you received from BotFather in step 4 of the pre-requisites.
+3. Rename the `sample_config.py` to `config.py`
+4. Fill in the configurations, such as Mongo DB URL `MONGO_URI`, previosuly created telegram token `TELEGRAM_BOT_TOKEN`, and many more knobs.
 
-  A successful run will display the message: "TeleBot: Started polling."
+### 🧪 Testing
 
-5. In the Telegram app, search for your bot using its username, open it, and type /start or /menu to begin using MoneyManager for expense tracking!
-
-### Testing
-
-This project uses pytest to test all functionalities of the bot:
+This project uses pytest and mongodb (docker) to test all core functionalities:
 
 Run the following command from the project's root directory to execute all unit tests:
   ```bash
-  python -m pytest test/
+  make test
   ```
-Currently, the project includes 100+ tests covering all bot functions.
+Currently, the project includes 150+ tests covering all core functionality.
 
 <img width="677" alt="image" src="https://github.com/user-attachments/assets/03d6d77f-7494-424e-bda6-0518ac79b124">
 
-### Code Coverage
-
-Code coverage is assessed as part of each build. Every time new code is pushed, a build runs, and code coverage is computed.
-
-To check code coverage locally:
-  ```bash
-  coverage run -m pytest test/
-  coverage report
-  ```
-
-## Configuration
-
-For **users**, no additional configuration is required—just start using MoneyManager!
-
-For **contributors**, we’ve designed the system to be as modular as possible, so that updates to one module won’t impact others. However, there are a few configurable parameters available to help tailor and extend the system:
-
-- Adding and removing categories
-- Adjusting graphing options
-- Modifying the Telegram bot name, etc.
-
-## Troubleshooting
-
-- **Ensure you have a valid bot token**: You can generate a token by creating a new bot via Telegram’s BotFather.
-- **Verify token placement**: Double-check that the token is correctly added to your bot’s code or configuration.
-- **Check bot permissions**: Confirm that your bot has the necessary permissions for the intended actions.
-
-Alternatively, you’re welcome to submit a bug report in our repository. Make sure to follow the steps outlined in [CONTRIBUTING.md](CONTRIBUTING.md) for reporting issues.
 
 ## 🚀 Future Enhancements
 
@@ -225,26 +164,31 @@ Alternatively, you’re welcome to submit a bug report in our repository. Make s
   - CSV import/export support for easy data handling.
   - Group expense tracking with features like bill splitting, real-time updates, and integrated payment options.
 
-## Contributing
+## 🤝 Contributing
 
 Thank you for your interest in contributing to MoneyManager! Your contributions are greatly appreciated, and this guide will help you get started. For full details on contributing, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file, which provides comprehensive instructions and guidelines.
 
-## LICENSE
+## 📜 LICENSE
 
 By contributing to MoneyManager, you agree that your contributions will fall under the project’s open-source license. Please take a moment to review and understand the licensing terms before contributing. The specific license details can be found in the [LICENSE](LICENSE) file.
 
 ## 🤝 Contributors
 
-Listed alphabetically:
-
-- **Abhishek Rao** ([arao23@ncsu.edu](mailto:arao23@ncsu.edu))
-- **Astha Bhalodiya** ([abhalod@ncsu.edu](mailto:abhalod@ncsu.edu))
+- **Abhishek Rao** ([GitHub](https://github.com/abhira0) | [arao23@ncsu.edu](mailto:arao23@ncsu.edu))
 - **Umang Diyora** ([udiyora@ncsu.edu](mailto:udiyora@ncsu.edu))
 
-## Code of Conduct
+- **Astha Bhalodiya** ([abhalod@ncsu.edu](mailto:abhalod@ncsu.edu))
+## 📜 Code of Conduct
 
 Please note that we have a [Code of Conduct](CODE_OF_CONDUCT.md) that all contributors are expected to uphold. This ensures that our community remains welcoming and inclusive for everyone.
+
+## 🐞 Issues or Bug Reports
+![discord](https://img.shields.io/badge/Discord-%235865F2.svg?&logo=discord&logoColor=white&link=https%3A%2F%2Fdiscord.gg%2FwCHuTY5B22)
+* You can join the discord chat using this invite link for quicker response
+* But, you are also allowed to open an bug issue
+
 
 ---
 
 Thank you for using MoneyManager! Follow this page to stay updated on new features and improvements.
+*

@@ -36,6 +36,20 @@ class TestUserCreation:
         assert response.status_code == 400
         assert response.json()["detail"] == "Username already exists"
 
+    async def test_missing_username(self, async_client: AsyncClient):
+        response = await async_client.post(
+            "/users/", json={"username": "", "password": "password"}
+        )
+        assert response.status_code == 422
+        assert response.json()["detail"] == "Invalid credential"
+
+    async def test_missing_password(self, async_client: AsyncClient):
+        response = await async_client.post(
+            "/users/", json={"username": "username", "password": ""}
+        )
+        assert response.status_code == 422
+        assert response.json()["detail"] == "Invalid credential"
+
 
 @pytest.mark.anyio
 class TestTokenCreation:
@@ -74,6 +88,22 @@ class TestTokenCreation:
         # Save token for future tests
         # async_client.headers.update({"Authorization": f"Bearer {response.json()['result']['token']}"})
         async_client.headers.update({"token": response.json()["result"]["token"]})
+
+    async def test_create_token_missing_username(self, async_client: AsyncClient):
+        response = await async_client.post(
+            "/users/token/",
+            data={"username": "", "password": "password"},
+        )
+        assert response.status_code == 401
+        assert response.json()["detail"] == "Incorrect username or password"
+
+    async def test_create_token_missing_password(self, async_client: AsyncClient):
+        response = await async_client.post(
+            "/users/token/",
+            data={"username": "username", "password": ""},
+        )
+        assert response.status_code == 401
+        assert response.json()["detail"] == "Incorrect username or password"
 
 
 @pytest.mark.anyio
@@ -163,6 +193,17 @@ class TestUserUpdate:
         assert response.status_code == 500, response.json()
         assert response.json()["detail"] == "Failed to update user"
 
+    async def test_update_password(self, async_client: AsyncClient):
+        response = await async_client.put(
+            "/users/",
+            json={
+                "password": "pswd",
+            },
+        )
+        assert response.status_code == 200
+        assert response.json()["message"] == "User updated successfully"
+        assert "updated_user" in response.json()
+
     async def test_valid(self, async_client: AsyncClient):
         response = await async_client.put(
             "/users/",
@@ -174,7 +215,6 @@ class TestUserUpdate:
         assert response.status_code == 200
         assert response.json()["message"] == "User updated successfully"
         assert "updated_user" in response.json()
-
 
 @pytest.mark.anyio
 class TestUserUnauthenticated:

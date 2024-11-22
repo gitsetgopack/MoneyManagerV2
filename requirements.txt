@@ -13,6 +13,7 @@ mypy
 bandit
 pandas-stubs
 types-python-jose
+types-openpyxl
 matplotlib
 pandas
 pandas-stubs
