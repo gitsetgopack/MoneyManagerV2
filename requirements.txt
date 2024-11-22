@@ -20,3 +20,4 @@ pandas-stubs
 reportlab
 python-telegram-bot
 requests
+openpyxl

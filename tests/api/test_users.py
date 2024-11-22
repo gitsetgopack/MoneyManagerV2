@@ -7,7 +7,7 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 
 from api.app import app
-from config import TOKEN_ALGORITHM, TOKEN_SECRET_KEY
+from config.config import TOKEN_ALGORITHM, TOKEN_SECRET_KEY
 
 
 @pytest.mark.anyio
@@ -215,6 +215,7 @@ class TestUserUpdate:
         assert response.status_code == 200
         assert response.json()["message"] == "User updated successfully"
         assert "updated_user" in response.json()
+
 
 @pytest.mark.anyio
 class TestUserUnauthenticated:

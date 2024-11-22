@@ -8,7 +8,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from api.routers import accounts, analytics, categories, expenses, exports, users
-from config import API_BIND_HOST, API_BIND_PORT
+from config.config import API_BIND_HOST, API_BIND_PORT
 
 
 @asynccontextmanager

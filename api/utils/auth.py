@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from jose import JWTError, jwt
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from config import MONGO_URI, TOKEN_ALGORITHM, TOKEN_SECRET_KEY
+from config.config import MONGO_URI, TOKEN_ALGORITHM, TOKEN_SECRET_KEY
 
 client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URI)
 db = client.mmdb

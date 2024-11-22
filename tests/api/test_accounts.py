@@ -269,7 +269,9 @@ class TestAccountDelete:
         assert response.json()["detail"] == "Account not found"
 
     async def test_delete_account_invalid_id(self, async_client_auth: AsyncClient):
-        invalid_account_id = "507f1f77bcf86cd799439011"  # Valid ObjectId format but non-existent
+        invalid_account_id = (
+            "507f1f77bcf86cd799439011"  # Valid ObjectId format but non-existent
+        )
         response = await async_client_auth.delete(f"/accounts/{invalid_account_id}")
         assert response.status_code == 404
         assert response.json()["detail"] == "Account not found"

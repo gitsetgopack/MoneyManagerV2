@@ -15,7 +15,7 @@ from fastapi.responses import HTMLResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from api.utils.auth import verify_token
-from config import MONGO_URI
+from config.config import MONGO_URI
 
 # MongoDB setup
 client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URI)
