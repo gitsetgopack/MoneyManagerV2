@@ -9,7 +9,7 @@ from httpx import AsyncClient
 from motor.motor_asyncio import AsyncIOMotorClient
 
 import api.routers.expenses
-from config import MONGO_URI
+from config.config import MONGO_URI
 
 # MongoDB setup
 client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URI)

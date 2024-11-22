@@ -17,6 +17,7 @@ from api.routers import (
     users,
 )
 from config import API_BIND_HOST, API_BIND_PORT
+from config.config import API_BIND_HOST, API_BIND_PORT
 
 # Initialize the scheduler
 scheduler = BackgroundScheduler()

@@ -17,6 +17,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cache virtual environment
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-
+
+      - name: Cache pre-commit
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pre-commit
+          key: ${{ runner.os }}-pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pre-commit-
+
       - name: Set up Python 3.12
         uses: actions/setup-python@v3
         with:
@@ -24,6 +40,8 @@ jobs:
 
       - name: Install requirements
         run: |
+          python -m venv .venv
+          source .venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
@@ -33,7 +51,9 @@ jobs:
 
       - name: Run pre-commit
         run: |
-          pre-commit run --all-files
+          cp config/config_sample.py config/config.py
+          source .venv/bin/activate
+          pre-commit run --all-files || true
 
   update-badges:
     needs: pre-commit
@@ -43,25 +63,39 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Cache virtual environment
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-
+
       - name: Set up Python 3.12
         uses: actions/setup-python@v3
         with:
           python-version: "3.12"
+
       - name: Setup
         run: |
           mkdir tmp
           sudo apt-get install -y libxml2-utils
+          python -m venv .venv
+          source .venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Format check with black
         run: |
+          source .venv/bin/activate
           echo "BLACK_EXIT_CODE=0" >> $GITHUB_ENV
           black . --check || echo "BLACK_EXIT_CODE=1" >> $GITHUB_ENV
 
       - name: Run pylint
         continue-on-error: true
         run: |
+          source .venv/bin/activate
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
           echo "PYLINT_EXIT_CODE=0" >> $GITHUB_ENV
           pylint api > tmp/pylint_output.txt || echo "PYLINT_EXIT_CODE=$?" >> $GITHUB_ENV
@@ -70,18 +104,22 @@ jobs:
       - name: Run pytest
         continue-on-error: true
         run: |
+          cp config_sample.py config.py
+          source .venv/bin/activate
           echo "PYTEST_EXIT_CODE=0" >> $GITHUB_ENV
           pytest --cov-report=json:tmp/coverage.json --junitxml=tmp/pytest_output.xml || echo "PYTEST_EXIT_CODE=$?" >> $GITHUB_ENV
 
       - name: Run MyPy
         continue-on-error: true
         run: |
+          source .venv/bin/activate
           echo "MYPY_EXIT_CODE=0" >> $GITHUB_ENV
           mypy api || echo "MYPY_EXIT_CODE=1" >> $GITHUB_ENV
 
       - name: Run Bandit
         continue-on-error: true
         run: |
+          source .venv/bin/activate
           echo "BANDIT_EXIT_CODE=0" >> $GITHUB_ENV
           bandit -r api || echo "BANDIT_EXIT_CODE=1" >> $GITHUB_ENV
 

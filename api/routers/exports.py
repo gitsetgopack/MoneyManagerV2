@@ -1,12 +1,16 @@
+"""
+This module contains the API routes for exporting data in various formats.
+"""
+
 import csv
 import datetime
 import os
 from enum import Enum
 from io import BytesIO, StringIO
-from typing import Any, Dict, List, Optional
+from typing import Optional
 
 from bson import ObjectId
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, Response
+from fastapi import APIRouter, Header, HTTPException, Query, Response
 from motor.motor_asyncio import AsyncIOMotorClient
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -24,10 +28,9 @@ from reportlab.platypus import (  # type: ignore
     Table,
     TableStyle,
 )
-from reportlab.platypus.tables import CellStyle  # type: ignore
 
 from api.utils.auth import verify_token
-from config import MONGO_URI, TIME_ZONE
+from config.config import MONGO_URI, TIME_ZONE
 
 router = APIRouter(prefix="/exports", tags=["Exports"])
 
@@ -40,15 +43,18 @@ users_collection = db.users
 
 
 class ExportType(str, Enum):
-    expenses = "expenses"
-    accounts = "accounts"
-    categories = "categories"
+    """Enum for export types."""
+
+    EXPENSES = "expenses"
+    ACCOUNTS = "accounts"
+    CATEGORIES = "categories"
 
 
 # Utility function to fetch data
 async def fetch_data(
     user_id: str, from_date: Optional[datetime.date], to_date: Optional[datetime.date]
 ):
+    """Fetch data from the database based on user ID and date range."""
     if from_date and to_date and from_date > to_date:
         raise HTTPException(
             status_code=422,
@@ -62,17 +68,57 @@ async def fetch_data(
 
     query = {"user_id": user_id}
     if from_dt and to_dt:
-        query["date"] = {"$gte": from_dt, "$lte": to_dt}
+        query["date"] = {"$gte": from_dt, "$lte": to_dt}  # type: ignore
     elif from_dt:
-        query["date"] = {"$gte": from_dt}
+        query["date"] = {"$gte": from_dt}  # type: ignore
     elif to_dt:
-        query["date"] = {"$lte": to_dt}
+        query["date"] = {"$lte": to_dt}  # type: ignore
 
     expenses = await expenses_collection.find(query).to_list(1000)
     accounts = await accounts_collection.find({"user_id": user_id}).to_list(100)
     user = await users_collection.find_one({"_id": ObjectId(user_id)})
 
     return expenses, accounts, user
+
+
+def write_expenses_to_sheet(sheet: Worksheet, expenses: list):
+    """Write expenses data to the given worksheet."""
+    sheet.append(
+        ["date", "amount", "currency", "category", "description", "account_name", "_id"]
+    )
+    for expense in expenses:
+        sheet.append(
+            [
+                expense["date"].isoformat() if expense.get("date") else "",
+                expense["amount"],
+                expense["currency"],
+                expense["category"],
+                expense.get("description", ""),
+                expense["account_name"],
+                str(expense["_id"]),
+            ]
+        )
+
+
+def write_accounts_to_sheet(sheet: Worksheet, accounts: list):
+    """Write accounts data to the given worksheet."""
+    sheet.append(["name", "balance", "currency", "_id"])
+    for account in accounts:
+        sheet.append(
+            [
+                account["name"],
+                account["balance"],
+                account["currency"],
+                str(account["_id"]),
+            ]
+        )
+
+
+def write_categories_to_sheet(sheet: Worksheet, categories: dict):
+    """Write categories data to the given worksheet."""
+    sheet.append(["name", "monthly_budget"])
+    for category_name, category_data in categories.items():
+        sheet.append([category_name, category_data["monthly_budget"]])
 
 
 @router.get("/xlsx")
@@ -102,53 +148,17 @@ async def data_to_xlsx(
     expenses_sheet: Optional[Worksheet] = workbook.active
     if expenses_sheet is not None:
         expenses_sheet.title = "Expenses"
-        expenses_sheet.append(
-            [
-                "date",
-                "amount",
-                "currency",
-                "category",
-                "description",
-                "account_name",
-                "_id",
-            ]
-        )
-        for expense in expenses:
-            expenses_sheet.append(
-                [
-                    expense["date"].isoformat() if expense.get("date") else "",
-                    expense["amount"],
-                    expense["currency"],
-                    expense["category"],
-                    expense.get("description", ""),
-                    expense["account_name"],
-                    str(expense["_id"]),
-                ]
-            )
+        write_expenses_to_sheet(expenses_sheet, expenses)
 
     # Write accounts
     accounts_sheet: Optional[Worksheet] = workbook.create_sheet(title="Accounts")
     if accounts_sheet is not None:
-        accounts_sheet.append(["name", "balance", "currency", "_id"])
-        for account in accounts:
-            accounts_sheet.append(
-                [
-                    account["name"],
-                    account["balance"],
-                    account["currency"],
-                    str(account["_id"]),
-                ]
-            )
+        write_accounts_to_sheet(accounts_sheet, accounts)
 
     # Write categories
     categories_sheet: Optional[Worksheet] = workbook.create_sheet(title="Categories")
-    if categories_sheet is not None:
-        categories_sheet.append(["name", "monthly_budget"])
-        if user and "categories" in user:
-            for category_name, category_data in user["categories"].items():
-                categories_sheet.append(
-                    [category_name, category_data["monthly_budget"]]
-                )
+    if categories_sheet is not None and user and "categories" in user:
+        write_categories_to_sheet(categories_sheet, user["categories"])
 
     output = BytesIO()
     workbook.save(output)
@@ -160,6 +170,18 @@ async def data_to_xlsx(
     )
     response.headers["Content-Disposition"] = "attachment; filename=data.xlsx"
     return response
+
+
+def create_paragraph(text: str, style: ParagraphStyle) -> Paragraph:
+    """Create a paragraph with the given text and style."""
+    return Paragraph(text, style)
+
+
+def create_table(data: list, col_widths: list, styles: TableStyle) -> Table:
+    """Create a table with the given data, column widths, and styles."""
+    table = Table(data, colWidths=col_widths)
+    table.setStyle(styles)
+    return table
 
 
 @router.get("/csv")
@@ -184,7 +206,7 @@ async def data_to_csv(
     output = StringIO()
     writer = csv.writer(output)
 
-    if export_type == ExportType.expenses:
+    if export_type == ExportType.EXPENSES:
         if not expenses:
             raise HTTPException(status_code=404, detail="No expenses found")
         writer.writerow(
@@ -210,7 +232,7 @@ async def data_to_csv(
                     str(expense["_id"]),
                 ]
             )
-    elif export_type == ExportType.accounts:
+    elif export_type == ExportType.ACCOUNTS:
         if not accounts:
             raise HTTPException(status_code=404, detail="No accounts found")
         writer.writerow(["name", "balance", "currency", "_id"])
@@ -223,7 +245,7 @@ async def data_to_csv(
                     str(account["_id"]),
                 ]
             )
-    elif export_type == ExportType.categories:
+    elif export_type == ExportType.CATEGORIES:
         if not user or "categories" not in user:
             raise HTTPException(status_code=404, detail="No categories found")
         writer.writerow(["name", "monthly_budget"])
@@ -254,6 +276,7 @@ async def data_to_pdf(
     Returns:
         Response: PDF file containing expenses, accounts, and categories data.
     """
+    # pylint: disable=too-many-locals, too-many-statements
     user_id = await verify_token(token)
     expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
 
@@ -286,7 +309,7 @@ async def data_to_pdf(
     )
 
     # Add heading, logo, application description, and TOC on the first page
-    elements.append(Paragraph("MONEY MANAGER", title_style))
+    elements.append(create_paragraph("MONEY MANAGER", title_style))
     elements.append(Spacer(1, 12))
     logo_path = os.path.abspath(
         os.path.join(os.path.dirname(__file__), "../../docs/logo/logo.png")
@@ -300,18 +323,22 @@ async def data_to_pdf(
     <b>Money Manager</b> is a comprehensive financial management tool designed to help you track your expenses, manage your accounts, and set budgets for various categories.
     With our application, you can easily export your financial data in various formats including XLSX, CSV, and PDF.
     """
-    elements.append(Paragraph(app_description, centered_style))
+    elements.append(create_paragraph(app_description, centered_style))
     elements.append(Spacer(1, 18))
-    elements.append(Paragraph(f"PDF Report for - {user['username']}", styles["Title"]))
+    elements.append(
+        create_paragraph(f"PDF Report for - {user['username']}", styles["Title"])
+    )
     elements.append(Spacer(1, 36))
 
     # Table of Contents
     toc = [
-        Paragraph("<link href='#expenses'>1. Expenses</link>", styles["Normal"]),
-        Paragraph("<link href='#accounts'>2. Accounts</link>", styles["Normal"]),
-        Paragraph("<link href='#categories'>3. Categories</link>", styles["Normal"]),
+        create_paragraph("<link href='#expenses'>1. Expenses</link>", styles["Normal"]),
+        create_paragraph("<link href='#accounts'>2. Accounts</link>", styles["Normal"]),
+        create_paragraph(
+            "<link href='#categories'>3. Categories</link>", styles["Normal"]
+        ),
     ]
-    elements.append(Paragraph("Table of Contents", styles["Title"]))
+    elements.append(create_paragraph("Table of Contents", styles["Title"]))
     elements.append(Spacer(1, 12))
     elements.extend(toc)
     elements.append(PageBreak())
@@ -327,7 +354,7 @@ async def data_to_pdf(
         return wrapped_data
 
     # Expenses
-    elements.append(Paragraph("<a name='expenses'/>Expenses", styles["Title"]))
+    elements.append(create_paragraph("<a name='expenses'/>Expenses", styles["Title"]))
     elements.append(Spacer(1, 12))
     if from_date and to_date:
         if from_date == to_date:
@@ -340,7 +367,7 @@ async def data_to_pdf(
         date_range_text = f"Date Range: To {to_date}"
     else:
         date_range_text = "Date Range: All"
-    elements.append(Paragraph(date_range_text, styles["Normal"]))
+    elements.append(create_paragraph(date_range_text, styles["Normal"]))
     elements.append(Spacer(1, 12))
     expenses_data = [
         ["Date", "Amount", "Currency", "Category", "Description", "Account Name", "ID"]
@@ -357,10 +384,9 @@ async def data_to_pdf(
                 str(expense["_id"]),
             ]
         )
-    expenses_table = Table(
-        wrap_text(expenses_data), colWidths=[60, 60, 60, 60, 120, 80, 80]
-    )
-    expenses_table.setStyle(
+    expenses_table = create_table(
+        wrap_text(expenses_data),
+        [60, 60, 60, 60, 120, 80, 80],
         TableStyle(
             [
                 ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
@@ -371,13 +397,13 @@ async def data_to_pdf(
                 ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
                 ("GRID", (0, 0), (-1, -1), 1, colors.black),
             ]
-        )
+        ),
     )
     elements.append(expenses_table)
     elements.append(PageBreak())
 
     # Accounts
-    elements.append(Paragraph("<a name='accounts'/>Accounts", styles["Title"]))
+    elements.append(create_paragraph("<a name='accounts'/>Accounts", styles["Title"]))
     elements.append(Spacer(1, 12))
     accounts_data = [["Name", "Balance", "Currency", "ID"]]
     for account in accounts:
@@ -389,8 +415,9 @@ async def data_to_pdf(
                 str(account["_id"]),
             ]
         )
-    accounts_table = Table(wrap_text(accounts_data), colWidths=[100, 100, 100, 100])
-    accounts_table.setStyle(
+    accounts_table = create_table(
+        wrap_text(accounts_data),
+        [100, 100, 100, 100],
         TableStyle(
             [
                 ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
@@ -401,20 +428,23 @@ async def data_to_pdf(
                 ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
                 ("GRID", (0, 0), (-1, -1), 1, colors.black),
             ]
-        )
+        ),
     )
     elements.append(accounts_table)
     elements.append(PageBreak())
 
     # Categories
-    elements.append(Paragraph("<a name='categories'/>Categories", styles["Title"]))
+    elements.append(
+        create_paragraph("<a name='categories'/>Categories", styles["Title"])
+    )
     elements.append(Spacer(1, 12))
     categories_data = [["Name", "Monthly Budget"]]
     if user and "categories" in user:
         for category_name, category_data in user["categories"].items():
             categories_data.append([category_name, category_data["monthly_budget"]])
-    categories_table = Table(wrap_text(categories_data), colWidths=[200, 200])
-    categories_table.setStyle(
+    categories_table = create_table(
+        wrap_text(categories_data),
+        [200, 200],
         TableStyle(
             [
                 ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
@@ -425,15 +455,19 @@ async def data_to_pdf(
                 ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
                 ("GRID", (0, 0), (-1, -1), 1, colors.black),
             ]
-        )
+        ),
     )
     elements.append(categories_table)
 
     # Footer with date of export, "Money Manager V2", and page number
     def footer(canvas, doc):
+        """Footer with date of export, 'Money Manager V2', and page number."""
         canvas.saveState()
         tz = timezone(TIME_ZONE)
-        footer_text = f"Money Manager V2 - Exported on {datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')}"
+        footer_text = (
+            f"Money Manager V2 - Exported on "
+            f"{datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')}"
+        )
         canvas.setFont("Helvetica", 9)
         canvas.drawString(inch, 0.75 * inch, footer_text)
         canvas.drawRightString(7.5 * inch, 0.75 * inch, f"Page {doc.page}")
