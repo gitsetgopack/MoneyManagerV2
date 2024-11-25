@@ -21,3 +21,4 @@ reportlab
 python-telegram-bot
 requests
 openpyxl
+python-telegram-bot-calendar
