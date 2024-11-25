@@ -17,6 +17,7 @@ from telegram.ext import (
 from typing import Dict
 from datetime import datetime
 from telegram_bot_calendar import DetailedTelegramCalendar
+from telegram_bot_pagination import InlineKeyboardPaginator
 
 # Add project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -320,8 +321,21 @@ async def expenses_view(update: Update, context: ContextTypes.DEFAULT_TYPE, toke
             await update.message.reply_text("No expenses found.")
             return
 
+        # Pagination setup
+        page = int(context.args[0]) if context.args else 1
+        items_per_page = 5
+        paginator = InlineKeyboardPaginator(
+            len(expenses) // items_per_page + (1 if len(expenses) % items_per_page else 0),
+            current_page=page,
+            data_pattern='view_expenses#{page}'
+        )
+
+        start_idx = (page - 1) * items_per_page
+        end_idx = start_idx + items_per_page
+        expenses_page = expenses[start_idx:end_idx]
+
         message = "💰 *Your Expenses:*\n\n"
-        for expense in expenses:
+        for expense in expenses_page:
             # Convert date to human-readable format, handling datetime strings with time components
             try:
                 date = datetime.strptime(expense['date'], "%Y-%m-%dT%H:%M:%S.%f").strftime("%B %d, %Y")
@@ -335,9 +349,22 @@ async def expenses_view(update: Update, context: ContextTypes.DEFAULT_TYPE, toke
                 "-------------------\n"
             )
 
-        await update.message.reply_text(message, parse_mode="Markdown")
+        if update.message:
+            await update.message.reply_text(message, parse_mode="Markdown", reply_markup=paginator.markup)
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(message, parse_mode="Markdown", reply_markup=paginator.markup)
     else:
-        await update.message.reply_text("Failed to fetch expenses.")
+        if update.message:
+            await update.message.reply_text("Failed to fetch expenses.")
+        elif update.callback_query:
+            await update.callback_query.message.edit_text("Failed to fetch expenses.")
+
+@authenticate
+async def expenses_view_page(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
+    query = update.callback_query
+    page = int(query.data.split('#')[1])
+    context.args = [page]
+    await expenses_view(update, context)
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await update.message.reply_text("Operation cancelled.")
@@ -398,6 +425,7 @@ def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("expense_view", expenses_view))
     application.add_handler(CommandHandler("logout", logout))
+    application.add_handler(CallbackQueryHandler(expenses_view_page, pattern='view_expenses#'))
 
     # Start the bot
     application.run_polling(allowed_updates=Update.ALL_TYPES)
