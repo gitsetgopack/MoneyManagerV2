@@ -176,7 +176,7 @@ def authenticate(func):
         user = await telegram_collection.find_one({"telegram_id": user_id})
         if user and user.get("token"):
             return await func(update, context, token=user.get("token"), *args, **kwargs)
-        await update.message.reply_text("You are not authenticated. Please /login")
+        await update.message.reply_text("Please /login or /signup to continue.")
         return ConversationHandler.END
 
     return wrapper

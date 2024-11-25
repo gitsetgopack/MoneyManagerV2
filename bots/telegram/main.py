@@ -41,7 +41,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         username = user.get("username")
         await update.message.reply_text(f"Welcome back, {username}!\n\n{get_menu_commands()}")
     else:
-        await update.message.reply_text("Welcome to Money Manager Telegram Bot! Please /login or /signup to continue.")
+        await update.message.reply_text("Welcome to Money Manager Telegram Bot!\nPlease /login or /signup to continue.")
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle the /menu command."""
