@@ -32,8 +32,8 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
  
 # States for conversation
-AMOUNT, DESCRIPTION, CATEGORY, DATE, CURRENCY = range(5)
-USERNAME, PASSWORD, LOGIN_PASSWORD, SIGNUP_CONFIRM = range(5, 9)  # Changed PHONE to USERNAME
+AMOUNT, DESCRIPTION, CATEGORY, DATE, CURRENCY, ACCOUNT = range(6)
+USERNAME, PASSWORD, LOGIN_PASSWORD, SIGNUP_CONFIRM = range(6, 10)  # Changed PHONE to USERNAME
 
 # API Base URL from config
 API_BASE_URL = config.TELEGRAM_BOT_API_BASE_URL
@@ -217,8 +217,8 @@ async def fetch_and_show_categories(update: Update, context: ContextTypes.DEFAUL
     else:
         await update.message.reply_text("Failed to fetch categories.")
 
-@authenticate
-async def category(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+
+async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
     context.user_data['category'] = query.data
@@ -244,11 +244,37 @@ async def fetch_and_show_currencies(update: Update, context: ContextTypes.DEFAUL
     else:
         await update.callback_query.message.edit_text("Failed to fetch currencies.")
 
-@authenticate
-async def currency(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+async def currency(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
     context.user_data['currency'] = query.data
+    await fetch_and_show_accounts(update, context)
+    return ACCOUNT
+
+@authenticate
+async def fetch_and_show_accounts(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
+    headers = {'token': token}
+    response = requests.get(f"{API_BASE_URL}/accounts/", headers=headers)
+    if response.status_code == 200:
+        accounts = response.json().get('accounts', [])
+        if not accounts:
+            await update.callback_query.message.edit_text("No accounts found.")
+            return
+
+        keyboard = [
+            [InlineKeyboardButton(account['name'], callback_data=account['name'])]
+            for account in accounts
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.callback_query.message.edit_text("Please select an account:", reply_markup=reply_markup)
+    else:
+        await update.callback_query.message.edit_text("Failed to fetch accounts.")
+
+@authenticate
+async def account(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    query = update.callback_query
+    await query.answer()
+    context.user_data['account'] = query.data
     calendar, step = DetailedTelegramCalendar().build()
     await query.edit_message_text(f"Please select the date: {step}", reply_markup=calendar)
     return DATE
@@ -268,6 +294,7 @@ async def date(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -
             'description': context.user_data['description'],
             'category': context.user_data['category'],
             'currency': context.user_data['currency'],
+            'account': context.user_data['account'],
             'date': result.strftime("%Y-%m-%dT%H:%M:%S.%f")  # Save date in the specified format
         }
         
@@ -338,6 +365,7 @@ def main() -> None:
             DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, description)],
             CATEGORY: [CallbackQueryHandler(category)],
             CURRENCY: [CallbackQueryHandler(currency)],
+            ACCOUNT: [CallbackQueryHandler(account)],
             DATE: [CallbackQueryHandler(date)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
