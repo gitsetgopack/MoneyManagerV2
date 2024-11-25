@@ -164,7 +164,21 @@ async def handle_signup_confirm(update: Update, context: ContextTypes.DEFAULT_TY
         await update.message.reply_text("An error occurred during signup. Please try again.")
         return ConversationHandler.END
 
-async def add_expense(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+def authenticate(func):
+    async def wrapper(
+        update: Update, context: ContextTypes.DEFAULT_TYPE, *args, **kwargs
+    ):
+        user_id = update.effective_user.id
+        user = await telegram_collection.find_one({"telegram_id": user_id})
+        if user and user.get("token"):
+            return await func(update, context, *args, **kwargs, token=user.get("token"))
+        else:
+            await update.message.reply_text("You are not authenticated. Please /login")
+
+    return wrapper
+
+@authenticate
+async def add_expense(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
     await update.message.reply_text("Please enter the amount:")
     return AMOUNT
 
@@ -226,14 +240,8 @@ async def date(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         context.user_data.clear()
         return ConversationHandler.END
 
-async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user_id = update.effective_user.id
-    user = await telegram_collection.find_one({"telegram_id": user_id})
-    token = user.get("token") if user else None
-    if not token:
-        await update.message.reply_text("Please login first using /login")
-        return
-
+@authenticate
+async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
     headers = {'token': token}
     response = requests.get(f"{API_BASE_URL}/expenses/", headers=headers)
     if response.status_code == 200:
@@ -261,15 +269,9 @@ async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     else:
         await update.message.reply_text("Failed to fetch expenses.")
 
-async def get_total(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+@authenticate
+async def get_total(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
     try:
-        user_id = update.effective_user.id
-        user = await telegram_collection.find_one({"telegram_id": user_id})
-        token = user.get("token") if user else None
-        if not token:
-            await update.message.reply_text("Please login first using /login")
-            return
-
         headers = {'token': token}
         response = requests.get(f"{API_BASE_URL}/expenses/total", headers=headers)
         if response.status_code == 200:
