@@ -1,6 +1,7 @@
 """Authentication handlers and utilities for the Telegram bot."""
 
 import requests
+from typing import Any, Optional
 from motor.motor_asyncio import AsyncIOMotorClient
 from telegram import Update
 from telegram.ext import (
@@ -157,6 +158,13 @@ async def handle_signup_confirm(
         )
         return ConversationHandler.END
 
+async def get_user(update: Optional[Update]=None, token: Optional[str]=None) -> Any:
+    """Get user data from the token."""
+    if token:
+        return await telegram_collection.find_one({"token": token})
+    if update:
+        user_id = update.effective_user.id
+        return await telegram_collection.find_one({"telegram_id": user_id})
 
 def authenticate(func):
     """Decorator to check if user is authenticated."""
