@@ -10,7 +10,7 @@ from bots.telegram.auth import authenticate
 from config.config import TELEGRAM_BOT_API_BASE_URL
 
 # States for conversation
-AMOUNT, DESCRIPTION, CATEGORY, DATE, CURRENCY, ACCOUNT = range(6)
+AMOUNT, DESCRIPTION, CATEGORY, DATE, CURRENCY, ACCOUNT, CONFIRM_DELETE = range(7)
 
 @authenticate
 async def expenses_add(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
@@ -198,6 +198,109 @@ async def expenses_view_page(update: Update, context: ContextTypes.DEFAULT_TYPE,
     context.args = [page]
     await expenses_view(update, context)
 
+@authenticate
+async def expenses_delete(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    headers = {'token': token}
+    response = requests.get(f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", headers=headers)
+    if response.status_code == 200:
+        expenses = response.json()['expenses']
+        if not expenses:
+            message = "No expenses found to delete."
+            if update.message:
+                await update.message.reply_text(message)
+            elif update.callback_query:
+                await update.callback_query.message.edit_text(message)
+            return ConversationHandler.END
+
+        # Pagination setup
+        page = int(context.args[0]) if context.args else 1
+        items_per_page = 2
+        total_pages = len(expenses) // items_per_page + (1 if len(expenses) % items_per_page else 0)
+        
+        # Create pagination buttons manually
+        pagination_buttons = []
+        if total_pages > 1:
+            if page > 1:
+                pagination_buttons.append(
+                    InlineKeyboardButton("⬅️", callback_data=f"delete_expenses#{page-1}")
+                )
+            if page < total_pages:
+                pagination_buttons.append(
+                    InlineKeyboardButton("➡️", callback_data=f"delete_expenses#{page+1}")
+                )
+        
+        start_idx = (page - 1) * items_per_page
+        end_idx = start_idx + items_per_page
+        expenses_page = expenses[start_idx:end_idx]
+
+        keyboard = []
+        for expense in expenses_page:
+            button_text = f"{expense['description']} - {expense['amount']} {expense['currency']}"
+            callback_data = f"delete_{expense['_id']}"
+            keyboard.append([InlineKeyboardButton(button_text, callback_data=callback_data)])
+
+        # Add pagination row to keyboard if there are pagination buttons
+        if pagination_buttons:
+            keyboard.append(pagination_buttons)
+            
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        message = "Select an expense to delete:"
+        
+        if update.message:
+            await update.message.reply_text(message, reply_markup=reply_markup)
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(message, reply_markup=reply_markup)
+        return CONFIRM_DELETE
+    else:
+        message = "Failed to fetch expenses."
+        if update.message:
+            await update.message.reply_text(message)
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(message)
+        return ConversationHandler.END
+
+@authenticate
+async def expenses_delete_page(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    query = update.callback_query
+    await query.answer()
+    page = int(query.data.split('#')[1])
+    context.args = [page]
+    return await expenses_delete(update, context)
+
+@authenticate
+async def confirm_delete(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    query = update.callback_query
+    await query.answer()
+    
+    # If it's a pagination callback, let it pass through
+    if query.data.startswith("delete_expenses#"):
+        return CONFIRM_DELETE
+        
+    if query.data.startswith("delete_"):
+        context.user_data['expense_id'] = query.data.split('_')[1]
+        await query.message.edit_text(
+            "Are you sure you want to delete this expense?",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("Yes", callback_data="confirm_delete"),
+                 InlineKeyboardButton("No", callback_data="cancel_delete")]
+            ])
+        )
+        return CONFIRM_DELETE
+    elif query.data == "confirm_delete":
+        expense_id = context.user_data.get('expense_id')
+        headers = {'token': token}
+        response = requests.delete(f"{TELEGRAM_BOT_API_BASE_URL}/expenses/{expense_id}", headers=headers)
+        if response.status_code == 200:
+            await query.message.edit_text("Expense deleted successfully!")
+        else:
+            await query.message.edit_text("Failed to delete expense.")
+        context.user_data.clear()
+        return ConversationHandler.END
+    elif query.data == "cancel_delete":
+        await query.message.edit_text("Deletion cancelled.")
+        context.user_data.clear()
+        return ConversationHandler.END
+
 # Handlers for expenses
 expenses_conv_handler = ConversationHandler(
     entry_points=[CommandHandler("expenses_add", expenses_add)],
@@ -208,6 +311,18 @@ expenses_conv_handler = ConversationHandler(
         CURRENCY: [CallbackQueryHandler(currency)],
         ACCOUNT: [CallbackQueryHandler(account)],
         DATE: [CallbackQueryHandler(date)],
+    },
+    fallbacks=[CommandHandler("cancel", cancel)],
+)
+
+# Add the new handlers
+expenses_delete_conv_handler = ConversationHandler(
+    entry_points=[CommandHandler("expenses_delete", expenses_delete)],
+    states={
+        CONFIRM_DELETE: [
+            CallbackQueryHandler(expenses_delete_page, pattern=r'^delete_expenses#\d+$'),
+            CallbackQueryHandler(confirm_delete)
+        ],
     },
     fallbacks=[CommandHandler("cancel", cancel)],
 )
