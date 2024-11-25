@@ -10,7 +10,7 @@ from bots.telegram.auth import authenticate
 from config.config import TELEGRAM_BOT_API_BASE_URL
 
 # States for conversation
-AMOUNT, DESCRIPTION, CATEGORY, DATE, CURRENCY, ACCOUNT, CONFIRM_DELETE = range(7)
+AMOUNT, DESCRIPTION, CATEGORY, DATE, CURRENCY, ACCOUNT, CONFIRM_DELETE, DELETE_ALL_CONFIRM = range(8)
 
 @authenticate
 async def expenses_add(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
@@ -301,6 +301,48 @@ async def confirm_delete(update: Update, context: ContextTypes.DEFAULT_TYPE, tok
         context.user_data.clear()
         return ConversationHandler.END
 
+@authenticate
+async def expenses_delete_all(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    headers = {'token': token}
+    response = requests.get(f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", headers=headers)
+    if response.status_code == 200:
+        expenses = response.json()['expenses']
+        if not expenses:
+            await update.message.reply_text("No expenses found to delete.")
+            return ConversationHandler.END
+        
+        total_expenses = len(expenses)
+        keyboard = [[
+            InlineKeyboardButton("Yes", callback_data="confirm_delete_all"),
+            InlineKeyboardButton("No", callback_data="cancel_delete_all")
+        ]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.message.reply_text(
+            f"⚠️ Are you sure you want to delete all {total_expenses} expenses? This action cannot be undone!",
+            reply_markup=reply_markup
+        )
+        return DELETE_ALL_CONFIRM
+    else:
+        await update.message.reply_text("Failed to fetch expenses.")
+        return ConversationHandler.END
+
+@authenticate
+async def confirm_delete_all(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    query = update.callback_query
+    await query.answer()
+    
+    if query.data == "confirm_delete_all":
+        headers = {'token': token}
+        response = requests.delete(f"{TELEGRAM_BOT_API_BASE_URL}/expenses/all", headers=headers)
+        if response.status_code == 200:
+            await query.message.edit_text("✅ All expenses deleted successfully!")
+        else:
+            await query.message.edit_text("❌ Failed to delete expenses.")
+        return ConversationHandler.END
+    elif query.data == "cancel_delete_all":
+        await query.message.edit_text("Deletion cancelled.")
+        return ConversationHandler.END
+
 # Handlers for expenses
 expenses_conv_handler = ConversationHandler(
     entry_points=[CommandHandler("expenses_add", expenses_add)],
@@ -323,6 +365,15 @@ expenses_delete_conv_handler = ConversationHandler(
             CallbackQueryHandler(expenses_delete_page, pattern=r'^delete_expenses#\d+$'),
             CallbackQueryHandler(confirm_delete)
         ],
+    },
+    fallbacks=[CommandHandler("cancel", cancel)],
+)
+
+# Add the delete all conversation handler
+expenses_delete_all_conv_handler = ConversationHandler(
+    entry_points=[CommandHandler("expenses_delete_all", expenses_delete_all)],
+    states={
+        DELETE_ALL_CONFIRM: [CallbackQueryHandler(confirm_delete_all)],
     },
     fallbacks=[CommandHandler("cancel", cancel)],
 )
