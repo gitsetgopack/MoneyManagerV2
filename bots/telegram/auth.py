@@ -1,3 +1,5 @@
+"""Authentication handlers and utilities for the Telegram bot."""
+
 import requests
 from motor.motor_asyncio import AsyncIOMotorClient
 from telegram import Update
@@ -8,9 +10,12 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-from utils import cancel
 
+from bots.telegram.utils import cancel
 from config import config
+
+# Constants
+TIMEOUT = 10  # seconds
 
 # States for conversation
 USERNAME, PASSWORD, LOGIN_PASSWORD, SIGNUP_CONFIRM = range(4)
@@ -21,6 +26,7 @@ telegram_collection = mongodb_client.mmdb.telegram_bot
 
 
 async def login(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Start the login process."""
     await update.message.reply_text("Please enter your username:")
     return USERNAME
 
@@ -47,6 +53,7 @@ async def handle_login_password(
                 "username": context.user_data["username"],
                 "password": update.message.text,
             },
+            timeout=TIMEOUT,
         )
 
         if response.status_code == 200:
@@ -106,7 +113,9 @@ async def handle_signup_confirm(
             "password": context.user_data["password"],
         }
         response = requests.post(
-            f"{config.TELEGRAM_BOT_API_BASE_URL}/users/", json=signup_data
+            f"{config.TELEGRAM_BOT_API_BASE_URL}/users/",
+            json=signup_data,
+            timeout=TIMEOUT,
         )
 
         if response.status_code == 200:
@@ -116,6 +125,7 @@ async def handle_signup_confirm(
                     "username": context.user_data["username"],
                     "password": context.user_data["password"],
                 },
+                timeout=TIMEOUT,
             )
 
             if login_response.status_code == 200:
@@ -149,6 +159,8 @@ async def handle_signup_confirm(
 
 
 def authenticate(func):
+    """Decorator to check if user is authenticated."""
+
     async def wrapper(
         update: Update, context: ContextTypes.DEFAULT_TYPE, *args, **kwargs
     ):
@@ -156,8 +168,8 @@ def authenticate(func):
         user = await telegram_collection.find_one({"telegram_id": user_id})
         if user and user.get("token"):
             return await func(update, context, token=user.get("token"), *args, **kwargs)
-        else:
-            await update.message.reply_text("You are not authenticated. Please /login")
+        await update.message.reply_text("You are not authenticated. Please /login")
+        return ConversationHandler.END
 
     return wrapper
 

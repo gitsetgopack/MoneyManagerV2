@@ -1,17 +1,21 @@
+"""Main module for the Telegram bot."""
+
 import logging
 import os
 import sys
 
 from telegram import Update
-from telegram.ext import (
-    Application,
-    CallbackQueryHandler,
-    CommandHandler,
-    ContextTypes,
-    ConversationHandler,
-)
-from utils import cancel
+from telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes
 
+from bots.telegram.auth import login_handler, logout, signup_handler
+from bots.telegram.expenses import (
+    expenses_conv_handler,
+    expenses_delete_all_conv_handler,
+    expenses_delete_conv_handler,
+    expenses_delete_page,
+    expenses_view,
+    expenses_view_page,
+)
 from config import config
 
 # Add project root to Python path
@@ -27,24 +31,14 @@ logging.basicConfig(
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
-# Import handlers from auth.py and expenses.py
-from auth import authenticate, login_handler, logout, signup_handler
-from expenses import (
-    expenses_conv_handler,
-    expenses_delete_all_conv_handler,
-    expenses_delete_conv_handler,
-    expenses_delete_page,
-    expenses_view,
-    expenses_view_page,
-)
-
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the /start command."""
     await update.message.reply_text("Welcome to Money Manager Telergram Bot!\n\n")
 
 
 def main() -> None:
-    # Get token directly from config
+    """Initialize and start the bot."""
     token = config.TELEGRAM_BOT_TOKEN
     application = Application.builder().token(token).build()
 

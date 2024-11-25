@@ -1,3 +1,5 @@
+"""Expense management handlers for the Telegram bot."""
+
 from datetime import datetime
 
 import requests
@@ -12,10 +14,13 @@ from telegram.ext import (
 )
 from telegram_bot_calendar import DetailedTelegramCalendar
 from telegram_bot_pagination import InlineKeyboardPaginator
-from utils import cancel
 
 from bots.telegram.auth import authenticate
+from bots.telegram.utils import cancel
 from config.config import TELEGRAM_BOT_API_BASE_URL
+
+# Constants
+TIMEOUT = 10  # seconds
 
 # States for conversation
 (
@@ -34,11 +39,13 @@ from config.config import TELEGRAM_BOT_API_BASE_URL
 async def expenses_add(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> int:
+    """Start the expense addition process."""
     await update.message.reply_text("Please enter the amount:")
     return AMOUNT
 
 
 async def amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handle the amount input from the user."""
     try:
         amount = float(update.message.text)
         context.user_data["amount"] = amount
@@ -50,6 +57,7 @@ async def amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 async def description(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handle the description input from the user."""
     context.user_data["description"] = update.message.text
     await fetch_and_show_categories(update, context)
     return CATEGORY
@@ -59,8 +67,11 @@ async def description(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
 async def fetch_and_show_categories(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> None:
+    """Fetch and display categories for the user to select."""
     headers = {"token": token}
-    response = requests.get(f"{TELEGRAM_BOT_API_BASE_URL}/categories/", headers=headers)
+    response = requests.get(
+        f"{TELEGRAM_BOT_API_BASE_URL}/categories/", headers=headers, timeout=TIMEOUT
+    )
     if response.status_code == 200:
         categories = response.json().get("categories", [])
         if not categories:
@@ -80,6 +91,7 @@ async def fetch_and_show_categories(
 
 
 async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handle the category selection from the user."""
     query = update.callback_query
     await query.answer()
     context.user_data["category"] = query.data
@@ -91,8 +103,11 @@ async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 async def fetch_and_show_currencies(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> None:
+    """Fetch and display currencies for the user to select."""
     headers = {"token": token}
-    response = requests.get(f"{TELEGRAM_BOT_API_BASE_URL}/users/", headers=headers)
+    response = requests.get(
+        f"{TELEGRAM_BOT_API_BASE_URL}/users/", headers=headers, timeout=TIMEOUT
+    )
     if response.status_code == 200:
         currencies = response.json().get("currencies", [])
         if not currencies:
@@ -112,6 +127,7 @@ async def fetch_and_show_currencies(
 
 
 async def currency(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handle the currency selection from the user."""
     query = update.callback_query
     await query.answer()
     context.user_data["currency"] = query.data
@@ -123,8 +139,11 @@ async def currency(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 async def fetch_and_show_accounts(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> None:
+    """Fetch and display accounts for the user to select."""
     headers = {"token": token}
-    response = requests.get(f"{TELEGRAM_BOT_API_BASE_URL}/accounts/", headers=headers)
+    response = requests.get(
+        f"{TELEGRAM_BOT_API_BASE_URL}/accounts/", headers=headers, timeout=TIMEOUT
+    )
     if response.status_code == 200:
         accounts = response.json().get("accounts", [])
         if not accounts:
@@ -147,6 +166,7 @@ async def fetch_and_show_accounts(
 async def account(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> int:
+    """Handle the account selection from the user."""
     query = update.callback_query
     await query.answer()
     context.user_data["account"] = query.data
@@ -159,6 +179,7 @@ async def account(
 
 @authenticate
 async def date(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle the date selection from the user and finalize the expense addition."""
     result, key, step = DetailedTelegramCalendar().process(update.callback_query.data)
     if not result and key:
         await update.callback_query.message.edit_text(
@@ -182,7 +203,10 @@ async def date(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -
 
         headers = {"token": token}
         response = requests.post(
-            f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", json=expense_data, headers=headers
+            f"{TELEGRAM_BOT_API_BASE_URL}/expenses/",
+            json=expense_data,
+            headers=headers,
+            timeout=TIMEOUT,
         )
 
         if response.status_code == 200:
@@ -201,8 +225,11 @@ async def date(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -
 async def expenses_view(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> None:
+    """View the list of expenses with pagination."""
     headers = {"token": token}
-    response = requests.get(f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", headers=headers)
+    response = requests.get(
+        f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", headers=headers, timeout=TIMEOUT
+    )
     if response.status_code == 200:
         expenses = response.json()["expenses"]
         if not expenses:
@@ -261,6 +288,7 @@ async def expenses_view(
 async def expenses_view_page(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> None:
+    """Handle pagination for viewing expenses."""
     query = update.callback_query
     page = int(query.data.split("#")[1])
     context.args = [page]
@@ -271,8 +299,11 @@ async def expenses_view_page(
 async def expenses_delete(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> int:
+    """Start the expense deletion process."""
     headers = {"token": token}
-    response = requests.get(f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", headers=headers)
+    response = requests.get(
+        f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", headers=headers, timeout=TIMEOUT
+    )
     if response.status_code == 200:
         expenses = response.json()["expenses"]
         if not expenses:
@@ -343,6 +374,7 @@ async def expenses_delete(
 async def expenses_delete_page(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> int:
+    """Handle pagination for deleting expenses."""
     query = update.callback_query
     await query.answer()
     page = int(query.data.split("#")[1])
@@ -354,6 +386,7 @@ async def expenses_delete_page(
 async def confirm_delete(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> int:
+    """Confirm the deletion of a specific expense."""
     query = update.callback_query
     await query.answer()
 
@@ -379,7 +412,9 @@ async def confirm_delete(
         expense_id = context.user_data.get("expense_id")
         headers = {"token": token}
         response = requests.delete(
-            f"{TELEGRAM_BOT_API_BASE_URL}/expenses/{expense_id}", headers=headers
+            f"{TELEGRAM_BOT_API_BASE_URL}/expenses/{expense_id}",
+            headers=headers,
+            timeout=TIMEOUT,
         )
         if response.status_code == 200:
             await query.message.edit_text("Expense deleted successfully!")
@@ -397,8 +432,11 @@ async def confirm_delete(
 async def expenses_delete_all(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> int:
+    """Start the process to delete all expenses."""
     headers = {"token": token}
-    response = requests.get(f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", headers=headers)
+    response = requests.get(
+        f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", headers=headers, timeout=TIMEOUT
+    )
     if response.status_code == 200:
         expenses = response.json()["expenses"]
         if not expenses:
@@ -427,13 +465,16 @@ async def expenses_delete_all(
 async def confirm_delete_all(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> int:
+    """Confirm the deletion of all expenses."""
     query = update.callback_query
     await query.answer()
 
     if query.data == "confirm_delete_all":
         headers = {"token": token}
         response = requests.delete(
-            f"{TELEGRAM_BOT_API_BASE_URL}/expenses/all", headers=headers
+            f"{TELEGRAM_BOT_API_BASE_URL}/expenses/all",
+            headers=headers,
+            timeout=TIMEOUT,
         )
         if response.status_code == 200:
             await query.message.edit_text("✅ All expenses deleted successfully!")
