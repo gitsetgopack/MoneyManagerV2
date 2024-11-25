@@ -35,4 +35,7 @@ no_verify_push: ## Stage, commit & push with --no-verify
 	git commit -a -m "$$msg" --no-verify
 	git push
 
-.PHONY: all help install api test fix clean no_verify_push
+telegram: ## Run the Telegram bot
+	python bots/telegram/main.py
+
+.PHONY: all help install api test fix clean no_verify_push telegram
