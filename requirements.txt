@@ -22,3 +22,4 @@ python-telegram-bot
 requests
 openpyxl
 python-telegram-bot-calendar
+python-telegram-bot-pagination
