@@ -59,16 +59,16 @@ A REST API application for managing expenses. Build your own automation—be it 
 
 ### 📊 Stats
 
-![pr_open](https://img.shields.io/github/issues-pr/gitsetgopack/MoneyManager?style=plastic&)
-![pr_close](https://img.shields.io/github/issues-pr-closed/gitsetgopack/MoneyManager?style=plastic&)
-![issue_open](https://img.shields.io/github/issues/gitsetgopack/MoneyManager.svg?style=plastic&)
-![issue_close](https://img.shields.io/github/issues-closed/gitsetgopack/MoneyManager.svg?style=plastic&)
+![pr_open](https://img.shields.io/github/issues-pr/gitsetgopack/MoneyManagerV2?style=plastic&)
+![pr_close](https://img.shields.io/github/issues-pr-closed/gitsetgopack/MoneyManagerV2?style=plastic&)
+![issue_open](https://img.shields.io/github/issues/gitsetgopack/MoneyManagerV2.svg?style=plastic&)
+![issue_close](https://img.shields.io/github/issues-closed/gitsetgopack/MoneyManagerV2.svg?style=plastic&)
 
-![commits_since_last_project](https://img.shields.io/github/commits-since/gitsetgopack/MoneyManager/v2023.f.3.svg?style=plastic&)
-![repo_size](https://img.shields.io/github/repo-size/gitsetgopack/MoneyManager?style=plastic&)
-![forks](https://img.shields.io/github/forks/gitsetgopack/MoneyManager?style=plastic&)
-![stars](https://img.shields.io/github/stars/gitsetgopack/MoneyManager?style=plastic&)
-![downloads](https://img.shields.io/github/downloads/gitsetgopack/MoneyManager/total?style=plastic&)
+![commits_since_last_project](https://img.shields.io/github/commits-since/gitsetgopack/MoneyManagerV2/v2023.f.3.svg?style=plastic&)
+![repo_size](https://img.shields.io/github/repo-size/gitsetgopack/MoneyManagerV2?style=plastic&)
+![forks](https://img.shields.io/github/forks/gitsetgopack/MoneyManagerV2?style=plastic&)
+![stars](https://img.shields.io/github/stars/gitsetgopack/MoneyManagerV2?style=plastic&)
+![downloads](https://img.shields.io/github/downloads/gitsetgopack/MoneyManagerV2/total?style=plastic&)
 
 ### 🛠️ Tools & Technologies
 
