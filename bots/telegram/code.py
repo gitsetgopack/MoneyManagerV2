@@ -14,6 +14,7 @@ from telegram.ext import (
     filters,
 )
 from typing import Dict
+from datetime import datetime
 
 # Add project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -219,32 +220,34 @@ async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return ConversationHandler.END
 
 async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        token = user_tokens.get(update.effective_user.id)
-        if not token:
-            await update.message.reply_text("Please login first using /login")
+    token = user_tokens.get(update.effective_user.id)
+    if not token:
+        await update.message.reply_text("Please login first using /login")
+        return
+
+    headers = {'token': token}
+    response = requests.get(f"{API_BASE_URL}/expenses/", headers=headers)
+    if response.status_code == 200:
+        expenses = response.json()['expenses']
+        if not expenses:
+            await update.message.reply_text("No expenses found.")
             return
 
-        headers = {'token': token}  # Changed from 'Authorization': f'Bearer {token}'
-        response = requests.get(f"{API_BASE_URL}/expenses/", headers=headers)
-        if response.status_code == 200:
-            expenses = response.json()['expenses']
-            if not expenses:
-                await update.message.reply_text("No expenses found.")
-                return
-            
-            message = "Your expenses:\n\n"
-            print(expenses)
-            for expense in expenses:
-                
-                inspect(expense)
-                message += f"Amount: {expense['amount']}\n"
-                message += f"Description: {expense['description']}\n"
-                message += f"Category: {expense['category']}\n"
-                message += "-------------------\n"
-            
-            await update.message.reply_text(message)
-        else:
-            await update.message.reply_text("Failed to fetch expenses.")
+        message = "💰 *Your Expenses:*\n\n"
+        for expense in expenses:
+            # Convert date to human-readable format, handling datetime strings with time components
+            date = datetime.strptime(expense['date'], "%Y-%m-%dT%H:%M:%S.%f").strftime("%B %d, %Y")
+            message += (
+                f"💵 *Amount:* {expense['amount']} {expense['currency']}\n"
+                f"📝 *Description:* {expense['description']}\n"
+                f"📂 *Category:* {expense['category']}\n"
+                f"📅 *Date:* {date}\n"
+                "-------------------\n"
+            )
+
+        await update.message.reply_text(message, parse_mode="Markdown")
+    else:
+        await update.message.reply_text("Failed to fetch expenses.")
 
 async def get_total(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
