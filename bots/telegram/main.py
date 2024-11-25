@@ -16,7 +16,9 @@ from bots.telegram.expenses import (
     expenses_view,
     expenses_view_page,
 )
+from bots.telegram.utils import unknown, get_menu_commands
 from config import config
+from bots.telegram.auth import get_user
 
 # Add project root to Python path
 project_root = os.path.dirname(
@@ -34,8 +36,16 @@ logger = logging.getLogger(__name__)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle the /start command."""
-    await update.message.reply_text("Welcome to Money Manager Telergram Bot!\n\n")
+    user = await get_user(update=update)
+    if user:
+        username = user.get("username")
+        await update.message.reply_text(f"Welcome back, {username}!\n\n{get_menu_commands()}")
+    else:
+        await update.message.reply_text("Welcome to Money Manager Telegram Bot! Please /login or /signup to continue.")
 
+async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the /menu command."""
+    await update.message.reply_text(get_menu_commands())
 
 def main() -> None:
     """Initialize and start the bot."""
@@ -57,6 +67,8 @@ def main() -> None:
         CallbackQueryHandler(expenses_delete_page, pattern=r"^delete_expenses#\d+$")
     )
     application.add_handler(expenses_delete_all_conv_handler)
+    application.add_handler(CommandHandler("menu", menu))
+    application.add_handler(CommandHandler("unknown", unknown))
 
     # Start the bot
     application.run_polling(allowed_updates=Update.ALL_TYPES)
