@@ -32,8 +32,8 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
  
 # States for conversation
-AMOUNT, DESCRIPTION, CATEGORY, DATE = range(4)
-USERNAME, PASSWORD, LOGIN_PASSWORD, SIGNUP_CONFIRM = range(4, 8)  # Changed PHONE to USERNAME
+AMOUNT, DESCRIPTION, CATEGORY, DATE, CURRENCY = range(5)
+USERNAME, PASSWORD, LOGIN_PASSWORD, SIGNUP_CONFIRM = range(5, 9)  # Changed PHONE to USERNAME
 
 # API Base URL from config
 API_BASE_URL = config.TELEGRAM_BOT_API_BASE_URL
@@ -172,7 +172,7 @@ def authenticate(func):
         user_id = update.effective_user.id
         user = await telegram_collection.find_one({"telegram_id": user_id})
         if user and user.get("token"):
-            return await func(update, context, *args, **kwargs, token=user.get("token"))
+            return await func(update, context, token=user.get("token"), *args, **kwargs)
         else:
             await update.message.reply_text("You are not authenticated. Please /login")
 
@@ -222,6 +222,33 @@ async def category(update: Update, context: ContextTypes.DEFAULT_TYPE, token: st
     query = update.callback_query
     await query.answer()
     context.user_data['category'] = query.data
+    await fetch_and_show_currencies(update, context)
+    return CURRENCY
+
+@authenticate
+async def fetch_and_show_currencies(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
+    headers = {'token': token}
+    response = requests.get(f"{API_BASE_URL}/users/", headers=headers)
+    if response.status_code == 200:
+        currencies = response.json().get('currencies', [])
+        if not currencies:
+            await update.callback_query.message.edit_text("No currencies found.")
+            return
+
+        keyboard = [
+            [InlineKeyboardButton(currency, callback_data=currency)]
+            for currency in currencies
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.callback_query.message.edit_text("Please select a currency:", reply_markup=reply_markup)
+    else:
+        await update.callback_query.message.edit_text("Failed to fetch currencies.")
+
+@authenticate
+async def currency(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    query = update.callback_query
+    await query.answer()
+    context.user_data['currency'] = query.data
     calendar, step = DetailedTelegramCalendar().build()
     await query.edit_message_text(f"Please select the date: {step}", reply_markup=calendar)
     return DATE
@@ -240,7 +267,7 @@ async def date(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -
             'amount': amount_str,
             'description': context.user_data['description'],
             'category': context.user_data['category'],
-            'currency': 'USD',
+            'currency': context.user_data['currency'],
             'date': result.strftime("%Y-%m-%dT%H:%M:%S.%f")  # Save date in the specified format
         }
         
@@ -310,6 +337,7 @@ def main() -> None:
             AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, amount)],
             DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, description)],
             CATEGORY: [CallbackQueryHandler(category)],
+            CURRENCY: [CallbackQueryHandler(currency)],
             DATE: [CallbackQueryHandler(date)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
