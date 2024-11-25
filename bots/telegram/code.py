@@ -203,20 +203,13 @@ async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await update.message.reply_text(f"Please select the date: {step}", reply_markup=calendar)
     return DATE
 
-async def date(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+@authenticate
+async def date(update: Update, context: ContextTypes.DEFAULT_TYPE, token) -> int:
     result, key, step = DetailedTelegramCalendar().process(update.callback_query.data)
     if not result and key:
         await update.callback_query.message.edit_text(f"Please select the date: {step}", reply_markup=key)
         return DATE
     elif result:
-        context.user_data['date'] = result
-        user_id = update.effective_user.id
-        user = await telegram_collection.find_one({"telegram_id": user_id})
-        token = user.get("token") if user else None
-        if not token:
-            await update.callback_query.message.edit_text("Please login first using /login")
-            return ConversationHandler.END
-
         # Format the amount as string and ensure it's a valid number
         amount_str = str(float(context.user_data['amount']))
         
