@@ -4,7 +4,7 @@ import logging
 import requests
 from rich import inspect
 from motor.motor_asyncio import AsyncIOMotorClient
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -195,17 +195,39 @@ async def amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 async def description(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     context.user_data['description'] = update.message.text
-    await update.message.reply_text("Please enter the category:")
+    await fetch_and_show_categories(update, context)
     return CATEGORY
 
-async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    context.user_data['category'] = update.message.text
+@authenticate
+async def fetch_and_show_categories(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
+    headers = {'token': token}
+    response = requests.get(f"{API_BASE_URL}/categories/", headers=headers)
+    if response.status_code == 200:
+        categories = response.json().get('categories', [])
+        if not categories:
+            await update.message.reply_text("No categories found.")
+            return
+
+        keyboard = [
+            [InlineKeyboardButton(category, callback_data=category)]
+            for category in categories
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.message.reply_text("Please select a category:", reply_markup=reply_markup)
+    else:
+        await update.message.reply_text("Failed to fetch categories.")
+
+@authenticate
+async def category(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    query = update.callback_query
+    await query.answer()
+    context.user_data['category'] = query.data
     calendar, step = DetailedTelegramCalendar().build()
-    await update.message.reply_text(f"Please select the date: {step}", reply_markup=calendar)
+    await query.edit_message_text(f"Please select the date: {step}", reply_markup=calendar)
     return DATE
 
 @authenticate
-async def date(update: Update, context: ContextTypes.DEFAULT_TYPE, token) -> int:
+async def date(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
     result, key, step = DetailedTelegramCalendar().process(update.callback_query.data)
     if not result and key:
         await update.callback_query.message.edit_text(f"Please select the date: {step}", reply_markup=key)
@@ -287,7 +309,7 @@ def main() -> None:
         states={
             AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, amount)],
             DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, description)],
-            CATEGORY: [MessageHandler(filters.TEXT & ~filters.COMMAND, category)],
+            CATEGORY: [CallbackQueryHandler(category)],
             DATE: [CallbackQueryHandler(date)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
