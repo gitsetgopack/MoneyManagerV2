@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 import requests
+from rich import inspect
 from motor.motor_asyncio import AsyncIOMotorClient
 from telegram import Update
 from telegram.ext import (
@@ -218,7 +219,6 @@ async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return ConversationHandler.END
 
 async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    try:
         token = user_tokens.get(update.effective_user.id)
         if not token:
             await update.message.reply_text("Please login first using /login")
@@ -227,13 +227,16 @@ async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         headers = {'token': token}  # Changed from 'Authorization': f'Bearer {token}'
         response = requests.get(f"{API_BASE_URL}/expenses/", headers=headers)
         if response.status_code == 200:
-            expenses = response.json()
+            expenses = response.json()['expenses']
             if not expenses:
                 await update.message.reply_text("No expenses found.")
                 return
             
             message = "Your expenses:\n\n"
+            print(expenses)
             for expense in expenses:
+                
+                inspect(expense)
                 message += f"Amount: {expense['amount']}\n"
                 message += f"Description: {expense['description']}\n"
                 message += f"Category: {expense['category']}\n"
@@ -242,8 +245,6 @@ async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             await update.message.reply_text(message)
         else:
             await update.message.reply_text("Failed to fetch expenses.")
-    except Exception as e:
-        await update.message.reply_text(f"An error occurred: {str(e)}")
 
 async def get_total(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
