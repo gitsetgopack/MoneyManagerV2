@@ -12,9 +12,11 @@ from telegram.ext import (
     ConversationHandler,
     MessageHandler,
     filters,
+    CallbackQueryHandler,
 )
 from typing import Dict
 from datetime import datetime
+from telegram_bot_calendar import DetailedTelegramCalendar
 
 # Add project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -30,7 +32,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
  
 # States for conversation
-AMOUNT, DESCRIPTION, CATEGORY = range(3)
+AMOUNT, DESCRIPTION, CATEGORY, DATE = range(4)
 USERNAME, PASSWORD, LOGIN_PASSWORD, SIGNUP_CONFIRM = range(4, 8)  # Changed PHONE to USERNAME
 user_tokens: Dict[int, str] = {}  # Store user tokens in memory
 
@@ -187,10 +189,21 @@ async def description(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     return CATEGORY
 
 async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    try:
+    context.user_data['category'] = update.message.text
+    calendar, step = DetailedTelegramCalendar().build()
+    await update.message.reply_text(f"Please select the date: {step}", reply_markup=calendar)
+    return DATE
+
+async def date(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    result, key, step = DetailedTelegramCalendar().process(update.callback_query.data)
+    if not result and key:
+        await update.callback_query.message.edit_text(f"Please select the date: {step}", reply_markup=key)
+        return DATE
+    elif result:
+        context.user_data['date'] = result
         token = user_tokens.get(update.effective_user.id)
         if not token:
-            await update.message.reply_text("Please login first using /login")
+            await update.callback_query.message.edit_text("Please login first using /login")
             return ConversationHandler.END
 
         # Format the amount as string and ensure it's a valid number
@@ -199,24 +212,21 @@ async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         expense_data = {
             'amount': amount_str,
             'description': context.user_data['description'],
-            'category': update.message.text,
-            'currency': 'USD'
+            'category': context.user_data['category'],
+            'currency': 'USD',
+            'date': result.strftime("%Y-%m-%dT%H:%M:%S.%f")  # Save date in the specified format
         }
         
-        headers = {'token': token}  # Changed from 'Authorization': f'Bearer {token}'
+        headers = {'token': token}
         response = requests.post(f"{API_BASE_URL}/expenses/", json=expense_data, headers=headers)
         
         if response.status_code == 200:
-            await update.message.reply_text("Expense added successfully!")
+            await update.callback_query.message.edit_text("Expense added successfully!")
         else:
             error_detail = response.json().get('detail', 'Unknown error')
-            await update.message.reply_text(f"Failed to add expense: {error_detail}")
+            await update.callback_query.message.edit_text(f"Failed to add expense: {error_detail}")
             
         context.user_data.clear()
-        return ConversationHandler.END
-    except Exception as e:
-        logger.error(f"Error adding expense: {str(e)}")
-        await update.message.reply_text(f"An error occurred: {str(e)}")
         return ConversationHandler.END
 
 async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -236,7 +246,10 @@ async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         message = "💰 *Your Expenses:*\n\n"
         for expense in expenses:
             # Convert date to human-readable format, handling datetime strings with time components
-            date = datetime.strptime(expense['date'], "%Y-%m-%dT%H:%M:%S.%f").strftime("%B %d, %Y")
+            try:
+                date = datetime.strptime(expense['date'], "%Y-%m-%dT%H:%M:%S.%f").strftime("%B %d, %Y")
+            except ValueError:
+                date = datetime.strptime(expense['date'], "%Y-%m-%dT%H:%M:%S").strftime("%B %d, %Y")
             message += (
                 f"💵 *Amount:* {expense['amount']} {expense['currency']}\n"
                 f"📝 *Description:* {expense['description']}\n"
@@ -283,6 +296,7 @@ def main() -> None:
             AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, amount)],
             DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, description)],
             CATEGORY: [MessageHandler(filters.TEXT & ~filters.COMMAND, category)],
+            DATE: [CallbackQueryHandler(date)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
     )
