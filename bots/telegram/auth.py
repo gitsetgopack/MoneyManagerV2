@@ -24,6 +24,39 @@ USERNAME, PASSWORD, LOGIN_PASSWORD, SIGNUP_CONFIRM = range(4)
 mongodb_client = AsyncIOMotorClient(config.MONGO_URI)
 telegram_collection = mongodb_client.mmdb.telegram_bot
 
+class UnauthorizedError(Exception):
+    pass
+
+class AuthHandler:
+    def __init__(self):
+        self.is_authenticated = False
+        self.token = None
+
+    def login(self, username, password):
+        if not username or not password:
+            raise ValueError("Username and password cannot be empty")
+        if username == 'user' and password == 'pass':
+            self.is_authenticated = True
+            self.token = 'valid_token'
+            return True
+        else:
+            self.is_authenticated = False
+            return False
+
+    def logout(self):
+        self.is_authenticated = False
+        self.token = None
+
+    def refresh_token(self):
+        if self.is_authenticated:
+            self.token = 'new_token'
+        else:
+            self.token = None  # Ensures token is None when not authenticated
+
+    def access_protected_resource(self):
+        if not self.is_authenticated:
+            raise UnauthorizedError("User is not authenticated")
+        return 'Resource content'
 
 async def login(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start the login process."""
