@@ -45,13 +45,7 @@ telegram_collection = mongodb_client.mmdb.telegram_bot
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
-        "Welcome to Money Manager Bot!\n\n"
-        "Use /signup to create new account\n"
-        "Use /login to access your account\n"
-        "Use /logout to logout from your account\n"
-        "Use /expense_add to add a new expense\n"
-        "Use /expense_view to view your expenses\n"
-        "Use /total to see total expenses"
+        "Welcome to Money Manager Telergram Bot!\n\n"
     )
 
 async def login(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -386,7 +380,7 @@ def main() -> None:
 
     # Add conversation handler
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("expense_add", expenses_add)],
+        entry_points=[CommandHandler("expenses_add", expenses_add)],
         states={
             AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, amount)],
             DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, description)],
@@ -423,7 +417,7 @@ def main() -> None:
     application.add_handler(login_handler)
     application.add_handler(signup_handler)
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("expense_view", expenses_view))
+    application.add_handler(CommandHandler("expenses_view", expenses_view))
     application.add_handler(CommandHandler("logout", logout))
     application.add_handler(CallbackQueryHandler(expenses_view_page, pattern='view_expenses#'))
 
