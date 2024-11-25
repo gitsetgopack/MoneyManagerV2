@@ -48,8 +48,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "Use /signup to create new account\n"
         "Use /login to access your account\n"
         "Use /logout to logout from your account\n"
-        "Use /add to add a new expense\n"
-        "Use /view to view your expenses\n"
+        "Use /expense_add to add a new expense\n"
+        "Use /expense_view to view your expenses\n"
         "Use /total to see total expenses"
     )
 
@@ -179,7 +179,7 @@ def authenticate(func):
     return wrapper
 
 @authenticate
-async def add_expense(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+async def expenses_add(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
     await update.message.reply_text("Please enter the amount:")
     return AMOUNT
 
@@ -311,7 +311,7 @@ async def date(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -
         return ConversationHandler.END
 
 @authenticate
-async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
+async def expenses_view(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
     headers = {'token': token}
     response = requests.get(f"{API_BASE_URL}/expenses/", headers=headers)
     if response.status_code == 200:
@@ -359,7 +359,7 @@ def main() -> None:
 
     # Add conversation handler
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("add", add_expense)],
+        entry_points=[CommandHandler("expense_add", expenses_add)],
         states={
             AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, amount)],
             DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, description)],
@@ -396,7 +396,7 @@ def main() -> None:
     application.add_handler(login_handler)
     application.add_handler(signup_handler)
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("view", view_expenses))
+    application.add_handler(CommandHandler("expense_view", expenses_view))
     application.add_handler(CommandHandler("logout", logout))
 
     # Start the bot
