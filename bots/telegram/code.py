@@ -26,7 +26,7 @@ logging.basicConfig(
 )
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
-
+ 
 # States for conversation
 AMOUNT, DESCRIPTION, CATEGORY = range(3)
 USERNAME, PASSWORD, LOGIN_PASSWORD, SIGNUP_CONFIRM = range(4, 8)  # Changed PHONE to USERNAME
@@ -191,23 +191,29 @@ async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             await update.message.reply_text("Please login first using /login")
             return ConversationHandler.END
 
+        # Format the amount as string and ensure it's a valid number
+        amount_str = str(float(context.user_data['amount']))
+        
         expense_data = {
-            'amount': context.user_data['amount'],
+            'amount': amount_str,
             'description': context.user_data['description'],
-            'category': update.message.text
+            'category': update.message.text,
+            'currency': 'USD'
         }
         
-        headers = {'Authorization': f'Bearer {token}'}
-        # Modified expense creation endpoint
+        headers = {'token': token}  # Changed from 'Authorization': f'Bearer {token}'
         response = requests.post(f"{API_BASE_URL}/expenses/", json=expense_data, headers=headers)
+        
         if response.status_code == 200:
             await update.message.reply_text("Expense added successfully!")
         else:
-            await update.message.reply_text("Failed to add expense. Please try again.")
+            error_detail = response.json().get('detail', 'Unknown error')
+            await update.message.reply_text(f"Failed to add expense: {error_detail}")
             
         context.user_data.clear()
         return ConversationHandler.END
     except Exception as e:
+        logger.error(f"Error adding expense: {str(e)}")
         await update.message.reply_text(f"An error occurred: {str(e)}")
         return ConversationHandler.END
 
@@ -218,8 +224,7 @@ async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             await update.message.reply_text("Please login first using /login")
             return
 
-        headers = {'Authorization': f'Bearer {token}'}
-        # Modified expense listing endpoint
+        headers = {'token': token}  # Changed from 'Authorization': f'Bearer {token}'
         response = requests.get(f"{API_BASE_URL}/expenses/", headers=headers)
         if response.status_code == 200:
             expenses = response.json()
@@ -247,8 +252,7 @@ async def get_total(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await update.message.reply_text("Please login first using /login")
             return
 
-        headers = {'Authorization': f'Bearer {token}'}
-        # Modified total expense endpoint
+        headers = {'token': token}  # Changed from 'Authorization': f'Bearer {token}'
         response = requests.get(f"{API_BASE_URL}/expenses/total", headers=headers)
         if response.status_code == 200:
             total = response.json()['total']
