@@ -34,7 +34,6 @@ logger = logging.getLogger(__name__)
 # States for conversation
 AMOUNT, DESCRIPTION, CATEGORY, DATE = range(4)
 USERNAME, PASSWORD, LOGIN_PASSWORD, SIGNUP_CONFIRM = range(4, 8)  # Changed PHONE to USERNAME
-user_tokens: Dict[int, str] = {}  # Store user tokens in memory
 
 # API Base URL from config
 API_BASE_URL = config.TELEGRAM_BOT_API_BASE_URL
@@ -96,8 +95,6 @@ async def handle_login_password(update: Update, context: ContextTypes.DEFAULT_TY
                 }
                 await telegram_collection.insert_one(user_data)
 
-            # Store token in memory
-            user_tokens[user_id] = token
             await update.message.reply_text("Login successful!")
         else:
             await update.message.reply_text(
@@ -154,8 +151,6 @@ async def handle_signup_confirm(update: Update, context: ContextTypes.DEFAULT_TY
                 }
                 await telegram_collection.insert_one(user_data)
                 
-                # Store token in memory
-                user_tokens[user_id] = token
                 await update.message.reply_text("Signup successful! You are now logged in.")
             else:
                 await update.message.reply_text("Account created! Please use /login to access your account.")
@@ -201,7 +196,9 @@ async def date(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return DATE
     elif result:
         context.user_data['date'] = result
-        token = user_tokens.get(update.effective_user.id)
+        user_id = update.effective_user.id
+        user = await telegram_collection.find_one({"telegram_id": user_id})
+        token = user.get("token") if user else None
         if not token:
             await update.callback_query.message.edit_text("Please login first using /login")
             return ConversationHandler.END
@@ -230,7 +227,9 @@ async def date(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return ConversationHandler.END
 
 async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    token = user_tokens.get(update.effective_user.id)
+    user_id = update.effective_user.id
+    user = await telegram_collection.find_one({"telegram_id": user_id})
+    token = user.get("token") if user else None
     if not token:
         await update.message.reply_text("Please login first using /login")
         return
@@ -264,12 +263,14 @@ async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 async def get_total(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
-        token = user_tokens.get(update.effective_user.id)
+        user_id = update.effective_user.id
+        user = await telegram_collection.find_one({"telegram_id": user_id})
+        token = user.get("token") if user else None
         if not token:
             await update.message.reply_text("Please login first using /login")
             return
 
-        headers = {'token': token}  # Changed from 'Authorization': f'Bearer {token}'
+        headers = {'token': token}
         response = requests.get(f"{API_BASE_URL}/expenses/total", headers=headers)
         if response.status_code == 200:
             total = response.json()['total']
