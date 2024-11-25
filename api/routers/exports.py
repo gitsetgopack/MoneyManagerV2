@@ -253,9 +253,9 @@ async def data_to_csv(
             writer.writerow([category_name, category_data["monthly_budget"]])
 
     response = Response(content=output.getvalue(), media_type="text/csv")
-    response.headers[
-        "Content-Disposition"
-    ] = f"attachment; filename={export_type.value}.csv"
+    response.headers["Content-Disposition"] = (
+        f"attachment; filename={export_type.value}.csv"
+    )
     return response
 
 
