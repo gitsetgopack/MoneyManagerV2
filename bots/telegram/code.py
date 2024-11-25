@@ -45,8 +45,9 @@ telegram_collection = mongodb_client.mmdb.telegram_bot
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         "Welcome to Money Manager Bot!\n\n"
-        "Use /login to access your account\n"
         "Use /signup to create new account\n"
+        "Use /login to access your account\n"
+        "Use /logout to logout from your account\n"
         "Use /add to add a new expense\n"
         "Use /view to view your expenses\n"
         "Use /total to see total expenses"
@@ -262,23 +263,18 @@ async def view_expenses(update: Update, context: ContextTypes.DEFAULT_TYPE, toke
     else:
         await update.message.reply_text("Failed to fetch expenses.")
 
-@authenticate
-async def get_total(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
-    try:
-        headers = {'token': token}
-        response = requests.get(f"{API_BASE_URL}/expenses/total", headers=headers)
-        if response.status_code == 200:
-            total = response.json()['total']
-            await update.message.reply_text(f"Total expenses: {total}")
-        else:
-            await update.message.reply_text("Failed to fetch total expenses.")
-    except Exception as e:
-        await update.message.reply_text(f"An error occurred: {str(e)}")
-
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await update.message.reply_text("Operation cancelled.")
     context.user_data.clear()
     return ConversationHandler.END
+
+async def logout(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    result = await telegram_collection.delete_many({"telegram_id": user_id})
+    if result.deleted_count > 0:
+        await update.message.reply_text("You have been logged out successfully.")
+    else:
+        await update.message.reply_text("You are not logged in.")
 
 def main() -> None:
     # Get token directly from config
@@ -323,7 +319,7 @@ def main() -> None:
     application.add_handler(signup_handler)
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("view", view_expenses))
-    application.add_handler(CommandHandler("total", get_total))
+    application.add_handler(CommandHandler("logout", logout))
 
     # Start the bot
     application.run_polling(allowed_updates=Update.ALL_TYPES)
