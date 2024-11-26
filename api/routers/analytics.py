@@ -90,10 +90,22 @@ async def expense_bar(
     # Plotting the bar graph
     plt.figure(figsize=(10, 6))
     ax = daily_expenses.plot(kind="bar", color="skyblue")
-    date_range = f"from {from_date} to {to_date}" if from_date and to_date else "all time"
+    
+    # Create detailed date range text
+    if from_date and to_date:
+        if from_date == to_date:
+            date_range_text = f"Date: {from_date}"
+        else:
+            date_range_text = f"Date Range: {from_date} to {to_date}"
+    elif from_date:
+        date_range_text = f"Date Range: From {from_date}"
+    elif to_date:
+        date_range_text = f"Date Range: To {to_date}"
+    else:
+        date_range_text = "Date Range: All"
     
     total_spend = daily_expenses.sum()
-    plt.title(f"Total Expenses per Day ({date_range})\nTotal Spend: ${total_spend:,.2f}")
+    plt.title(f"Total Expenses per Day\n{date_range_text}\nTotal Spend: ${total_spend:,.2f}")
     
     plt.xlabel("Date")
     plt.ylabel("Total Expense Amount")
@@ -150,10 +162,22 @@ async def expense_pie(
 
     # Plotting the pie chart
     plt.figure(figsize=(8, 8))
-    date_range = f"from {from_date} to {to_date}" if from_date and to_date else "all time"
+    
+    # Create detailed date range text
+    if from_date and to_date:
+        if from_date == to_date:
+            date_range_text = f"Date: {from_date}"
+        else:
+            date_range_text = f"Date Range: {from_date} to {to_date}"
+    elif from_date:
+        date_range_text = f"Date Range: From {from_date}"
+    elif to_date:
+        date_range_text = f"Date Range: To {to_date}"
+    else:
+        date_range_text = "Date Range: All"
     
     total_spend = category_expenses.sum()
-    plt.title(f"Expense Distribution by Category ({date_range})\nTotal Spend: ${total_spend:,.2f}", pad=20)
+    plt.title(f"Expense Distribution by Category\n{date_range_text}\nTotal Spend: ${total_spend:,.2f}", pad=20)
     
     # Define a visually appealing color palette
     colors = [
