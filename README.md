@@ -156,11 +156,40 @@ Currently, the project includes 150+ tests covering all core functionality.
 
 - **Sign Up:**
   
-<img src="https://github.com/user-attachments/assets/76c7867b-81ae-4be3-a73a-9e08e0cda8b3" alt="Sign Up" width="400">
+<img src="https://github.com/user-attachments/assets/76c7867b-81ae-4be3-a73a-9e08e0cda8b3" alt="Sign Up" width="200"></br>
 
 - **Login**
 
-<img src="https://github.com/user-attachments/assets/94daf731-9ce0-4ef6-8797-54ede9ac9713" alt="Login" width="400">
+<img src="https://github.com/user-attachments/assets/94daf731-9ce0-4ef6-8797-54ede9ac9713" alt="Login" width="200"></br>
+
+- **Add Expenses**
+
+<img src="https://github.com/user-attachments/assets/38206a69-68f9-4b1f-b25b-c6853ab90894" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/816367c0-e145-4334-af23-97614b9cb1bd" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/716f301f-dee6-4fbf-a890-25d0edf1994b" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/0bbea4a2-f1e9-438c-8efa-d5297c5aa151" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/1cb99a0e-e3ca-4b0f-82e8-05ad42a4880d" alt="Login" width="200"></br>
+
+- **View Expenses**
+
+<img src="https://github.com/user-attachments/assets/b54b9329-d2de-4386-8b4c-7c2437b3273e" alt="Login" width="200"></br>
+
+- **Update Expenses**
+
+<img src="https://github.com/user-attachments/assets/4ad39895-8f66-4e1c-9c3f-8c67c0b735bf" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/84cb1a5c-4e88-4326-83f2-c3aaa0d4935e" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/727853b8-ba8e-45fc-a82d-f2c1eb4fc06f" alt="Login" width="200"></br>
+
+- **Delete Expenses**
+
+<img src="https://github.com/user-attachments/assets/6e981ef7-a094-4c1b-835e-3114776c985f" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/9ce0a04f-d824-4710-b749-46cfffed05ad" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/cf8f26ab-d4ae-4d82-abd5-e5c0a401de32" alt="Login" width="200"></br>
+
+- **Delete All Expenses**
+
+<img src="https://github.com/user-attachments/assets/a1962ccb-81c9-45c9-9edf-6f57acb7e632" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/170a5483-c100-4eae-b124-88c028d864b0" alt="Login" width="200"></br>
 
 ## 🚀 Future Enhancements (Needs Change)
 
