@@ -13,6 +13,7 @@ from telegram.ext import (
 )
 
 from bots.telegram.utils import cancel
+from bots.telegram.utils import get_menu_commands
 from config import config
 
 # Constants
@@ -82,7 +83,7 @@ async def handle_login_password(
                 }
                 await telegram_collection.insert_one(user_data)
 
-            await update.message.reply_text("Login successful!")
+            await update.message.reply_text(f"Login successful!\n\n{get_menu_commands()}")
         else:
             await update.message.reply_text(
                 f"Login failed: {response.json()['detail']}\n /signup if you haven't, otherwise /login"
@@ -141,7 +142,7 @@ async def handle_signup_confirm(
                 await telegram_collection.insert_one(user_data)
 
                 await update.message.reply_text(
-                    "Signup successful! You are now logged in."
+                    f"Signup successful! You are now logged in.\n\n{get_menu_commands()}"
                 )
             else:
                 await update.message.reply_text(
@@ -186,9 +187,9 @@ async def logout(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     result = await telegram_collection.delete_many({"telegram_id": user_id})
     if result.deleted_count > 0:
-        await update.message.reply_text("You have been logged out successfully.")
+        await update.message.reply_text("You have been logged out successfully.\nPlease /login or /signup to continue.")
     else:
-        await update.message.reply_text("You are not logged in.")
+        await update.message.reply_text("You are not logged in.\nPlease /login or /signup to continue.")
 
 
 # Handlers for authentication
