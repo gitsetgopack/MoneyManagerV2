@@ -5,12 +5,10 @@ This module provides analytics endpoints for retrieving and visualizing expense 
 import datetime
 from typing import Optional
 
-
 from fastapi import APIRouter, Header, HTTPException, Response
-from api.utils.db import calculate_days_in_range
 
 from api.utils.auth import verify_token
-from api.utils.db import fetch_data
+from api.utils.db import calculate_days_in_range, fetch_data
 from api.utils.plots import (
     create_budget_vs_actual,
     create_category_bar,
@@ -122,7 +120,6 @@ def prorate_budget(
     last_expense_date: Optional[datetime.date],
 ) -> float:
     """Prorate the budget based on the date range."""
-    
 
     days_in_range = calculate_days_in_range(
         from_date, to_date, first_expense_date, last_expense_date

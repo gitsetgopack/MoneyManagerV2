@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 from api.app import app
-from api.routers.exports import fetch_data
+from api.utils.db import fetch_data
 
 client = TestClient(app)
 
