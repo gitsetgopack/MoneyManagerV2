@@ -12,6 +12,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+from pytz import timezone  # type: ignore
 from telegram_bot_calendar import DetailedTelegramCalendar
 from telegram_bot_pagination import InlineKeyboardPaginator
 
@@ -19,6 +20,7 @@ from bots.telegram.auth import authenticate
 from bots.telegram.utils import cancel
 from config.config import TELEGRAM_BOT_API_BASE_URL
 
+from config.config import MONGO_URI, TIME_ZONE
 # Constants
 TIMEOUT = 10  # seconds
 
@@ -27,12 +29,13 @@ TIMEOUT = 10  # seconds
     AMOUNT,
     DESCRIPTION,
     CATEGORY,
+    DATE_OPTION,  # New state
     DATE,
     CURRENCY,
     ACCOUNT,
     CONFIRM_DELETE,
     DELETE_ALL_CONFIRM,
-) = range(8)
+) = range(9)
 
 
 @authenticate
@@ -166,15 +169,61 @@ async def fetch_and_show_accounts(
 async def account(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> int:
-    """Handle the account selection from the user."""
+    """Handle the account selection from the user and ask for date option."""
     query = update.callback_query
     await query.answer()
     context.user_data["account"] = query.data
-    calendar, step = DetailedTelegramCalendar().build()
+    keyboard = [
+        [
+            InlineKeyboardButton("Now", callback_data="date_now"),
+            InlineKeyboardButton("Custom", callback_data="date_custom"),
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
     await query.edit_message_text(
-        f"Please select the date: {step}", reply_markup=calendar
+        "Please choose the date option:", reply_markup=reply_markup
     )
-    return DATE
+    return DATE_OPTION
+
+@authenticate
+async def handle_date_option(update: Update, context: ContextTypes.DEFAULT_TYPE, token:str) -> int:
+    """Handle the user's date option choice."""
+    query = update.callback_query
+    await query.answer()
+    if query.data == "date_now":
+        tz = timezone(TIME_ZONE)
+        context.user_data["date"] = datetime.now(tz).strftime("%Y-%m-%dT%H:%M:%S.%f")
+        # ...existing code to finalize expense addition...
+        expense_data = {
+            "amount": str(float(context.user_data["amount"])),
+            "description": context.user_data["description"],
+            "category": context.user_data["category"],
+            "currency": context.user_data["currency"],
+            "account": context.user_data["account"],
+            "date": context.user_data["date"],
+        }
+        headers = {"token": token}
+        response = requests.post(
+            f"{TELEGRAM_BOT_API_BASE_URL}/expenses/",
+            json=expense_data,
+            headers=headers,
+            timeout=TIMEOUT,
+        )
+        if response.status_code == 200:
+            await query.message.edit_text("Expense added successfully!")
+        else:
+            error_detail = response.json().get("detail", "Unknown error")
+            await query.message.edit_text(
+                f"Failed to add expense: {error_detail}"
+            )
+        context.user_data.clear()
+        return ConversationHandler.END
+    elif query.data == "date_custom":
+        calendar, step = DetailedTelegramCalendar().build()
+        await query.edit_message_text(
+            f"Please select the date: {step}", reply_markup=calendar
+        )
+        return DATE
 
 
 @authenticate
@@ -452,7 +501,7 @@ async def expenses_delete_all(
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
-            f"⚠️ Are you sure you want to delete all {total_expenses} expenses? This action cannot be undone!",
+            f"⚠��� Are you sure you want to delete all {total_expenses} expenses? This action cannot be undone!",
             reply_markup=reply_markup,
         )
         return DELETE_ALL_CONFIRM
@@ -495,6 +544,7 @@ expenses_conv_handler = ConversationHandler(
         CATEGORY: [CallbackQueryHandler(category)],
         CURRENCY: [CallbackQueryHandler(currency)],
         ACCOUNT: [CallbackQueryHandler(account)],
+        DATE_OPTION: [CallbackQueryHandler(handle_date_option)],
         DATE: [CallbackQueryHandler(date)],
     },
     fallbacks=[CommandHandler("cancel", cancel)],
