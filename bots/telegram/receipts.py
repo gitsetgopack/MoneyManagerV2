@@ -6,6 +6,11 @@ from PIL import Image
 import io
 from .auth import get_user
 from .api_helper import APIHelper  # Add this import at the top
+import logging
+from datetime import datetime
+
+# Add logger configuration
+logger = logging.getLogger(__name__)
 
 UPLOAD_PHOTO = 1
 CONFIRM_DATA = 2
@@ -98,16 +103,23 @@ async def confirm_data(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
             if not user:
                 raise Exception("User not authenticated")
 
-            # Save expense via API
+            # Convert date from DD/MM/YY to ISO format
+            receipt_date = datetime.strptime(receipt_data['date'], '%d/%m/%y')
+            iso_date = receipt_date.strftime('%Y-%m-%dT%H:%M:%S.%f')
+
+            expense_data = {
+                "amount": str(receipt_data['total']),
+                "description": f"Receipt from {receipt_data['store']}",
+                "category": "Food",
+                "currency": "USD",
+                "account": "Checking",
+                "date": iso_date  # Use converted ISO date
+            }
+
+            # Save expense via API using token
             api_response = await APIHelper.save_expense(
-                user_id=user['id'],  # Use correct user ID from auth
-                expense_data={
-                    'total': receipt_data['total'],
-                    'store': receipt_data['store'],
-                    'date': receipt_data['date'],
-                    'category_id': 1,  # Default category ID
-                    'account_id': 1    # Default account ID
-                }
+                token=user['token'],
+                expense_data=expense_data
             )
             
             if api_response.get('success'):
