@@ -38,6 +38,7 @@ from api.utils.plots import (
     create_monthly_line,
 )
 from config.config import MONGO_URI, TIME_ZONE
+from api.utils.db import fetch_data
 
 router = APIRouter(prefix="/exports", tags=["Exports"])
 
