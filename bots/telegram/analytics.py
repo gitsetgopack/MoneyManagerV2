@@ -28,7 +28,7 @@ async def analytics(update: Update, context: ContextTypes.DEFAULT_TYPE, token: s
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
-        "📊 *Available Analytics*\n\nChoose a plot type:",
+        "📊 *Lets Analyse*\n\nChoose a plot type:",
         reply_markup=reply_markup,
         parse_mode="Markdown"
     )
