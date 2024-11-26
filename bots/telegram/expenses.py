@@ -224,7 +224,7 @@ async def handle_date_option(update: Update, context: ContextTypes.DEFAULT_TYPE,
             timeout=TIMEOUT,
         )
         if response.status_code == 200:
-            await query.message.edit_text("Expense added successfully!")
+            await query.message.edit_text("Expense added successfully!\nClick /expenses_view to see updated list.")
         else:
             error_detail = response.json().get("detail", "Unknown error")
             await query.message.edit_text(
@@ -273,7 +273,7 @@ async def date(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -
         )
 
         if response.status_code == 200:
-            await update.callback_query.message.edit_text("Expense added successfully!")
+            await update.callback_query.message.edit_text("Expense added successfully!\nClick /expenses_view to see updated list.")
         else:
             error_detail = response.json().get("detail", "Unknown error")
             await update.callback_query.message.edit_text(
@@ -480,7 +480,7 @@ async def confirm_delete(
             timeout=TIMEOUT,
         )
         if response.status_code == 200:
-            await query.message.edit_text("Expense deleted successfully!")
+            await query.message.edit_text("Expense deleted successfully!\nClick /expenses_view to see updated list.")
         else:
             await query.message.edit_text("Failed to delete expense.")
         context.user_data.clear()
@@ -698,7 +698,7 @@ async def handle_update_value(update: Update, context: ContextTypes.DEFAULT_TYPE
         timeout=TIMEOUT
     )
 
-    message = "Expense updated successfully!" if response.status_code == 200 else f"Failed to update expense: {response.json()['detail']}"
+    message = "Expense updated successfully!\nClick /expenses_view to see updated list." if response.status_code == 200 else f"Failed to update expense: {response.json()['detail']}"
     
     if update.callback_query:
         await update.callback_query.message.edit_text(message)
