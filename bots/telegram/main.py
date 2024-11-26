@@ -12,6 +12,7 @@ from bots.telegram.expenses import expenses_handlers
 from bots.telegram.utils import unknown, get_menu_commands
 from config import config
 from bots.telegram.categories import categories_handlers
+from bots.telegram.accounts import accounts_handlers
 
 
 # Configure logging
@@ -54,6 +55,9 @@ def main() -> None:
         
     # Add categories handlers
     for handler in categories_handlers:
+        application.add_handler(handler)
+    # Add categories handlers
+    for handler in accounts_handlers:
         application.add_handler(handler)
         
     application.add_handler(CommandHandler("unknown", unknown))
