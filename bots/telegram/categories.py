@@ -22,10 +22,11 @@ TIMEOUT = 10  # seconds
 # States for category conversation
 (
     CATEGORY_NAME,
+    MONTHLY_BUDGET,
     CONFIRM_DELETE,
     SELECT_CATEGORY,
     NEW_CATEGORY_NAME,
-) = range(4)
+) = range(5)  # Added MONTHLY_BUDGET
 
 @authenticate
 async def categories_view(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
@@ -100,8 +101,62 @@ async def categories_view_page(update: Update, context: ContextTypes.DEFAULT_TYP
     context.args = [page]
     await categories_view(update, context)
 
+@authenticate
+async def categories_add(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Start the category addition process."""
+    await update.message.reply_text("Please enter the category name:")
+    return CATEGORY_NAME
+
+async def handle_category_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handle the category name input."""
+    category_name = update.message.text
+    context.user_data["category_name"] = category_name
+    await update.message.reply_text("Please enter the monthly budget for this category:")
+    return MONTHLY_BUDGET
+
+@authenticate
+async def handle_monthly_budget(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle the monthly budget input and create the category."""
+    try:
+        monthly_budget = float(update.message.text)
+        category_data = {
+            "name": context.user_data["category_name"],
+            "monthly_budget": str(monthly_budget)
+        }
+        
+        headers = {"token": token}
+        response = requests.post(
+            f"{TELEGRAM_BOT_API_BASE_URL}/categories/",
+            json=category_data,
+            headers=headers,
+            timeout=TIMEOUT
+        )
+        
+        if response.status_code == 200:
+            await update.message.reply_text("Category added successfully!")
+        else:
+            error_detail = response.json().get("detail", "Unknown error")
+            await update.message.reply_text(f"Failed to add category: {error_detail}")
+            
+        context.user_data.clear()
+        return ConversationHandler.END
+        
+    except ValueError:
+        await update.message.reply_text("Please enter a valid number for the monthly budget.")
+        return MONTHLY_BUDGET
+
 # Handlers for categories
+categories_conv_handler = ConversationHandler(
+    entry_points=[CommandHandler("categories_add", categories_add)],
+    states={
+        CATEGORY_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_category_name)],
+        MONTHLY_BUDGET: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_monthly_budget)],
+    },
+    fallbacks=[CommandHandler("cancel", cancel)]
+)
+
 categories_handlers = [
     CommandHandler("categories_view", categories_view),
     CallbackQueryHandler(categories_view_page, pattern="^view_categories#"),
+    categories_conv_handler,
 ]
