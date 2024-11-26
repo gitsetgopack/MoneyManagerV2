@@ -132,14 +132,14 @@ async def expense_bar(
     
     return Response(content=buf.getvalue(), media_type="image/png")
 
-@router.get("/expense/pie")
-async def expense_pie(
+@router.get("/category/pie")
+async def category_pie(
     from_date: Optional[datetime.date] = None,
     to_date: Optional[datetime.date] = None,
     token: str = Header(None)
 ):
     """
-    Endpoint to generate a pie chart of expenses categorized by type.
+    Endpoint to generate a pie chart of categories categorized by type.
     Returns a PNG image file directly.
     """
     user_id = await verify_token(token)
@@ -207,6 +207,138 @@ async def expense_pie(
         colors=colors,
     )
     plt.axis("equal")  # Equal aspect ratio ensures that pie chart is circular.
+
+    # Send image directly from memory
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png", bbox_inches="tight")
+    plt.close()
+    buf.seek(0)
+    
+    return Response(content=buf.getvalue(), media_type="image/png")
+
+@router.get("/expense/line-monthly", response_class=Response)
+async def expense_line_monthly(
+    from_date: Optional[datetime.date] = None,
+    to_date: Optional[datetime.date] = None,
+    token: str = Header(None)
+):
+    """
+    Endpoint to generate a line chart of monthly expenses within a date range.
+    Returns a PNG image file directly.
+    """
+    user_id = await verify_token(token)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    expenses, _, _ = await fetch_data(user_id, from_date, to_date)
+
+    if not expenses:
+        raise HTTPException(
+            status_code=404, detail="No expenses found for the specified period"
+        )
+
+    # Convert to DataFrame and process data
+    df = pd.DataFrame(expenses)
+    df["date"] = pd.to_datetime(df["date"])
+    monthly_expenses = df.groupby(df["date"].dt.to_period("M"))["amount"].sum()
+
+    # Plotting the line graph
+    plt.figure(figsize=(10, 6))
+    ax = monthly_expenses.plot(kind="line", marker='o', color="skyblue")
+    
+    # Create detailed date range text
+    if from_date and to_date:
+        if from_date == to_date:
+            date_range_text = f"Date: {from_date}"
+        else:
+            date_range_text = f"Date Range: {from_date} to {to_date}"
+    elif from_date:
+        date_range_text = f"Date Range: From {from_date}"
+    elif to_date:
+        date_range_text = f"Date Range: To {to_date}"
+    else:
+        date_range_text = "Date Range: All"
+    
+    total_spend = monthly_expenses.sum()
+    plt.title(f"Monthly Expenses\n{date_range_text}\nTotal Spend: ${total_spend:,.2f}")
+    
+    plt.xlabel("Month")
+    plt.ylabel("Total Expense Amount")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+
+    # Send image directly from memory
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png", bbox_inches="tight")
+    plt.close()
+    buf.seek(0)
+    
+    return Response(content=buf.getvalue(), media_type="image/png")
+
+@router.get("/category/bar", response_class=Response)
+async def category_bar(
+    from_date: Optional[datetime.date] = None,
+    to_date: Optional[datetime.date] = None,
+    token: str = Header(None)
+):
+    """
+    Endpoint to generate a bar chart of expenses categorized by type within a date range.
+    Returns a PNG image file directly.
+    """
+    user_id = await verify_token(token)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    expenses, _, _ = await fetch_data(user_id, from_date, to_date)
+
+    if not expenses:
+        raise HTTPException(
+            status_code=404, detail="No expenses found for the specified period"
+        )
+
+    # Convert to DataFrame and process data
+    df = pd.DataFrame(expenses)
+    df["date"] = pd.to_datetime(df["date"])
+
+    # Group by category and sum the amounts
+    category_expenses = df.groupby("category")["amount"].sum()
+
+    # Plotting the bar chart
+    plt.figure(figsize=(10, 6))
+    ax = category_expenses.plot(kind="bar", color="skyblue")
+    
+    # Create detailed date range text
+    if from_date and to_date:
+        if from_date == to_date:
+            date_range_text = f"Date: {from_date}"
+        else:
+            date_range_text = f"Date Range: {from_date} to {to_date}"
+    elif from_date:
+        date_range_text = f"Date Range: From {from_date}"
+    elif to_date:
+        date_range_text = f"Date Range: To {to_date}"
+    else:
+        date_range_text = "Date Range: All"
+    
+    total_spend = category_expenses.sum()
+    plt.title(f"Expenses by Category\n{date_range_text}\nTotal Spend: ${total_spend:,.2f}")
+    
+    plt.xlabel("Category")
+    plt.ylabel("Total Expense Amount")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+
+    # Adding labels on top of each bar
+    for i, value in enumerate(category_expenses):
+        ax.text(
+            i,
+            value + 0.5,
+            f"{value:.2f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            color="black",
+        )
 
     # Send image directly from memory
     buf = io.BytesIO()
