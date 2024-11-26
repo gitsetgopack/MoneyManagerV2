@@ -95,13 +95,13 @@ def write_expenses_to_sheet(sheet: Worksheet, expenses: list):
     for expense in expenses:
         sheet.append(
             [
-                expense["date"].isoformat() if expense.get("date") else "",
-                expense["amount"],
-                expense["currency"],
-                expense["category"],
-                expense.get("description", ""),
-                expense["account_name"],
-                str(expense["_id"]),
+            expense["date"].strftime("%Y-%m-%d") if expense.get("date") else "",
+            expense["amount"],
+            expense["currency"],
+            expense["category"],
+            expense.get("description", ""),
+            expense["account_name"],
+            str(expense["_id"]),
             ]
         )
 
@@ -229,7 +229,7 @@ async def data_to_csv(
         for expense in expenses:
             writer.writerow(
                 [
-                    expense["date"].isoformat() if expense.get("date") else "",
+                    expense["date"].strftime("%Y-%m-%d") if expense.get("date") else "",
                     expense["amount"],
                     expense["currency"],
                     expense["category"],
@@ -380,18 +380,17 @@ async def data_to_pdf(
     elements.append(create_paragraph(date_range_text, styles["Normal"]))
     elements.append(Spacer(1, 12))
     expenses_data = [
-        ["Date", "Amount", "Currency", "Category", "Description", "Account Name", "ID"]
+        ["Date", "Amount", "Currency", "Category", "Description", "Account Name"]
     ]
     for expense in expenses:
         expenses_data.append(
             [
-                expense["date"].isoformat() if expense.get("date") else "",
+                expense["date"].strftime("%Y-%m-%d") if expense.get("date") else "",
                 expense["amount"],
                 expense["currency"],
                 expense["category"],
                 expense.get("description", ""),
-                expense["account_name"],
-                str(expense["_id"]),
+                expense["account_name"]
             ]
         )
     expenses_table = create_table(
@@ -415,14 +414,13 @@ async def data_to_pdf(
     # Accounts
     elements.append(create_paragraph("<a name='accounts'/>Accounts", styles["Title"]))
     elements.append(Spacer(1, 12))
-    accounts_data = [["Name", "Balance", "Currency", "ID"]]
+    accounts_data = [["Name", "Balance", "Currency"]]
     for account in accounts:
         accounts_data.append(
             [
                 account["name"],
                 account["balance"],
-                account["currency"],
-                str(account["_id"]),
+                account["currency"]
             ]
         )
     accounts_table = create_table(
