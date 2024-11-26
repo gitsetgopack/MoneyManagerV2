@@ -763,3 +763,14 @@ expenses_update_conv_handler = ConversationHandler(
     },
     fallbacks=[CommandHandler("cancel", cancel)],
 )
+
+# Handlers for expenses
+expenses_handlers = [
+    CommandHandler("expenses_view", expenses_view),
+    CallbackQueryHandler(expenses_view_page, pattern="^view_expenses#"),
+    expenses_conv_handler,
+    expenses_delete_conv_handler,
+    expenses_delete_all_conv_handler,
+    expenses_update_conv_handler,
+    CallbackQueryHandler(expenses_delete_page, pattern=r"^delete_expenses#\d+$"),
+]
