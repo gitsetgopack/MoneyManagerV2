@@ -68,5 +68,5 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE, to
 
 analytics_handlers = [
     CommandHandler('analytics', analytics),
-    CallbackQueryHandler(button_callback, pattern=r'^plot_')
+    CallbackQueryHandler(button_callback, pattern=r'^plot_'),
 ]
