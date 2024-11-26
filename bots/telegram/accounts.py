@@ -23,10 +23,12 @@ TIMEOUT = 10  # seconds
 (
     ACCOUNT_NAME,
     INITIAL_BALANCE,
+    SELECT_CURRENCY,  # Add new state
     CONFIRM_DELETE,
     SELECT_ACCOUNT,
     UPDATE_BALANCE,
-) = range(5)
+    SELECT_CATEGORY,  # Add new state
+) = range(7)  # Update range to 7
 
 @authenticate
 async def accounts_view(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
@@ -115,34 +117,69 @@ async def handle_account_name(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 @authenticate
 async def handle_initial_balance(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
-    """Handle the initial balance input and create the account."""
+    """Handle the initial balance input."""
     try:
         initial_balance = float(update.message.text)
-        account_data = {
-            "name": context.user_data["account_name"],
-            "balance": str(initial_balance)
-        }
+        context.user_data["balance"] = str(initial_balance)
         
+        # Fetch available currencies
         headers = {"token": token}
-        response = requests.post(
-            f"{TELEGRAM_BOT_API_BASE_URL}/accounts/",
-            json=account_data,
+        response = requests.get(
+            f"{TELEGRAM_BOT_API_BASE_URL}/users/",
             headers=headers,
             timeout=TIMEOUT
         )
-        
         if response.status_code == 200:
-            await update.message.reply_text("Account added successfully!\nClick /accounts_view to see the updated list.")
+            currencies = response.json().get("currencies", [])
         else:
-            error_detail = response.json().get("detail", "Unknown error")
-            await update.message.reply_text(f"Failed to add account: {error_detail}")
+            await update.message.reply_text("Failed to fetch currencies. Please try again later.")
+            return ConversationHandler.END
+        
+        # Create keyboard with available currency options
+        keyboard = []
+        for currency in currencies:
+            keyboard.append([InlineKeyboardButton(currency, callback_data=f"currency_{currency}")])
             
-        context.user_data.clear()
-        return ConversationHandler.END
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.message.reply_text(
+            "Please select the currency:",
+            reply_markup=reply_markup
+        )
+        return SELECT_CURRENCY
         
     except ValueError:
         await update.message.reply_text("Please enter a valid number for the initial balance.")
         return INITIAL_BALANCE
+
+@authenticate
+async def handle_currency_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, token:str) -> int:
+    """Handle currency selection and create the account."""
+    query = update.callback_query
+    await query.answer()
+    context.user_data["currency"] = query.data.split("_")[1]
+
+    account_data = {
+        "name": context.user_data["account_name"],
+        "balance": context.user_data["balance"],
+        "currency": context.user_data.get("currency", "USD")
+    }
+    
+    response = requests.post(
+        f"{TELEGRAM_BOT_API_BASE_URL}/accounts/",
+        json=account_data,
+        headers={"token": token},
+        timeout=TIMEOUT
+    )
+    
+    if response.status_code == 200:
+        await query.message.edit_text("Account added successfully!\nClick /accounts_view to see the updated list.")
+    else:
+        error_detail = response.json().get("detail", "Unknown error")
+        await query.message.edit_text(f"Failed to add account: {error_detail}")
+    
+    context.user_data.clear()
+    return ConversationHandler.END
+
 
 @authenticate
 async def accounts_delete(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
@@ -306,6 +343,7 @@ accounts_conv_handler = ConversationHandler(
     states={
         ACCOUNT_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_account_name)],
         INITIAL_BALANCE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_initial_balance)],
+        SELECT_CURRENCY: [CallbackQueryHandler(handle_currency_selection)],
     },
     fallbacks=[CommandHandler("cancel", cancel)]
 )
