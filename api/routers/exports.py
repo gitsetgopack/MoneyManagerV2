@@ -30,7 +30,6 @@ from reportlab.platypus import (  # type: ignore
 )
 
 from api.utils.auth import verify_token
-from api.utils.db import fetch_data
 from api.utils.plots import (
     create_budget_vs_actual,
     create_category_bar,
