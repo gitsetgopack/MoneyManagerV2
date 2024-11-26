@@ -17,10 +17,19 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+from config.config import (
+    TELEGRAM_BOT_API_BASE_URL, MONGO_URI, TIME_ZONE,
+    GMAIL_SMTP_SERVER, GMAIL_SMTP_USERNAME, GMAIL_SMTP_PASSWORD, GMAIL_SMTP_PORT
+)
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
+
 TIMEOUT = 10
 
 # States for the conversation
-SELECTING_FROM_DATE, SELECTING_TO_DATE, SELECTING_FORMAT, SELECTING_DATE_OPTION = range(4)
+SELECTING_FROM_DATE, SELECTING_TO_DATE, SELECTING_FORMAT, SELECTING_DATE_OPTION, WAITING_EMAIL = range(5)
 
 @authenticate
 async def analytics(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
@@ -155,16 +164,27 @@ async def handle_date_selection(update: Update, context: ContextTypes.DEFAULT_TY
     return SELECTING_FORMAT
 
 async def create_calendar_markup(year: int, month: int) -> InlineKeyboardMarkup:
-    """Create an inline keyboard with a calendar"""
+    """Create an inline keyboard with a calendar and year/month navigation"""
     keyboard = []
-    # Add year and month selection row
+    
+    # Add year navigation
     keyboard.append([
-        InlineKeyboardButton(f"{calendar.month_name[month]} {year}",
-                            callback_data="ignore")
+        InlineKeyboardButton("◀️", callback_data=f"year_{year-1}_{month}"),
+        InlineKeyboardButton(f"{year}", callback_data="ignore"),
+        InlineKeyboardButton("▶️", callback_data=f"year_{year+1}_{month}")
     ])
+    
+    # Add month navigation
+    keyboard.append([
+        InlineKeyboardButton("◀️", callback_data=f"month_{year}_{(month-1) if month > 1 else 12}"),
+        InlineKeyboardButton(f"{calendar.month_name[month]}", callback_data="ignore"),
+        InlineKeyboardButton("▶️", callback_data=f"month_{year}_{(month+1) if month < 12 else 1}")
+    ])
+    
     # Add days header
     keyboard.append([InlineKeyboardButton(day, callback_data="ignore")
                     for day in ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]])
+    
     # Add calendar days
     cal = calendar.monthcalendar(year, month)
     for week in cal:
@@ -177,6 +197,26 @@ async def create_calendar_markup(year: int, month: int) -> InlineKeyboardMarkup:
                           callback_data=f"date_{year}_{month}_{day}"))
         keyboard.append(row)
     return InlineKeyboardMarkup(keyboard)
+
+@authenticate
+async def handle_calendar_navigation(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle year and month navigation in calendar"""
+    query = update.callback_query
+    await query.answer()
+    
+    data = query.data.split('_')
+    action = data[0]
+    year = int(data[1])
+    month = int(data[2])
+    
+    calendar_markup = await create_calendar_markup(year, month)
+    await query.message.edit_text(
+        "Select date:",
+        reply_markup=calendar_markup
+    )
+    
+    # Maintain the current state
+    return context.user_data.get('calendar_state', SELECTING_FROM_DATE)
 
 async def show_export_formats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Show export format options"""
@@ -225,12 +265,37 @@ async def handle_csv_options(update: Update, context: ContextTypes.DEFAULT_TYPE,
         reply_markup=reply_markup
     )
 
+async def send_email(email: str, files: list, context: dict) -> bool:
+    """Send email with exported files"""
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = GMAIL_SMTP_USERNAME
+        msg['To'] = email
+        msg['Subject'] = "Your Exported Data"
+
+        body = "Here are your exported files from Money Manager."
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Connect to SMTP server
+        with smtplib.SMTP(GMAIL_SMTP_SERVER, GMAIL_SMTP_PORT) as server:
+            server.starttls()
+            server.login(GMAIL_SMTP_USERNAME, GMAIL_SMTP_PASSWORD)
+            server.send_message(msg)
+        return True
+    except Exception as e:
+        print(f"Email error: {str(e)}")
+        return False
+
 @authenticate
 async def handle_export(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
     """Handle the actual export process"""
     query = update.callback_query
     await query.answer()
     
+    if query.data == "export_email":
+        await query.message.edit_text("Please enter your email address:")
+        return WAITING_EMAIL
+        
     export_type = query.data
     params = {}
     from_date = context.user_data.get('from_date')
@@ -290,9 +355,55 @@ async def handle_export(update: Update, context: ContextTypes.DEFAULT_TYPE, toke
         await query.message.reply_text(f"❌ Error during export: {str(e)}")
         return ConversationHandler.END
 
+@authenticate
+async def handle_email_input(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle email address input"""
+    email = update.message.text
+    
+    # Basic email validation
+    if "@" not in email or "." not in email:
+        await update.message.reply_text("Invalid email address. Please try again.")
+        return WAITING_EMAIL
+
+    try:
+        headers = {"token": token}
+        # Get all export types
+        export_types = ["pdf", "excel", "expenses", "accounts", "categories"]
+        
+        for export_type in export_types:
+            endpoint = f"exports/{export_type}"
+            response = requests.get(
+                f"{TELEGRAM_BOT_API_BASE_URL}/{endpoint}",
+                headers=headers,
+                params=context.user_data.get('params', {}),
+                timeout=TIMEOUT
+            )
+            if response.status_code == 200:
+                # Store files temporarily
+                context.user_data.setdefault('export_files', []).append(
+                    (f"export_{export_type}.{export_type}", response.content)
+                )
+
+        # Send email with all files
+        if await send_email(email, context.user_data.get('export_files', []), context.user_data):
+            await update.message.reply_text("✅ Files have been sent to your email!")
+        else:
+            await update.message.reply_text("❌ Failed to send email. Please try again.")
+
+        # Clean up stored files
+        context.user_data.pop('export_files', None)
+        
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {str(e)}")
+    
+    return ConversationHandler.END
+
 async def select_from_date(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send the calendar for selecting the start date."""
-    calendar_markup = await create_calendar_markup(datetime.now().year, datetime.now().month)
+    context.user_data['calendar_state'] = SELECTING_FROM_DATE
+    current_year = datetime.now().year
+    current_month = datetime.now().month
+    calendar_markup = await create_calendar_markup(current_year, current_month)
     await update.callback_query.message.edit_text(
         "Select the start date:",
         reply_markup=calendar_markup
@@ -301,7 +412,10 @@ async def select_from_date(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 async def select_to_date(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send the calendar for selecting the end date."""
-    calendar_markup = await create_calendar_markup(datetime.now().year, datetime.now().month)
+    context.user_data['calendar_state'] = SELECTING_TO_DATE
+    current_year = datetime.now().year
+    current_month = datetime.now().month
+    calendar_markup = await create_calendar_markup(current_year, current_month)
     await update.callback_query.message.edit_text(
         "Select the end date:",
         reply_markup=calendar_markup
@@ -322,11 +436,11 @@ analytics_handlers.extend([
                 CallbackQueryHandler(handle_date_option, pattern='^(set_from_date|set_to_date|clear_dates|next)$')  # Updated pattern
             ],
             SELECTING_FROM_DATE: [
-                CallbackQueryHandler(select_from_date, pattern='^select_from_date$'),
+                CallbackQueryHandler(handle_calendar_navigation, pattern='^(year|month)_\d+_\d+$'),
                 CallbackQueryHandler(handle_date_selection, pattern='^date_\d{4}_\d{1,2}_\d{1,2}$')
             ],
             SELECTING_TO_DATE: [
-                CallbackQueryHandler(select_to_date, pattern='^select_to_date$'),
+                CallbackQueryHandler(handle_calendar_navigation, pattern='^(year|month)_\d+_\d+$'),
                 CallbackQueryHandler(handle_date_selection, pattern='^date_\d{4}_\d{1,2}_\d{1,2}$')
             ],
             SELECTING_FORMAT: [
@@ -334,6 +448,9 @@ analytics_handlers.extend([
                 CallbackQueryHandler(handle_export, pattern='^(export_pdf|export_excel|export_email|csv_\w+)$'),
                 CallbackQueryHandler(show_export_formats, pattern='^back_to_formats$'),
                 CallbackQueryHandler(handle_back_to_dates, pattern='^back_to_dates$')  # Added handler for Back button
+            ],
+            WAITING_EMAIL: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_email_input)
             ]
         },
         fallbacks=[CommandHandler('cancel', cancel)]
