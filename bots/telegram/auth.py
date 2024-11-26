@@ -62,7 +62,7 @@ async def handle_login_password(
             user_id = update.effective_user.id
 
             user = await telegram_collection.find_one(
-                {"username": context.user_data["username"]}
+                {"telegram_id": user_id}
             )
             if user:
                 await telegram_collection.update_one(
