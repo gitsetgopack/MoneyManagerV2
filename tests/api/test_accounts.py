@@ -15,7 +15,7 @@ class TestAccountCreation:
             "/accounts/",
             json={"name": "Invest meant", "balance": 1000.0, "currency": "USD"},
         )
-        assert response.status_code == 200
+        assert response.status_code == 200, response.json()
         assert "Account created successfully" in response.json()["message"]
         assert "account_id" in response.json()
 
@@ -85,6 +85,7 @@ class TestAccountGet:
             "/accounts/",
             json={"name": "Test 1", "balance": 500.0, "currency": "USD"},
         )
+        assert create_response.status_code == 200, create_response.json()
         # print(create_response.json())  # Debugging line
         account_id = create_response.json()["account_id"]
 
@@ -219,7 +220,7 @@ class TestAccountNameConstraints:
             "/accounts/",
             json={"name": long_name, "balance": 500.0, "currency": "USD"},
         )
-        assert response.status_code == 200  # Unprocessable Entity
+        assert response.status_code == 200, response.json()
 
 
 @pytest.mark.anyio
