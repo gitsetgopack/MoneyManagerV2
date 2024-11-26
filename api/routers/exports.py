@@ -34,8 +34,11 @@ from reportlab.platypus import (  # type: ignore
 from api.utils.auth import verify_token
 from config.config import MONGO_URI, TIME_ZONE
 from api.utils.plots import (
-    create_expense_bar, create_category_pie, create_monthly_line,
-    create_category_bar, create_budget_vs_actual
+    create_expense_bar,
+    create_category_pie,
+    create_monthly_line,
+    create_category_bar,
+    create_budget_vs_actual,
 )
 
 router = APIRouter(prefix="/exports", tags=["Exports"])
@@ -95,13 +98,13 @@ def write_expenses_to_sheet(sheet: Worksheet, expenses: list):
     for expense in expenses:
         sheet.append(
             [
-            expense["date"].strftime("%Y-%m-%d") if expense.get("date") else "",
-            expense["amount"],
-            expense["currency"],
-            expense["category"],
-            expense.get("description", ""),
-            expense["account_name"],
-            str(expense["_id"]),
+                expense["date"].strftime("%Y-%m-%d") if expense.get("date") else "",
+                expense["amount"],
+                expense["currency"],
+                expense["category"],
+                expense.get("description", ""),
+                expense["account_name"],
+                str(expense["_id"]),
             ]
         )
 
@@ -259,9 +262,9 @@ async def data_to_csv(
             writer.writerow([category_name, category_data["monthly_budget"]])
 
     response = Response(content=output.getvalue(), media_type="text/csv")
-    response.headers["Content-Disposition"] = (
-        f"attachment; filename={export_type.value}.csv"
-    )
+    response.headers[
+        "Content-Disposition"
+    ] = f"attachment; filename={export_type.value}.csv"
     return response
 
 
@@ -340,13 +343,31 @@ async def data_to_pdf(
     toc = [
         create_paragraph("<link href='#expenses'>1. Expenses</link>", styles["Normal"]),
         create_paragraph("<link href='#accounts'>2. Accounts</link>", styles["Normal"]),
-        create_paragraph("<link href='#categories'>3. Categories</link>", styles["Normal"]),
-        create_paragraph("<link href='#analytics'>4. Analytics</link>", styles["Normal"]),
-        create_paragraph("   <link href='#expense-chart'>4.1. Expense Chart</link>", styles["Normal"]),
-        create_paragraph("   <link href='#category-pie'>4.2. Category Distribution</link>", styles["Normal"]),
-        create_paragraph("   <link href='#monthly-line'>4.3. Monthly Expenses</link>", styles["Normal"]),
-        create_paragraph("   <link href='#category-bar'>4.4. Category Comparison</link>", styles["Normal"]),
-        create_paragraph("   <link href='#budget-actual'>4.5. Budget vs Actual</link>", styles["Normal"]),
+        create_paragraph(
+            "<link href='#categories'>3. Categories</link>", styles["Normal"]
+        ),
+        create_paragraph(
+            "<link href='#analytics'>4. Analytics</link>", styles["Normal"]
+        ),
+        create_paragraph(
+            "   <link href='#expense-chart'>4.1. Expense Chart</link>", styles["Normal"]
+        ),
+        create_paragraph(
+            "   <link href='#category-pie'>4.2. Category Distribution</link>",
+            styles["Normal"],
+        ),
+        create_paragraph(
+            "   <link href='#monthly-line'>4.3. Monthly Expenses</link>",
+            styles["Normal"],
+        ),
+        create_paragraph(
+            "   <link href='#category-bar'>4.4. Category Comparison</link>",
+            styles["Normal"],
+        ),
+        create_paragraph(
+            "   <link href='#budget-actual'>4.5. Budget vs Actual</link>",
+            styles["Normal"],
+        ),
     ]
     elements.append(create_paragraph("Table of Contents", styles["Title"]))
     elements.append(Spacer(1, 12))
@@ -390,7 +411,7 @@ async def data_to_pdf(
                 expense["currency"],
                 expense["category"],
                 expense.get("description", ""),
-                expense["account_name"]
+                expense["account_name"],
             ]
         )
     expenses_table = create_table(
@@ -416,13 +437,7 @@ async def data_to_pdf(
     elements.append(Spacer(1, 12))
     accounts_data = [["Name", "Balance", "Currency"]]
     for account in accounts:
-        accounts_data.append(
-            [
-                account["name"],
-                account["balance"],
-                account["currency"]
-            ]
-        )
+        accounts_data.append([account["name"], account["balance"], account["currency"]])
     accounts_table = create_table(
         wrap_text(accounts_data),
         [100, 100, 100, 100],
@@ -478,7 +493,9 @@ async def data_to_pdf(
         "<a name='category-pie'/>Category Distribution": create_category_pie,
         "<a name='monthly-line'/>Monthly Expenses": create_monthly_line,
         "<a name='category-bar'/>Category Comparison": create_category_bar,
-        "<a name='budget-actual'/>Budget vs Actual": lambda e, f, t: create_budget_vs_actual(e, user["categories"], f, t)
+        "<a name='budget-actual'/>Budget vs Actual": lambda e, f, t: create_budget_vs_actual(
+            e, user["categories"], f, t
+        ),
     }
 
     for title, generator in plot_generators.items():
@@ -512,4 +529,3 @@ async def data_to_pdf(
     response = Response(content=buffer.getvalue(), media_type="application/pdf")
     response.headers["Content-Disposition"] = "attachment; filename=data.pdf"
     return response
-

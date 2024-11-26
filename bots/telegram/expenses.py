@@ -21,6 +21,7 @@ from bots.telegram.utils import cancel
 from config.config import TELEGRAM_BOT_API_BASE_URL
 
 from config.config import MONGO_URI, TIME_ZONE
+
 # Constants
 TIMEOUT = 10  # seconds
 
@@ -94,11 +95,13 @@ async def fetch_and_show_categories(
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         message = "Please select a category:"
-        
+
         if update.message:
             await update.message.reply_text(message, reply_markup=reply_markup)
         elif update.callback_query:
-            await update.callback_query.message.edit_text(message, reply_markup=reply_markup)
+            await update.callback_query.message.edit_text(
+                message, reply_markup=reply_markup
+            )
     else:
         message = "Failed to fetch categories."
         if update.message:
@@ -199,8 +202,11 @@ async def account(
     )
     return DATE_OPTION
 
+
 @authenticate
-async def handle_date_option(update: Update, context: ContextTypes.DEFAULT_TYPE, token:str) -> int:
+async def handle_date_option(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
+) -> int:
     """Handle the user's date option choice."""
     query = update.callback_query
     await query.answer()
@@ -224,12 +230,12 @@ async def handle_date_option(update: Update, context: ContextTypes.DEFAULT_TYPE,
             timeout=TIMEOUT,
         )
         if response.status_code == 200:
-            await query.message.edit_text("Expense added successfully!\nClick /expenses_view to see updated list.")
+            await query.message.edit_text(
+                "Expense added successfully!\nClick /expenses_view to see updated list."
+            )
         else:
             error_detail = response.json().get("detail", "Unknown error")
-            await query.message.edit_text(
-                f"Failed to add expense: {error_detail}"
-            )
+            await query.message.edit_text(f"Failed to add expense: {error_detail}")
         context.user_data.clear()
         return ConversationHandler.END
     elif query.data == "date_custom":
@@ -273,7 +279,9 @@ async def date(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -
         )
 
         if response.status_code == 200:
-            await update.callback_query.message.edit_text("Expense added successfully!\nClick /expenses_view to see updated list.")
+            await update.callback_query.message.edit_text(
+                "Expense added successfully!\nClick /expenses_view to see updated list."
+            )
         else:
             error_detail = response.json().get("detail", "Unknown error")
             await update.callback_query.message.edit_text(
@@ -389,11 +397,15 @@ async def expenses_delete(
         if total_pages > 1:
             if page > 1:
                 pagination_buttons.append(
-                    InlineKeyboardButton("⬅️", callback_data=f"delete_expenses#{page-1}")
+                    InlineKeyboardButton(
+                        "⬅️", callback_data=f"delete_expenses#{page-1}"
+                    )
                 )
             if page < total_pages:
                 pagination_buttons.append(
-                    InlineKeyboardButton("➡️", callback_data=f"delete_expenses#{page+1}")
+                    InlineKeyboardButton(
+                        "➡️", callback_data=f"delete_expenses#{page+1}"
+                    )
                 )
 
         start_idx = (page - 1) * items_per_page
@@ -480,7 +492,9 @@ async def confirm_delete(
             timeout=TIMEOUT,
         )
         if response.status_code == 200:
-            await query.message.edit_text("Expense deleted successfully!\nClick /expenses_view to see updated list.")
+            await query.message.edit_text(
+                "Expense deleted successfully!\nClick /expenses_view to see updated list."
+            )
         else:
             await query.message.edit_text("Failed to delete expense.")
         context.user_data.clear()
@@ -550,11 +564,15 @@ async def confirm_delete_all(
 
 
 @authenticate
-async def expenses_update(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+async def expenses_update(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
+) -> int:
     """Start the expense update process by showing list of expenses."""
     headers = {"token": token}
-    response = requests.get(f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", headers=headers, timeout=TIMEOUT)
-    
+    response = requests.get(
+        f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", headers=headers, timeout=TIMEOUT
+    )
+
     if response.status_code == 200:
         expenses = response.json()["expenses"]
         if not expenses:
@@ -564,18 +582,24 @@ async def expenses_update(update: Update, context: ContextTypes.DEFAULT_TYPE, to
         # Pagination setup
         page = int(context.args[0]) if context.args else 1
         items_per_page = 5
-        total_pages = len(expenses) // items_per_page + (1 if len(expenses) % items_per_page else 0)
+        total_pages = len(expenses) // items_per_page + (
+            1 if len(expenses) % items_per_page else 0
+        )
 
         # Create pagination buttons
         pagination_buttons = []
         if total_pages > 1:
             if page > 1:
                 pagination_buttons.append(
-                    InlineKeyboardButton("⬅️", callback_data=f"update_expenses#{page-1}")
+                    InlineKeyboardButton(
+                        "⬅️", callback_data=f"update_expenses#{page-1}"
+                    )
                 )
             if page < total_pages:
                 pagination_buttons.append(
-                    InlineKeyboardButton("➡️", callback_data=f"update_expenses#{page+1}")
+                    InlineKeyboardButton(
+                        "➡️", callback_data=f"update_expenses#{page+1}"
+                    )
                 )
 
         start_idx = (page - 1) * items_per_page
@@ -584,9 +608,13 @@ async def expenses_update(update: Update, context: ContextTypes.DEFAULT_TYPE, to
 
         keyboard = []
         for expense in expenses_page:
-            button_text = f"{expense['description']} - {expense['amount']} {expense['currency']}"
+            button_text = (
+                f"{expense['description']} - {expense['amount']} {expense['currency']}"
+            )
             callback_data = f"update_{expense['_id']}"
-            keyboard.append([InlineKeyboardButton(button_text, callback_data=callback_data)])
+            keyboard.append(
+                [InlineKeyboardButton(button_text, callback_data=callback_data)]
+            )
 
         # Add pagination row if there are pagination buttons
         if pagination_buttons:
@@ -598,7 +626,9 @@ async def expenses_update(update: Update, context: ContextTypes.DEFAULT_TYPE, to
         if update.message:
             await update.message.reply_text(message, reply_markup=reply_markup)
         elif update.callback_query:
-            await update.callback_query.message.edit_text(message, reply_markup=reply_markup)
+            await update.callback_query.message.edit_text(
+                message, reply_markup=reply_markup
+            )
         return SELECT_EXPENSE
     else:
         message = "Failed to fetch expenses."
@@ -608,8 +638,11 @@ async def expenses_update(update: Update, context: ContextTypes.DEFAULT_TYPE, to
             await update.callback_query.message.edit_text(message)
         return ConversationHandler.END
 
+
 @authenticate
-async def expenses_update_page(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+async def expenses_update_page(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
+) -> int:
     """Handle pagination for updating expenses."""
     query = update.callback_query
     await query.answer()
@@ -617,36 +650,44 @@ async def expenses_update_page(update: Update, context: ContextTypes.DEFAULT_TYP
     context.args = [page]
     return await expenses_update(update, context)
 
-async def select_update_field(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+
+async def select_update_field(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
     """Show options for which field to update."""
     query = update.callback_query
     await query.answer()
-    
+
     if query.data.startswith("update_"):
         expense_id = query.data.split("_")[1]
         context.user_data["expense_id"] = expense_id
-        
+
         keyboard = [
             [InlineKeyboardButton("Amount", callback_data="field_amount")],
             [InlineKeyboardButton("Description", callback_data="field_description")],
             [InlineKeyboardButton("Category", callback_data="field_category")],
             [InlineKeyboardButton("Currency", callback_data="field_currency")],
             [InlineKeyboardButton("Account", callback_data="field_account")],
-            [InlineKeyboardButton("Date", callback_data="field_date")]
+            [InlineKeyboardButton("Date", callback_data="field_date")],
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.message.edit_text("What would you like to update?", reply_markup=reply_markup)
+        await query.message.edit_text(
+            "What would you like to update?", reply_markup=reply_markup
+        )
         return SELECT_FIELD
 
+
 @authenticate
-async def handle_field_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+async def handle_field_selection(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
+) -> int:
     """Handle the selected field and prompt for new value."""
     query = update.callback_query
     await query.answer()
-    
+
     field = query.data.split("_")[1]
     context.user_data["update_field"] = field
-    
+
     if field == "category":
         await fetch_and_show_categories(update, context)
     elif field == "currency":
@@ -658,19 +699,22 @@ async def handle_field_selection(update: Update, context: ContextTypes.DEFAULT_T
         await query.edit_message_text(f"Select new date:", reply_markup=calendar)
     else:
         await query.message.edit_text(f"Please enter new {field}:")
-    
+
     return UPDATE_VALUE
 
+
 @authenticate
-async def handle_update_value(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+async def handle_update_value(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
+) -> int:
     """Handle the new value and update the expense."""
     field = context.user_data["update_field"]
     expense_id = context.user_data["expense_id"]
-    
+
     if update.callback_query:  # For category, currency, account, date selections
         query = update.callback_query
         await query.answer()
-        
+
         if field == "date":
             result, key, step = DetailedTelegramCalendar().process(query.data)
             if not result and key:
@@ -695,16 +739,20 @@ async def handle_update_value(update: Update, context: ContextTypes.DEFAULT_TYPE
         f"{TELEGRAM_BOT_API_BASE_URL}/expenses/{expense_id}",
         json=update_data,
         headers=headers,
-        timeout=TIMEOUT
+        timeout=TIMEOUT,
     )
 
-    message = "Expense updated successfully!\nClick /expenses_view to see updated list." if response.status_code == 200 else f"Failed to update expense: {response.json()['detail']}"
-    
+    message = (
+        "Expense updated successfully!\nClick /expenses_view to see updated list."
+        if response.status_code == 200
+        else f"Failed to update expense: {response.json()['detail']}"
+    )
+
     if update.callback_query:
         await update.callback_query.message.edit_text(message)
     else:
         await update.message.reply_text(message)
-    
+
     context.user_data.clear()
     return ConversationHandler.END
 
@@ -752,13 +800,17 @@ expenses_update_conv_handler = ConversationHandler(
     entry_points=[CommandHandler("expenses_update", expenses_update)],
     states={
         SELECT_EXPENSE: [
-            CallbackQueryHandler(expenses_update_page, pattern=r"^update_expenses#\d+$"),
+            CallbackQueryHandler(
+                expenses_update_page, pattern=r"^update_expenses#\d+$"
+            ),
             CallbackQueryHandler(select_update_field, pattern=r"^update_"),
         ],
-        SELECT_FIELD: [CallbackQueryHandler(handle_field_selection, pattern=r"^field_")],
+        SELECT_FIELD: [
+            CallbackQueryHandler(handle_field_selection, pattern=r"^field_")
+        ],
         UPDATE_VALUE: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_update_value),
-            CallbackQueryHandler(handle_update_value)
+            CallbackQueryHandler(handle_update_value),
         ],
     },
     fallbacks=[CommandHandler("cancel", cancel)],

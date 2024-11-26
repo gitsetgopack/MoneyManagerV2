@@ -156,7 +156,7 @@ async def update_account(
         update_data["currency"] = account_update.currency
     if account_update.name:
         update_data["name"] = account_update.name
-    
+
     if not update_data:
         raise HTTPException(status_code=400, detail="No update data provided")
 
