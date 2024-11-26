@@ -276,6 +276,16 @@ async def send_email(email: str, files: list, context: dict) -> bool:
         body = "Here are your exported files from Money Manager."
         msg.attach(MIMEText(body, 'plain'))
 
+        # Attach all files
+        for filename, content in files:
+            attachment = MIMEApplication(content)
+            attachment.add_header(
+                'Content-Disposition', 
+                'attachment', 
+                filename=filename
+            )
+            msg.attach(attachment)
+
         # Connect to SMTP server
         with smtplib.SMTP(GMAIL_SMTP_SERVER, GMAIL_SMTP_PORT) as server:
             server.starttls()
@@ -367,34 +377,60 @@ async def handle_email_input(update: Update, context: ContextTypes.DEFAULT_TYPE,
 
     try:
         headers = {"token": token}
-        # Get all export types
-        export_types = ["pdf", "excel", "expenses", "accounts", "categories"]
+        params = {}
+        from_date = context.user_data.get('from_date')
+        to_date = context.user_data.get('to_date')
+        if from_date:
+            params['from_date'] = from_date
+        if to_date:
+            params['to_date'] = to_date
+            
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        export_files = []
         
-        for export_type in export_types:
-            endpoint = f"exports/{export_type}"
+        # Get PDF
+        response = requests.get(
+            f"{TELEGRAM_BOT_API_BASE_URL}/exports/pdf",
+            headers=headers,
+            params=params,
+            timeout=TIMEOUT
+        )
+        if response.status_code == 200:
+            export_files.append((f"analytics_{timestamp}.pdf", response.content))
+
+        # Get Excel
+        response = requests.get(
+            f"{TELEGRAM_BOT_API_BASE_URL}/exports/xlsx",
+            headers=headers,
+            params=params,
+            timeout=TIMEOUT
+        )
+        if response.status_code == 200:
+            export_files.append((f"all_data_{timestamp}.xlsx", response.content))
+
+        # Get CSV files
+        csv_types = ["expenses", "accounts", "categories"]
+        for csv_type in csv_types:
             response = requests.get(
-                f"{TELEGRAM_BOT_API_BASE_URL}/{endpoint}",
+                f"{TELEGRAM_BOT_API_BASE_URL}/exports/csv",
                 headers=headers,
-                params=context.user_data.get('params', {}),
+                params={**params, "export_type": csv_type},
                 timeout=TIMEOUT
             )
             if response.status_code == 200:
-                # Store files temporarily
-                context.user_data.setdefault('export_files', []).append(
-                    (f"export_{export_type}.{export_type}", response.content)
-                )
+                export_files.append((f"{csv_type}_{timestamp}.csv", response.content))
 
-        # Send email with all files
-        if await send_email(email, context.user_data.get('export_files', []), context.user_data):
-            await update.message.reply_text("✅ Files have been sent to your email!")
+        if export_files:
+            # Send email with all files
+            if await send_email(email, export_files, context.user_data):
+                await update.message.reply_text("✅ All files have been sent to your email!")
+            else:
+                await update.message.reply_text("❌ Failed to send email. Please try again.")
         else:
-            await update.message.reply_text("❌ Failed to send email. Please try again.")
-
-        # Clean up stored files
-        context.user_data.pop('export_files', None)
+            await update.message.reply_text("❌ No files were generated for export.")
         
     except Exception as e:
-        await update.message.reply_text(f"❌ Error: {str(e)}")
+        await update.message.reply_text(f"❌ Error during export: {str(e)}")
     
     return ConversationHandler.END
 
