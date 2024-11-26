@@ -17,6 +17,10 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from typing import Optional
 from api.utils.auth import verify_token
 from config.config import MONGO_URI
+from api.utils.plots import (
+    create_expense_bar, create_category_pie, create_monthly_line,
+    create_category_bar, create_budget_vs_actual
+)
 
 # MongoDB setup
 client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URI)
@@ -67,69 +71,14 @@ async def expense_bar(
     to_date: Optional[datetime.date] = None,
     token: str = Header(None)
 ):
-    """
-    Endpoint to generate a bar chart of daily expenses within a date range.
-    Returns a PNG image file directly.
-    """
+    """Generate bar chart of daily expenses."""
     user_id = await verify_token(token)
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
     expenses, _, _ = await fetch_data(user_id, from_date, to_date)
-
+    
     if not expenses:
-        raise HTTPException(
-            status_code=404, detail="No expenses found for the specified period"
-        )
-
-    # Convert to DataFrame and process data
-    df = pd.DataFrame(expenses)
-    df["date"] = pd.to_datetime(df["date"])
-    daily_expenses = df.groupby(df["date"].dt.date)["amount"].sum()
-
-    # Plotting the bar graph
-    plt.figure(figsize=(10, 6))
-    ax = daily_expenses.plot(kind="bar", color="skyblue")
+        raise HTTPException(status_code=404, detail="No expenses found")
     
-    # Create detailed date range text
-    if from_date and to_date:
-        if from_date == to_date:
-            date_range_text = f"Date: {from_date}"
-        else:
-            date_range_text = f"Date Range: {from_date} to {to_date}"
-    elif from_date:
-        date_range_text = f"Date Range: From {from_date}"
-    elif to_date:
-        date_range_text = f"Date Range: To {to_date}"
-    else:
-        date_range_text = "Date Range: All"
-    
-    total_spend = daily_expenses.sum()
-    plt.title(f"Total Expenses per Day\n{date_range_text}\nTotal Spend: ${total_spend:,.2f}")
-    
-    plt.xlabel("Date")
-    plt.ylabel("Total Expense Amount")
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-
-    # Adding labels on top of each bar
-    for i, value in enumerate(daily_expenses):
-        ax.text(
-            i,
-            value + 0.5,
-            f"{value:.2f}",
-            ha="center",
-            va="bottom",
-            fontsize=10,
-            color="black",
-        )
-
-    # Send image directly from memory
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png", bbox_inches="tight")
-    plt.close()
-    buf.seek(0)
-    
+    buf = create_expense_bar(expenses, from_date, to_date)
     return Response(content=buf.getvalue(), media_type="image/png")
 
 @router.get("/category/pie")
@@ -153,67 +102,7 @@ async def category_pie(
             status_code=404, detail="No expenses found for the specified period"
         )
 
-    # Convert to DataFrame and process data
-    df = pd.DataFrame(expenses)
-    df["date"] = pd.to_datetime(df["date"])
-
-    # Group by category and sum the amounts
-    category_expenses = df.groupby("category")["amount"].sum()
-
-    # Plotting the pie chart
-    plt.figure(figsize=(8, 8))
-    
-    # Create detailed date range text
-    if from_date and to_date:
-        if from_date == to_date:
-            date_range_text = f"Date: {from_date}"
-        else:
-            date_range_text = f"Date Range: {from_date} to {to_date}"
-    elif from_date:
-        date_range_text = f"Date Range: From {from_date}"
-    elif to_date:
-        date_range_text = f"Date Range: To {to_date}"
-    else:
-        date_range_text = "Date Range: All"
-    
-    total_spend = category_expenses.sum()
-    plt.title(f"Expense Distribution by Category\n{date_range_text}\nTotal Spend: ${total_spend:,.2f}", pad=20)
-    
-    # Define a visually appealing color palette
-    colors = [
-        '#2ecc71',  # emerald green
-        '#3498db',  # bright blue
-        '#9b59b6',  # amethyst purple
-        '#e74c3c',  # alizarin red
-        '#f1c40f',  # sunflower yellow
-        '#1abc9c',  # turquoise
-        '#e67e22',  # carrot orange
-        '#34495e',  # wet asphalt
-        '#7f8c8d',  # concrete gray
-        '#16a085',  # green sea
-    ]
-
-    # Create custom labels with amounts
-    labels = [
-        f'{cat}\n(${amount:,.2f})'
-        for cat, amount in category_expenses.items()
-    ]
-
-    plt.pie(
-        category_expenses,
-        labels=labels,
-        autopct='%1.1f%%',
-        startangle=140,
-        colors=colors,
-    )
-    plt.axis("equal")  # Equal aspect ratio ensures that pie chart is circular.
-
-    # Send image directly from memory
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png", bbox_inches="tight")
-    plt.close()
-    buf.seek(0)
-    
+    buf = create_category_pie(expenses, from_date, to_date)
     return Response(content=buf.getvalue(), media_type="image/png")
 
 @router.get("/expense/line-monthly", response_class=Response)
@@ -237,42 +126,7 @@ async def expense_line_monthly(
             status_code=404, detail="No expenses found for the specified period"
         )
 
-    # Convert to DataFrame and process data
-    df = pd.DataFrame(expenses)
-    df["date"] = pd.to_datetime(df["date"])
-    monthly_expenses = df.groupby(df["date"].dt.to_period("M"))["amount"].sum()
-
-    # Plotting the line graph
-    plt.figure(figsize=(10, 6))
-    ax = monthly_expenses.plot(kind="line", marker='o', color="skyblue")
-    
-    # Create detailed date range text
-    if from_date and to_date:
-        if from_date == to_date:
-            date_range_text = f"Date: {from_date}"
-        else:
-            date_range_text = f"Date Range: {from_date} to {to_date}"
-    elif from_date:
-        date_range_text = f"Date Range: From {from_date}"
-    elif to_date:
-        date_range_text = f"Date Range: To {to_date}"
-    else:
-        date_range_text = "Date Range: All"
-    
-    total_spend = monthly_expenses.sum()
-    plt.title(f"Monthly Expenses\n{date_range_text}\nTotal Spend: ${total_spend:,.2f}")
-    
-    plt.xlabel("Month")
-    plt.ylabel("Total Expense Amount")
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-
-    # Send image directly from memory
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png", bbox_inches="tight")
-    plt.close()
-    buf.seek(0)
-    
+    buf = create_monthly_line(expenses, from_date, to_date)
     return Response(content=buf.getvalue(), media_type="image/png")
 
 @router.get("/category/bar", response_class=Response)
@@ -296,56 +150,7 @@ async def category_bar(
             status_code=404, detail="No expenses found for the specified period"
         )
 
-    # Convert to DataFrame and process data
-    df = pd.DataFrame(expenses)
-    df["date"] = pd.to_datetime(df["date"])
-
-    # Group by category and sum the amounts
-    category_expenses = df.groupby("category")["amount"].sum()
-
-    # Plotting the bar chart
-    plt.figure(figsize=(10, 6))
-    ax = category_expenses.plot(kind="bar", color="skyblue")
-    
-    # Create detailed date range text
-    if from_date and to_date:
-        if from_date == to_date:
-            date_range_text = f"Date: {from_date}"
-        else:
-            date_range_text = f"Date Range: {from_date} to {to_date}"
-    elif from_date:
-        date_range_text = f"Date Range: From {from_date}"
-    elif to_date:
-        date_range_text = f"Date Range: To {to_date}"
-    else:
-        date_range_text = "Date Range: All"
-    
-    total_spend = category_expenses.sum()
-    plt.title(f"Expenses by Category\n{date_range_text}\nTotal Spend: ${total_spend:,.2f}")
-    
-    plt.xlabel("Category")
-    plt.ylabel("Total Expense Amount")
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-
-    # Adding labels on top of each bar
-    for i, value in enumerate(category_expenses):
-        ax.text(
-            i,
-            value + 0.5,
-            f"{value:.2f}",
-            ha="center",
-            va="bottom",
-            fontsize=10,
-            color="black",
-        )
-
-    # Send image directly from memory
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png", bbox_inches="tight")
-    plt.close()
-    buf.seek(0)
-    
+    buf = create_category_bar(expenses, from_date, to_date)
     return Response(content=buf.getvalue(), media_type="image/png")
 
 def prorate_budget(budget: float, from_date: Optional[datetime.date], to_date: Optional[datetime.date], first_expense_date: Optional[datetime.date], last_expense_date: Optional[datetime.date]) -> float:
@@ -383,51 +188,6 @@ async def budget_vs_actual(
             status_code=404, detail="No expenses found for the specified period"
         )
 
-    # Convert to DataFrame and process data
-    df = pd.DataFrame(expenses)
-    df["date"] = pd.to_datetime(df["date"])
-    category_expenses = df.groupby("category")["amount"].sum()
-    first_expense_date = df["date"].min().date() if not from_date else from_date
-    last_expense_date = df["date"].max().date() if not to_date else to_date
-
-    # Assuming user document contains budget information
-    categories = user.get("categories", {})
-
-    # Prepare data for plotting
-    category_names = list(set(category_expenses.index).union(set(categories.keys())))
-    actuals = [category_expenses.get(cat, 0) for cat in category_names]
-    budgeted = [prorate_budget(categories[cat]["monthly_budget"], from_date, to_date, first_expense_date, last_expense_date) if cat in categories else 0 for cat in category_names]
-
-    # Plotting the bar chart
-    plt.figure(figsize=(10, 6))
-    x = range(len(category_names))
-    plt.bar(x, budgeted, width=0.4, label='Budgeted', align='center')
-    plt.bar(x, actuals, width=0.4, label='Actual', align='edge')
-    plt.xticks(x, category_names, rotation=45)
-    
-    # Create detailed date range text
-    if from_date and to_date:
-        if from_date == to_date:
-            date_range_text = f"Date: {from_date}"
-        else:
-            date_range_text = f"Date Range: {from_date} to {to_date}"
-    elif from_date:
-        date_range_text = f"Date Range: From {from_date}"
-    elif to_date:
-        date_range_text = f"Date Range: To {to_date}"
-    else:
-        date_range_text = "Date Range: All"
-    
-    plt.title(f"Budget vs Actual Expenses\n{date_range_text}")
-    plt.xlabel("Category")
-    plt.ylabel("Amount")
-    plt.legend()
-    plt.tight_layout()
-
-    # Send image directly from memory
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png", bbox_inches="tight")
-    plt.close()
-    buf.seek(0)
+    buf = create_budget_vs_actual(expenses, user["categories"], from_date, to_date)
     
     return Response(content=buf.getvalue(), media_type="image/png")
