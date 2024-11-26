@@ -202,7 +202,7 @@ async def accounts_delete(update: Update, context: ContextTypes.DEFAULT_TYPE, to
         # Create keyboard with account buttons
         keyboard = [
             [InlineKeyboardButton(
-                f"{account['name']} : {account['balance']} {account['currency']}", 
+                f"{account['name']} : {(round(account['balance'], 2))} {account['currency']}", 
                 callback_data=f"delete_{account['_id']}"
             )]
             for account in accounts
@@ -281,7 +281,7 @@ async def accounts_update(update: Update, context: ContextTypes.DEFAULT_TYPE, to
 
         keyboard = [
             [InlineKeyboardButton(
-                f"{account['name']} : {account['balance']} {account['currency']}", 
+                f"{account['name']} : {round(account['balance'], 2)} {account['currency']}", 
                 callback_data=f"update_{account['_id']}"
             )]
             for account in accounts
