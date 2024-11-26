@@ -561,18 +561,61 @@ async def expenses_update(update: Update, context: ContextTypes.DEFAULT_TYPE, to
             await update.message.reply_text("No expenses found to update.")
             return ConversationHandler.END
 
+        # Pagination setup
+        page = int(context.args[0]) if context.args else 1
+        items_per_page = 5
+        total_pages = len(expenses) // items_per_page + (1 if len(expenses) % items_per_page else 0)
+
+        # Create pagination buttons
+        pagination_buttons = []
+        if total_pages > 1:
+            if page > 1:
+                pagination_buttons.append(
+                    InlineKeyboardButton("⬅️", callback_data=f"update_expenses#{page-1}")
+                )
+            if page < total_pages:
+                pagination_buttons.append(
+                    InlineKeyboardButton("➡️", callback_data=f"update_expenses#{page+1}")
+                )
+
+        start_idx = (page - 1) * items_per_page
+        end_idx = start_idx + items_per_page
+        expenses_page = expenses[start_idx:end_idx]
+
         keyboard = []
-        for expense in expenses:
+        for expense in expenses_page:
             button_text = f"{expense['description']} - {expense['amount']} {expense['currency']}"
             callback_data = f"update_{expense['_id']}"
             keyboard.append([InlineKeyboardButton(button_text, callback_data=callback_data)])
 
+        # Add pagination row if there are pagination buttons
+        if pagination_buttons:
+            keyboard.append(pagination_buttons)
+
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text("Select an expense to update:", reply_markup=reply_markup)
+        message = "Select an expense to update:"
+
+        if update.message:
+            await update.message.reply_text(message, reply_markup=reply_markup)
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(message, reply_markup=reply_markup)
         return SELECT_EXPENSE
     else:
-        await update.message.reply_text("Failed to fetch expenses.")
+        message = "Failed to fetch expenses."
+        if update.message:
+            await update.message.reply_text(message)
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(message)
         return ConversationHandler.END
+
+@authenticate
+async def expenses_update_page(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle pagination for updating expenses."""
+    query = update.callback_query
+    await query.answer()
+    page = int(query.data.split("#")[1])
+    context.args = [page]
+    return await expenses_update(update, context)
 
 async def select_update_field(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Show options for which field to update."""
@@ -708,7 +751,10 @@ expenses_delete_all_conv_handler = ConversationHandler(
 expenses_update_conv_handler = ConversationHandler(
     entry_points=[CommandHandler("expenses_update", expenses_update)],
     states={
-        SELECT_EXPENSE: [CallbackQueryHandler(select_update_field, pattern=r"^update_")],
+        SELECT_EXPENSE: [
+            CallbackQueryHandler(expenses_update_page, pattern=r"^update_expenses#\d+$"),
+            CallbackQueryHandler(select_update_field, pattern=r"^update_"),
+        ],
         SELECT_FIELD: [CallbackQueryHandler(handle_field_selection, pattern=r"^field_")],
         UPDATE_VALUE: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_update_value),
