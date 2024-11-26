@@ -64,7 +64,7 @@ A REST API application for managing expenses. Build your own automation—be it 
 ![issue_open](https://img.shields.io/github/issues/gitsetgopack/MoneyManagerV2.svg?style=plastic&)
 ![issue_close](https://img.shields.io/github/issues-closed/gitsetgopack/MoneyManagerV2.svg?style=plastic&)
 
-![commits_since_last_project](https://img.shields.io/github/commits-since/gitsetgopack/MoneyManagerV2/v2023.f.3.svg?style=plastic&)
+![commits_since_last_project](https://img.shields.io/github/commits-since/gitsetgopack/MoneyManagerV2/v2024.f.2.svg?style=plastic&)
 ![repo_size](https://img.shields.io/github/repo-size/gitsetgopack/MoneyManagerV2?style=plastic&)
 ![forks](https://img.shields.io/github/forks/gitsetgopack/MoneyManagerV2?style=plastic&)
 ![stars](https://img.shields.io/github/stars/gitsetgopack/MoneyManagerV2?style=plastic&)
