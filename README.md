@@ -113,7 +113,7 @@ https://github.com/user-attachments/assets/0f668b62-a0ac-4d36-b8b7-f897a7550c57
 MoneyManager allows you to take control of your personal finances, providing insights into where your money goes and helping you make informed financial decisions. Whether you're looking to monitor daily spending or analyze broader trends, MoneyManager has the tools you need to stay on top of your finances.
 
 
-## 🛠️ Installation
+## 🛠️ Installation (Needs Change)
 
 ### 📋 Pre-requisite Tasks
 
@@ -152,8 +152,17 @@ Currently, the project includes 150+ tests covering all core functionality.
 
 <img width="677" alt="image" src="https://github.com/user-attachments/assets/03d6d77f-7494-424e-bda6-0518ac79b124">
 
+## Functionalities
 
-## 🚀 Future Enhancements
+- **Sign Up:**
+  
+<img src="https://github.com/user-attachments/assets/76c7867b-81ae-4be3-a73a-9e08e0cda8b3" alt="Sign Up" width="400">
+
+- **Login**
+
+<img src="https://github.com/user-attachments/assets/94daf731-9ce0-4ef6-8797-54ede9ac9713" alt="Login" width="400">
+
+## 🚀 Future Enhancements (Needs Change)
 
 - **External Integrations**: Explore integrations with platforms like Discord, WhatsApp, and Slack to provide seamless notifications and financial management within users' preferred communication apps.
 - **UI/Website Development**: Develop a user-friendly web interface to enhance accessibility, offering streamlined access to financial data and resources.
