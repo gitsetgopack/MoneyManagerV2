@@ -149,12 +149,27 @@ async def expense_pie(
     plt.figure(figsize=(8, 8))
     date_range = f"from {from_date} to {to_date}" if from_date and to_date else "all time"
     plt.title(f"Expense Distribution by Category ({date_range})")
+
+    # Define a visually appealing color palette
+    colors = [
+        '#2ecc71',  # emerald green
+        '#3498db',  # bright blue
+        '#9b59b6',  # amethyst purple
+        '#e74c3c',  # alizarin red
+        '#f1c40f',  # sunflower yellow
+        '#1abc9c',  # turquoise
+        '#e67e22',  # carrot orange
+        '#34495e',  # wet asphalt
+        '#7f8c8d',  # concrete gray
+        '#16a085',  # green sea
+    ]
+
     plt.pie(
         category_expenses,
         labels=category_expenses.index.astype(str).tolist(),
         autopct="%1.1f%%",
         startangle=140,
-        colors=["#FF9999", "#FF4D4D", "#FF0000"],
+        colors=colors,
     )
     plt.axis("equal")  # Equal aspect ratio ensures that pie chart is circular.
 
