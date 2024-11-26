@@ -7,12 +7,11 @@ import sys
 from telegram import Update
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes
 
-from bots.telegram.auth import login_handler, logout, signup_handler
-from bots.telegram.expenses import expenses_handlers  # Update import
+from bots.telegram.auth import auth_handlers, get_user  # Update import
+from bots.telegram.expenses import expenses_handlers
 from bots.telegram.utils import unknown, get_menu_commands
 from config import config
-from bots.telegram.auth import get_user
-from bots.telegram.categories import categories_view, categories_view_page, categories_handlers
+from bots.telegram.categories import categories_handlers
 
 
 # Configure logging
@@ -43,10 +42,11 @@ def main() -> None:
 
     # Register handlers
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(login_handler)
-    application.add_handler(signup_handler)
-    application.add_handler(CommandHandler("logout", logout))
     application.add_handler(CommandHandler("menu", menu))
+    
+    # Add auth handlers
+    for handler in auth_handlers:
+        application.add_handler(handler)
     
     # Add expenses handlers
     for handler in expenses_handlers:

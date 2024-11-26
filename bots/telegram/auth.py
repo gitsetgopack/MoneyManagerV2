@@ -193,27 +193,29 @@ async def logout(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 # Handlers for authentication
-login_handler = ConversationHandler(
-    entry_points=[CommandHandler("login", login)],
-    states={
-        USERNAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username)],
-        LOGIN_PASSWORD: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_login_password)
-        ],
-    },
-    fallbacks=[CommandHandler("cancel", cancel)],
-)
-
-signup_handler = ConversationHandler(
-    entry_points=[CommandHandler("signup", signup)],
-    states={
-        USERNAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username)],
-        PASSWORD: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_signup_password)
-        ],
-        SIGNUP_CONFIRM: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_signup_confirm)
-        ],
-    },
-    fallbacks=[CommandHandler("cancel", cancel)],
-)
+auth_handlers = [
+    ConversationHandler(
+        entry_points=[CommandHandler("login", login)],
+        states={
+            USERNAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username)],
+            LOGIN_PASSWORD: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_login_password)
+            ],
+        },
+        fallbacks=[CommandHandler("cancel", cancel)],
+    ),
+    ConversationHandler(
+        entry_points=[CommandHandler("signup", signup)],
+        states={
+            USERNAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username)],
+            PASSWORD: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_signup_password)
+            ],
+            SIGNUP_CONFIRM: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_signup_confirm)
+            ],
+        },
+        fallbacks=[CommandHandler("cancel", cancel)],
+    ),
+    CommandHandler("logout", logout),
+]
