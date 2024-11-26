@@ -90,8 +90,7 @@ A REST API application for managing expenses. Build your own automation—be it 
 
 ## 👥 User Friendly
 
-
-https://github.com/user-attachments/assets/91fdf9e0-9489-4e05-ab61-a7599e5463e1
+https://github.com/user-attachments/assets/0f668b62-a0ac-4d36-b8b7-f897a7550c57
 
 - **Expense Tracking**: Add, update, and delete expenses. Track expenses by category, date, and account.
 - **Authentication**: Secure access to your data using token-based authentication.
