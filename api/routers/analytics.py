@@ -11,8 +11,8 @@ import datetime
 from bson import ObjectId
 import matplotlib.pyplot as plt
 import pandas as pd
-from fastapi import APIRouter, Header, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Header, HTTPException, Response
+from fastapi.responses import HTMLResponse, FileResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from typing import Optional
 from api.utils.auth import verify_token
@@ -61,7 +61,7 @@ async def fetch_data(
     return expenses, accounts, user
 
 
-@router.get("/expense/bar", response_class=HTMLResponse)
+@router.get("/expense/bar")
 async def expense_bar(
     from_date: Optional[datetime.date] = None,
     to_date: Optional[datetime.date] = None,
@@ -69,12 +69,7 @@ async def expense_bar(
 ):
     """
     Endpoint to generate a bar chart of daily expenses within a date range.
-    Args:
-        from_date (datetime.date, optional): Start date for expense data
-        to_date (datetime.date, optional): End date for expense data
-        token (str): Authorization token for user verification
-    Returns:
-        HTMLResponse: An HTML page displaying the bar chart.
+    Returns a PNG image file directly.
     """
     user_id = await verify_token(token)
     if not user_id:
@@ -114,41 +109,23 @@ async def expense_bar(
             color="black",
         )
 
-    # Convert the plot to a base64-encoded image
+    # Send image directly from memory
     buf = io.BytesIO()
-    plt.savefig(buf, format="png")
+    plt.savefig(buf, format="png", bbox_inches="tight")
     plt.close()
     buf.seek(0)
-    image_data = base64.b64encode(buf.getvalue()).decode("utf-8")
+    
+    return Response(content=buf.getvalue(), media_type="image/png")
 
-    # Return the HTML response with the embedded image
-    return HTMLResponse(
-        content=f"""
-        <html>
-            <head><title>Expense Bar Chart</title></head>
-            <body>
-                <h1>Total Expenses per Day ({date_range})</h1>
-                <img src="data:image/png;base64,{image_data}" alt="Expense Bar Chart">
-            </body>
-        </html>
-        """
-    )
-
-
-@router.get("/expense/pie", response_class=HTMLResponse)
+@router.get("/expense/pie")
 async def expense_pie(
     from_date: Optional[datetime.date] = None,
     to_date: Optional[datetime.date] = None,
     token: str = Header(None)
 ):
     """
-    Endpoint to generate a pie chart of expenses categorized by type within a date range.
-    Args:
-        from_date (datetime.date, optional): Start date for expense data
-        to_date (datetime.date, optional): End date for expense data
-        token (str): Authorization token for user verification
-    Returns:
-        HTMLResponse: An HTML page displaying the pie chart.
+    Endpoint to generate a pie chart of expenses categorized by type.
+    Returns a PNG image file directly.
     """
     user_id = await verify_token(token)
     if not user_id:
@@ -181,22 +158,10 @@ async def expense_pie(
     )
     plt.axis("equal")  # Equal aspect ratio ensures that pie chart is circular.
 
-    # Convert the plot to a base64-encoded image
+    # Send image directly from memory
     buf = io.BytesIO()
-    plt.savefig(buf, format="png")
+    plt.savefig(buf, format="png", bbox_inches="tight")
     plt.close()
     buf.seek(0)
-    image_data = base64.b64encode(buf.getvalue()).decode("utf-8")
-
-    # Return the HTML response with the embedded image
-    return HTMLResponse(
-        content=f"""
-        <html>
-            <head><title>Expense Pie Chart</title></head>
-            <body>
-                <h1>Expense Distribution by Category ({date_range})</h1>
-                <img src="data:image/png;base64,{image_data}" alt="Expense Pie Chart">
-            </body>
-        </html>
-        """
-    )
+    
+    return Response(content=buf.getvalue(), media_type="image/png")
