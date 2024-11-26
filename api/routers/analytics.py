@@ -148,7 +148,7 @@ async def expense_pie(
     # Plotting the pie chart
     plt.figure(figsize=(8, 8))
     date_range = f"from {from_date} to {to_date}" if from_date and to_date else "all time"
-    plt.title(f"Expense Distribution by Category ({date_range})")
+    plt.title(f"Expense Distribution by Category ({date_range})", pad=20)  # Add padding below title
 
     # Define a visually appealing color palette
     colors = [
@@ -164,10 +164,16 @@ async def expense_pie(
         '#16a085',  # green sea
     ]
 
+    # Create custom labels with amounts
+    labels = [
+        f'{cat}\n(${amount:,.2f})'
+        for cat, amount in category_expenses.items()
+    ]
+
     plt.pie(
         category_expenses,
-        labels=category_expenses.index.astype(str).tolist(),
-        autopct="%1.1f%%",
+        labels=labels,
+        autopct='%1.1f%%',
         startangle=140,
         colors=colors,
     )
