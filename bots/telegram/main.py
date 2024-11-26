@@ -12,7 +12,6 @@ from bots.telegram.expenses import (
     expenses_conv_handler,
     expenses_delete_all_conv_handler,
     expenses_delete_conv_handler,
-    expenses_update_conv_handler,
     expenses_delete_page,
     expenses_view,
     expenses_view_page,
@@ -20,6 +19,7 @@ from bots.telegram.expenses import (
 from bots.telegram.utils import unknown, get_menu_commands
 from config import config
 from bots.telegram.auth import get_user
+from bots.telegram.categories import categories_view, categories_view_page, categories_handlers
 
 # Add project root to Python path
 project_root = os.path.dirname(
@@ -59,7 +59,6 @@ def main() -> None:
     application.add_handler(signup_handler)
     application.add_handler(expenses_conv_handler)
     application.add_handler(expenses_delete_conv_handler)
-    application.add_handler(expenses_update_conv_handler)
     application.add_handler(CommandHandler("expenses_view", expenses_view))
     application.add_handler(CommandHandler("logout", logout))
     application.add_handler(
@@ -70,6 +69,12 @@ def main() -> None:
     )
     application.add_handler(expenses_delete_all_conv_handler)
     application.add_handler(CommandHandler("menu", menu))
+    application.add_handler(CommandHandler("categories_view", categories_view))
+    application.add_handler(
+        CallbackQueryHandler(categories_view_page, pattern="view_categories#")
+    )
+    for i in categories_handlers:
+        application.add_handler(i)
     application.add_handler(CommandHandler("unknown", unknown))
 
     # Start the bot
