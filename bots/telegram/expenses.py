@@ -35,7 +35,10 @@ TIMEOUT = 10  # seconds
     ACCOUNT,
     CONFIRM_DELETE,
     DELETE_ALL_CONFIRM,
-) = range(9)
+    SELECT_EXPENSE,  # New states for update flow
+    SELECT_FIELD,
+    UPDATE_VALUE,
+) = range(12)
 
 
 @authenticate
@@ -78,7 +81,11 @@ async def fetch_and_show_categories(
     if response.status_code == 200:
         categories = response.json().get("categories", [])
         if not categories:
-            await update.message.reply_text("No categories found.")
+            message = "No categories found."
+            if update.message:
+                await update.message.reply_text(message)
+            elif update.callback_query:
+                await update.callback_query.message.edit_text(message)
             return
 
         keyboard = [
@@ -86,11 +93,18 @@ async def fetch_and_show_categories(
             for category in categories
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text(
-            "Please select a category:", reply_markup=reply_markup
-        )
+        message = "Please select a category:"
+        
+        if update.message:
+            await update.message.reply_text(message, reply_markup=reply_markup)
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(message, reply_markup=reply_markup)
     else:
-        await update.message.reply_text("Failed to fetch categories.")
+        message = "Failed to fetch categories."
+        if update.message:
+            await update.message.reply_text(message)
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(message)
 
 
 async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -501,7 +515,7 @@ async def expenses_delete_all(
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
-            f"⚠��� Are you sure you want to delete all {total_expenses} expenses? This action cannot be undone!",
+            f"⚠️ Are you sure you want to delete all {total_expenses} expenses? This action cannot be undone!",
             reply_markup=reply_markup,
         )
         return DELETE_ALL_CONFIRM
@@ -533,6 +547,123 @@ async def confirm_delete_all(
     elif query.data == "cancel_delete_all":
         await query.message.edit_text("Deletion cancelled.")
         return ConversationHandler.END
+
+
+@authenticate
+async def expenses_update(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Start the expense update process by showing list of expenses."""
+    headers = {"token": token}
+    response = requests.get(f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", headers=headers, timeout=TIMEOUT)
+    
+    if response.status_code == 200:
+        expenses = response.json()["expenses"]
+        if not expenses:
+            await update.message.reply_text("No expenses found to update.")
+            return ConversationHandler.END
+
+        keyboard = []
+        for expense in expenses:
+            button_text = f"{expense['description']} - {expense['amount']} {expense['currency']}"
+            callback_data = f"update_{expense['_id']}"
+            keyboard.append([InlineKeyboardButton(button_text, callback_data=callback_data)])
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.message.reply_text("Select an expense to update:", reply_markup=reply_markup)
+        return SELECT_EXPENSE
+    else:
+        await update.message.reply_text("Failed to fetch expenses.")
+        return ConversationHandler.END
+
+async def select_update_field(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Show options for which field to update."""
+    query = update.callback_query
+    await query.answer()
+    
+    if query.data.startswith("update_"):
+        expense_id = query.data.split("_")[1]
+        context.user_data["expense_id"] = expense_id
+        
+        keyboard = [
+            [InlineKeyboardButton("Amount", callback_data="field_amount")],
+            [InlineKeyboardButton("Description", callback_data="field_description")],
+            [InlineKeyboardButton("Category", callback_data="field_category")],
+            [InlineKeyboardButton("Currency", callback_data="field_currency")],
+            [InlineKeyboardButton("Account", callback_data="field_account")],
+            [InlineKeyboardButton("Date", callback_data="field_date")]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await query.message.edit_text("What would you like to update?", reply_markup=reply_markup)
+        return SELECT_FIELD
+
+@authenticate
+async def handle_field_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle the selected field and prompt for new value."""
+    query = update.callback_query
+    await query.answer()
+    
+    field = query.data.split("_")[1]
+    context.user_data["update_field"] = field
+    
+    if field == "category":
+        await fetch_and_show_categories(update, context)
+    elif field == "currency":
+        await fetch_and_show_currencies(update, context)
+    elif field == "account":
+        await fetch_and_show_accounts(update, context)
+    elif field == "date":
+        calendar, step = DetailedTelegramCalendar().build()
+        await query.edit_message_text(f"Select new date:", reply_markup=calendar)
+    else:
+        await query.message.edit_text(f"Please enter new {field}:")
+    
+    return UPDATE_VALUE
+
+@authenticate
+async def handle_update_value(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle the new value and update the expense."""
+    field = context.user_data["update_field"]
+    expense_id = context.user_data["expense_id"]
+    
+    if update.callback_query:  # For category, currency, account, date selections
+        query = update.callback_query
+        await query.answer()
+        
+        if field == "date":
+            result, key, step = DetailedTelegramCalendar().process(query.data)
+            if not result and key:
+                await query.message.edit_text(f"Select date: {step}", reply_markup=key)
+                return UPDATE_VALUE
+            new_value = result.strftime("%Y-%m-%dT%H:%M:%S.%f")
+        else:
+            new_value = query.data
+    else:  # For text input (amount, description)
+        new_value = update.message.text
+        if field == "amount":
+            try:
+                new_value = str(float(new_value))
+            except ValueError:
+                await update.message.reply_text("Please enter a valid number.")
+                return UPDATE_VALUE
+
+    # Update the expense
+    headers = {"token": token}
+    update_data = {field: new_value}
+    response = requests.put(
+        f"{TELEGRAM_BOT_API_BASE_URL}/expenses/{expense_id}",
+        json=update_data,
+        headers=headers,
+        timeout=TIMEOUT
+    )
+
+    message = "Expense updated successfully!" if response.status_code == 200 else f"Failed to update expense: {response.json()['detail']}"
+    
+    if update.callback_query:
+        await update.callback_query.message.edit_text(message)
+    else:
+        await update.message.reply_text(message)
+    
+    context.user_data.clear()
+    return ConversationHandler.END
 
 
 # Handlers for expenses
@@ -569,6 +700,20 @@ expenses_delete_all_conv_handler = ConversationHandler(
     entry_points=[CommandHandler("expenses_delete_all", expenses_delete_all)],
     states={
         DELETE_ALL_CONFIRM: [CallbackQueryHandler(confirm_delete_all)],
+    },
+    fallbacks=[CommandHandler("cancel", cancel)],
+)
+
+# Add this new conversation handler at the bottom with other handlers
+expenses_update_conv_handler = ConversationHandler(
+    entry_points=[CommandHandler("expenses_update", expenses_update)],
+    states={
+        SELECT_EXPENSE: [CallbackQueryHandler(select_update_field, pattern=r"^update_")],
+        SELECT_FIELD: [CallbackQueryHandler(handle_field_selection, pattern=r"^field_")],
+        UPDATE_VALUE: [
+            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_update_value),
+            CallbackQueryHandler(handle_update_value)
+        ],
     },
     fallbacks=[CommandHandler("cancel", cancel)],
 )

@@ -12,6 +12,7 @@ from bots.telegram.expenses import (
     expenses_conv_handler,
     expenses_delete_all_conv_handler,
     expenses_delete_conv_handler,
+    expenses_update_conv_handler,
     expenses_delete_page,
     expenses_view,
     expenses_view_page,
@@ -58,6 +59,7 @@ def main() -> None:
     application.add_handler(signup_handler)
     application.add_handler(expenses_conv_handler)
     application.add_handler(expenses_delete_conv_handler)
+    application.add_handler(expenses_update_conv_handler)
     application.add_handler(CommandHandler("expenses_view", expenses_view))
     application.add_handler(CommandHandler("logout", logout))
     application.add_handler(
