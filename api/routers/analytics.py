@@ -4,16 +4,11 @@ expense data. It includes routes to generate visualizations for expenses
 from a specified number of days.
 """
 
-import base64
 import datetime
-import io
 from typing import Optional
 
-import matplotlib.pyplot as plt
-import pandas as pd
 from bson import ObjectId
 from fastapi import APIRouter, Header, HTTPException, Response
-from fastapi.responses import FileResponse, HTMLResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from api.utils.auth import verify_token
@@ -202,7 +197,7 @@ async def budget_vs_actual(
     if not user_id:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
+    expenses, _, user = await fetch_data(user_id, from_date, to_date)
 
     if not expenses:
         raise HTTPException(
