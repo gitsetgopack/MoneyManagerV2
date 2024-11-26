@@ -26,9 +26,11 @@ TIMEOUT = 10  # seconds
     SELECT_CURRENCY,  # Add new state
     CONFIRM_DELETE,
     SELECT_ACCOUNT,
+    SELECT_UPDATE_TYPE,  # New state
+    UPDATE_NAME,    # Add this
     UPDATE_BALANCE,
     SELECT_CATEGORY,  # Add new state
-) = range(7)  # Update range to 7
+) = range(9)  # Update range to 9
 
 @authenticate
 async def accounts_view(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
@@ -200,7 +202,7 @@ async def accounts_delete(update: Update, context: ContextTypes.DEFAULT_TYPE, to
         # Create keyboard with account buttons
         keyboard = [
             [InlineKeyboardButton(
-                f"{account['name']} - Balance: {account['balance']} {account['currency']}", 
+                f"{account['name']} : {account['balance']} {account['currency']}", 
                 callback_data=f"delete_{account['_id']}"
             )]
             for account in accounts
@@ -279,12 +281,12 @@ async def accounts_update(update: Update, context: ContextTypes.DEFAULT_TYPE, to
 
         keyboard = [
             [InlineKeyboardButton(
-                f"{account['name']} - Balance: {account['balance']} {account['currency']}", 
-                callback_data=f"update_{account['name']}"
+                f"{account['name']} : {account['balance']} {account['currency']}", 
+                callback_data=f"update_{account['_id']}"
             )]
             for account in accounts
         ]
-        
+
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
             "Select an account to update its balance:",
@@ -296,36 +298,79 @@ async def accounts_update(update: Update, context: ContextTypes.DEFAULT_TYPE, to
         return ConversationHandler.END
 
 async def handle_account_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Handle account selection and prompt for new balance."""
+    """Handle account selection and show update options."""
     query = update.callback_query
     await query.answer()
     
     if query.data.startswith("update_"):
-        account_name = query.data.split("_")[1]
-        context.user_data["account_name"] = account_name
-        await query.message.edit_text(f"Please enter the new balance for '{account_name}':")
+        account_id = query.data.split("_")[1]
+        context.user_data["account_id"] = account_id
+        
+        keyboard = [
+            [
+                InlineKeyboardButton("Update Name", callback_data="change_name"),
+                InlineKeyboardButton("Update Balance", callback_data="change_balance")
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await query.message.edit_text(
+            "What would you like to update?",
+            reply_markup=reply_markup
+        )
+        return SELECT_UPDATE_TYPE
+
+async def handle_update_type_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handle the selection of what to update."""
+    query = update.callback_query
+    await query.answer()
+    
+    if query.data == "change_name":
+        await query.message.edit_text("Please enter the new name:")
+        return UPDATE_NAME
+    elif query.data == "change_balance":
+        await query.message.edit_text("Please enter the new balance:")
         return UPDATE_BALANCE
 
 @authenticate
+async def handle_name_update(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle the name update."""
+    new_name = update.message.text
+    account_id = context.user_data["account_id"]
+    
+    headers = {"token": token}
+    response = requests.put(
+        f"{TELEGRAM_BOT_API_BASE_URL}/accounts/{account_id}",
+        json={"name": new_name},
+        headers=headers,
+        timeout=TIMEOUT
+    )
+    
+    if response.status_code == 200:
+        await update.message.reply_text("✅ Account name updated successfully!\nClick /accounts_view to see the updated list.")
+    else:
+        error_detail = response.json().get("detail", "Unknown error")
+        await update.message.reply_text(f"❌ Failed to update account: {error_detail}")
+    
+    context.user_data.clear()
+    return ConversationHandler.END
+
+@authenticate
 async def handle_balance_update(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
-    """Handle the new balance value and update the account."""
+    """Handle the balance update."""
     try:
         new_balance = float(update.message.text)
-        account_name = context.user_data["account_name"]
+        account_id = context.user_data["account_id"]
         
         headers = {"token": token}
         response = requests.put(
-            f"{TELEGRAM_BOT_API_BASE_URL}/accounts/{account_name}",
+            f"{TELEGRAM_BOT_API_BASE_URL}/accounts/{account_id}",
             json={"balance": str(new_balance)},
             headers=headers,
             timeout=TIMEOUT
         )
         
         if response.status_code == 200:
-            await update.message.reply_text(
-                f"✅ Balance updated successfully for '{account_name}'!\n"
-                "Click /accounts_view to see the updated list."
-            )
+            await update.message.reply_text("✅ Account balance updated successfully!\nClick /accounts_view to see the updated list.")
         else:
             error_detail = response.json().get("detail", "Unknown error")
             await update.message.reply_text(f"❌ Failed to update account: {error_detail}")
@@ -357,11 +402,13 @@ accounts_delete_conv_handler = ConversationHandler(
     fallbacks=[CommandHandler("cancel", cancel)]
 )
 
-# Add new conversation handler for updates
+# Update the accounts_update_conv_handler
 accounts_update_conv_handler = ConversationHandler(
     entry_points=[CommandHandler("accounts_update", accounts_update)],
     states={
         SELECT_ACCOUNT: [CallbackQueryHandler(handle_account_selection)],
+        SELECT_UPDATE_TYPE: [CallbackQueryHandler(handle_update_type_selection)],
+        UPDATE_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_name_update)],
         UPDATE_BALANCE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_balance_update)],
     },
     fallbacks=[CommandHandler("cancel", cancel)]
