@@ -59,7 +59,7 @@ class ExportType(str, Enum):
 
 
 # Utility function to fetch data
-async def fetch_data(
+async def fetch_user_data(
     user_id: str, from_date: Optional[datetime.date], to_date: Optional[datetime.date]
 ):
     """Fetch data from the database based on user ID and date range."""
@@ -145,7 +145,7 @@ async def data_to_xlsx(
         Response: XLSX file containing expenses, accounts, and categories data.
     """
     user_id = await verify_token(token)
-    expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
+    expenses, accounts, user = await fetch_user_data(user_id, from_date, to_date)
 
     if not expenses and not accounts and not user:
         raise HTTPException(status_code=404, detail="No data found")
@@ -165,7 +165,7 @@ async def data_to_xlsx(
 
     # Write categories
     categories_sheet: Optional[Worksheet] = workbook.create_sheet(title="Categories")
-    if categories_sheet is not None and user and "categories" in user:
+    if categories_sheet is not None and user and user.get("categories"):
         write_categories_to_sheet(categories_sheet, user["categories"])
 
     output = BytesIO()
@@ -210,7 +210,7 @@ async def data_to_csv(
         Response: CSV file containing the selected data.
     """
     user_id = await verify_token(token)
-    expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
+    expenses, accounts, user = await fetch_user_data(user_id, from_date, to_date)
     output = StringIO()
     writer = csv.writer(output)
 
@@ -254,7 +254,7 @@ async def data_to_csv(
                 ]
             )
     elif export_type == ExportType.CATEGORIES:
-        if not user or "categories" not in user:
+        if not user or not user.get("categories"):
             raise HTTPException(status_code=404, detail="No categories found")
         writer.writerow(["name", "monthly_budget"])
         for category_name, category_data in user["categories"].items():
@@ -286,7 +286,7 @@ async def data_to_pdf(
     """
     # pylint: disable=too-many-locals, too-many-statements, too-many-branches
     user_id = await verify_token(token)
-    expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
+    expenses, accounts, user = await fetch_user_data(user_id, from_date, to_date)
 
     if not expenses and not accounts and not user:
         raise HTTPException(status_code=404, detail="No data found")
@@ -295,7 +295,7 @@ async def data_to_pdf(
     doc = SimpleDocTemplate(
         buffer,
         pagesize=letter,
-        title=f"MM PDF Export - {user['username']}",
+        title=f"MM PDF Export - {user['username'] if user else 'Unknown'}",
         lang="en-gb",
     )
     styles = getSampleStyleSheet()
@@ -493,12 +493,12 @@ async def data_to_pdf(
         "<a name='monthly-line'/>Monthly Expenses": create_monthly_line,
         "<a name='category-bar'/>Category Comparison": create_category_bar,
         "<a name='budget-actual'/>Budget vs Actual": lambda e, f, t: create_budget_vs_actual(
-            e, user["categories"], f, t
+            e, user["categories"] if user else {}, f, t
         ),
     }
 
     for title, generator in plot_generators.items():
-        image_data = generator(expenses, from_date, to_date)
+        image_data = generator(expenses, from_date, to_date)  # type: ignore
         if image_data:
             elements.append(create_paragraph(title, styles["Heading2"]))
             elements.append(Spacer(1, 12))

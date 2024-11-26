@@ -38,11 +38,11 @@ async def fetch_data(
 
     query = {"user_id": user_id}
     if from_dt and to_dt:
-        query["date"] = {"$gte": from_dt, "$lte": to_dt}
+        query["date"] = {"$gte": from_dt, "$lte": to_dt}  # type: ignore
     elif from_dt:
-        query["date"] = {"$gte": from_dt}
+        query["date"] = {"$gte": from_dt}  # type: ignore
     elif to_dt:
-        query["date"] = {"$lte": to_dt}
+        query["date"] = {"$lte": to_dt}  # type: ignore
 
     expenses = await expenses_collection.find(query).to_list(1000)
     accounts = await accounts_collection.find({"user_id": user_id}).to_list(100)

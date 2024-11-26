@@ -149,6 +149,8 @@ async def budget_vs_actual(
             status_code=404, detail="No expenses found for the specified period"
         )
 
-    buf = create_budget_vs_actual(expenses, user["categories"], from_date, to_date)
+    buf = create_budget_vs_actual(
+        expenses, user["categories"] if user else {}, from_date, to_date
+    )
 
     return Response(content=buf.getvalue(), media_type="image/png")
