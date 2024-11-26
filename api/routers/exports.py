@@ -7,10 +7,12 @@ import datetime
 import os
 from enum import Enum
 from io import BytesIO, StringIO
+import requests
 from typing import Optional
+from config.config import TELEGRAM_BOT_API_BASE_URL  # Add this import
 
 from bson import ObjectId
-from fastapi import APIRouter, Header, HTTPException, Query, Response
+from fastapi import APIRouter, Header, HTTPException, Query, Response, Request
 from motor.motor_asyncio import AsyncIOMotorClient
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -31,6 +33,10 @@ from reportlab.platypus import (  # type: ignore
 
 from api.utils.auth import verify_token
 from config.config import MONGO_URI, TIME_ZONE
+from api.utils.plots import (
+    create_expense_bar, create_category_pie, create_monthly_line,
+    create_category_bar, create_budget_vs_actual
+)
 
 router = APIRouter(prefix="/exports", tags=["Exports"])
 
@@ -89,13 +95,13 @@ def write_expenses_to_sheet(sheet: Worksheet, expenses: list):
     for expense in expenses:
         sheet.append(
             [
-                expense["date"].isoformat() if expense.get("date") else "",
-                expense["amount"],
-                expense["currency"],
-                expense["category"],
-                expense.get("description", ""),
-                expense["account_name"],
-                str(expense["_id"]),
+            expense["date"].strftime("%Y-%m-%d") if expense.get("date") else "",
+            expense["amount"],
+            expense["currency"],
+            expense["category"],
+            expense.get("description", ""),
+            expense["account_name"],
+            str(expense["_id"]),
             ]
         )
 
@@ -223,7 +229,7 @@ async def data_to_csv(
         for expense in expenses:
             writer.writerow(
                 [
-                    expense["date"].isoformat() if expense.get("date") else "",
+                    expense["date"].strftime("%Y-%m-%d") if expense.get("date") else "",
                     expense["amount"],
                     expense["currency"],
                     expense["category"],
@@ -334,9 +340,13 @@ async def data_to_pdf(
     toc = [
         create_paragraph("<link href='#expenses'>1. Expenses</link>", styles["Normal"]),
         create_paragraph("<link href='#accounts'>2. Accounts</link>", styles["Normal"]),
-        create_paragraph(
-            "<link href='#categories'>3. Categories</link>", styles["Normal"]
-        ),
+        create_paragraph("<link href='#categories'>3. Categories</link>", styles["Normal"]),
+        create_paragraph("<link href='#analytics'>4. Analytics</link>", styles["Normal"]),
+        create_paragraph("   <link href='#expense-chart'>4.1. Expense Chart</link>", styles["Normal"]),
+        create_paragraph("   <link href='#category-pie'>4.2. Category Distribution</link>", styles["Normal"]),
+        create_paragraph("   <link href='#monthly-line'>4.3. Monthly Expenses</link>", styles["Normal"]),
+        create_paragraph("   <link href='#category-bar'>4.4. Category Comparison</link>", styles["Normal"]),
+        create_paragraph("   <link href='#budget-actual'>4.5. Budget vs Actual</link>", styles["Normal"]),
     ]
     elements.append(create_paragraph("Table of Contents", styles["Title"]))
     elements.append(Spacer(1, 12))
@@ -370,18 +380,17 @@ async def data_to_pdf(
     elements.append(create_paragraph(date_range_text, styles["Normal"]))
     elements.append(Spacer(1, 12))
     expenses_data = [
-        ["Date", "Amount", "Currency", "Category", "Description", "Account Name", "ID"]
+        ["Date", "Amount", "Currency", "Category", "Description", "Account Name"]
     ]
     for expense in expenses:
         expenses_data.append(
             [
-                expense["date"].isoformat() if expense.get("date") else "",
+                expense["date"].strftime("%Y-%m-%d") if expense.get("date") else "",
                 expense["amount"],
                 expense["currency"],
                 expense["category"],
                 expense.get("description", ""),
-                expense["account_name"],
-                str(expense["_id"]),
+                expense["account_name"]
             ]
         )
     expenses_table = create_table(
@@ -405,14 +414,13 @@ async def data_to_pdf(
     # Accounts
     elements.append(create_paragraph("<a name='accounts'/>Accounts", styles["Title"]))
     elements.append(Spacer(1, 12))
-    accounts_data = [["Name", "Balance", "Currency", "ID"]]
+    accounts_data = [["Name", "Balance", "Currency"]]
     for account in accounts:
         accounts_data.append(
             [
                 account["name"],
                 account["balance"],
-                account["currency"],
-                str(account["_id"]),
+                account["currency"]
             ]
         )
     accounts_table = create_table(
@@ -459,6 +467,31 @@ async def data_to_pdf(
     )
     elements.append(categories_table)
 
+    # Add analytics graphs
+    elements.append(PageBreak())
+    elements.append(create_paragraph("<a name='analytics'/>Analytics", styles["Title"]))
+    elements.append(Spacer(1, 12))
+
+    # Replace graph fetching section with direct plot generation
+    plot_generators = {
+        "<a name='expense-chart'/>Expense Chart": create_expense_bar,
+        "<a name='category-pie'/>Category Distribution": create_category_pie,
+        "<a name='monthly-line'/>Monthly Expenses": create_monthly_line,
+        "<a name='category-bar'/>Category Comparison": create_category_bar,
+        "<a name='budget-actual'/>Budget vs Actual": lambda e, f, t: create_budget_vs_actual(e, user["categories"], f, t)
+    }
+
+    for title, generator in plot_generators.items():
+        image_data = generator(expenses, from_date, to_date)
+        if image_data:
+            elements.append(create_paragraph(title, styles["Heading2"]))
+            elements.append(Spacer(1, 12))
+            img = Image(image_data)
+            img.drawHeight = 4 * inch * img.drawHeight / img.drawWidth
+            img.drawWidth = 4 * inch
+            elements.append(img)
+            elements.append(Spacer(1, 24))
+
     # Footer with date of export, "Money Manager V2", and page number
     def footer(canvas, doc):
         """Footer with date of export, 'Money Manager V2', and page number."""
@@ -479,3 +512,4 @@ async def data_to_pdf(
     response = Response(content=buffer.getvalue(), media_type="application/pdf")
     response.headers["Content-Disposition"] = "attachment; filename=data.pdf"
     return response
+

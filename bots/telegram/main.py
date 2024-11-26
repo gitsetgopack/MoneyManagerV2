@@ -14,6 +14,7 @@ from config import config
 from bots.telegram.categories import categories_handlers
 from bots.telegram.accounts import accounts_handlers
 from bots.telegram.receipts import receipts_handlers  # New import
+from bots.telegram.analytics import analytics_handlers
 
 
 # Configure logging
@@ -59,10 +60,6 @@ def main() -> None:
         application.add_handler(handler)
     # Add categories handlers
     for handler in accounts_handlers:
-        application.add_handler(handler)
-        
-    # Add receipts handlers
-    for handler in receipts_handlers:
         application.add_handler(handler)
         
     application.add_handler(CommandHandler("unknown", unknown))

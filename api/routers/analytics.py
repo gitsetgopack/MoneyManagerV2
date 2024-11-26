@@ -6,165 +6,188 @@ from a specified number of days.
 
 import base64
 import io
-from datetime import datetime, timedelta
+import datetime
 
+from bson import ObjectId
 import matplotlib.pyplot as plt
 import pandas as pd
-from fastapi import APIRouter, Header, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Header, HTTPException, Response
+from fastapi.responses import HTMLResponse, FileResponse
 from motor.motor_asyncio import AsyncIOMotorClient
-
+from typing import Optional
 from api.utils.auth import verify_token
 from config.config import MONGO_URI
+from api.utils.plots import (
+    create_expense_bar, create_category_pie, create_monthly_line,
+    create_category_bar, create_budget_vs_actual
+)
 
 # MongoDB setup
 client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URI)
 db = client.mmdb
+users_collection = db.users
 expenses_collection = db.expenses
+accounts_collection = db.accounts
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
 
-@router.get("/expense/bar", response_class=HTMLResponse)
-async def expense_bar(x_days: int, token: str = Header(None)):
+
+
+# Utility function to fetch data
+async def fetch_data(
+    user_id: str, from_date: Optional[datetime.date], to_date: Optional[datetime.date]
+):
+    """Fetch data from the database based on user ID and date range."""
+    if from_date and to_date and from_date > to_date:
+        raise HTTPException(
+            status_code=422,
+            detail="Invalid date range: 'from_date' must be before 'to_date'",
+        )
+
+    from_dt = (
+        datetime.datetime.combine(from_date, datetime.time.min) if from_date else None
+    )
+    to_dt = datetime.datetime.combine(to_date, datetime.time.max) if to_date else None
+
+    query = {"user_id": user_id}
+    if from_dt and to_dt:
+        query["date"] = {"$gte": from_dt, "$lte": to_dt}  # type: ignore
+    elif from_dt:
+        query["date"] = {"$gte": from_dt}  # type: ignore
+    elif to_dt:
+        query["date"] = {"$lte": to_dt}  # type: ignore
+
+    expenses = await expenses_collection.find(query).to_list(1000)
+    accounts = await accounts_collection.find({"user_id": user_id}).to_list(100)
+    user = await users_collection.find_one({"_id": ObjectId(user_id)})
+
+    return expenses, accounts, user
+
+
+@router.get("/expense/bar")
+async def expense_bar(
+    from_date: Optional[datetime.date] = None,
+    to_date: Optional[datetime.date] = None,
+    token: str = Header(None)
+):
+    """Generate bar chart of daily expenses."""
+    user_id = await verify_token(token)
+    expenses, _, _ = await fetch_data(user_id, from_date, to_date)
+    
+    if not expenses:
+        raise HTTPException(status_code=404, detail="No expenses found")
+    
+    buf = create_expense_bar(expenses, from_date, to_date)
+    return Response(content=buf.getvalue(), media_type="image/png")
+
+@router.get("/category/pie")
+async def category_pie(
+    from_date: Optional[datetime.date] = None,
+    to_date: Optional[datetime.date] = None,
+    token: str = Header(None)
+):
     """
-    Endpoint to generate a bar chart of daily expenses for the previous x_days.
-    Args:
-        x_days (int): The number of days to look back for expense data.
-        token (str): Authorization token for user verification.
-    Returns:
-        HTMLResponse: An HTML page displaying the bar chart.
+    Endpoint to generate a pie chart of categories categorized by type.
+    Returns a PNG image file directly.
     """
-    # Verify token and retrieve user_id
     user_id = await verify_token(token)
     if not user_id:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    # Define the date range filter for MongoDB query
-    date_filter = {
-        "date": {"$gte": datetime.now() - timedelta(days=x_days)},
-        "user_id": user_id,
-    }
-
-    # Fetch expenses data from MongoDB
-    expenses = await expenses_collection.find(date_filter).to_list(length=1000)
+    expenses, _, _ = await fetch_data(user_id, from_date, to_date)
 
     if not expenses:
         raise HTTPException(
             status_code=404, detail="No expenses found for the specified period"
         )
 
-    # Convert to DataFrame and process data
-    df = pd.DataFrame(expenses)
-    df["date"] = pd.to_datetime(df["date"])
-    daily_expenses = df.groupby(df["date"].dt.date)["amount"].sum()
+    buf = create_category_pie(expenses, from_date, to_date)
+    return Response(content=buf.getvalue(), media_type="image/png")
 
-    # Plotting the bar graph
-    plt.figure(figsize=(10, 6))
-    ax = daily_expenses.plot(kind="bar", color="skyblue")
-    plt.title(f"Total Expenses per Day (Last {x_days} Days)")
-    plt.xlabel("Date")
-    plt.ylabel("Total Expense Amount")
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-
-    # Adding labels on top of each bar
-    for i, value in enumerate(daily_expenses):
-        ax.text(
-            i,
-            value + 0.5,
-            f"{value:.2f}",
-            ha="center",
-            va="bottom",
-            fontsize=10,
-            color="black",
-        )
-
-    # Convert the plot to a base64-encoded image
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png")
-    plt.close()
-    buf.seek(0)
-    image_data = base64.b64encode(buf.getvalue()).decode("utf-8")
-
-    # Return the HTML response with the embedded image
-    return HTMLResponse(
-        content=f"""
-        <html>
-            <head><title>Expense Bar Chart</title></head>
-            <body>
-                <h1>Total Expenses per Day (Last {x_days} Days)</h1>
-                <img src="data:image/png;base64,{image_data}" alt="Expense Bar Chart">
-            </body>
-        </html>
-        """
-    )
-
-
-@router.get("/expense/pie", response_class=HTMLResponse)
-async def expense_pie(x_days: int, token: str = Header(None)):
+@router.get("/expense/line-monthly", response_class=Response)
+async def expense_line_monthly(
+    from_date: Optional[datetime.date] = None,
+    to_date: Optional[datetime.date] = None,
+    token: str = Header(None)
+):
     """
-    Endpoint to generate a pie chart of expenses categorized by type for the previous x_days.
-    Args:
-        x_days (int): The number of days to look back for expense data.
-        token (str): Authorization token for user verification.
-    Returns:
-        HTMLResponse: An HTML page displaying the pie chart.
+    Endpoint to generate a line chart of monthly expenses within a date range.
+    Returns a PNG image file directly.
     """
-    # Verify token and retrieve user_id
     user_id = await verify_token(token)
     if not user_id:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    # Define the date range filter for MongoDB query
-    date_filter = {
-        "date": {"$gte": datetime.now() - timedelta(days=x_days)},
-        "user_id": user_id,
-    }
-
-    # Fetch expenses data from MongoDB
-    expenses = await expenses_collection.find(date_filter).to_list(length=1000)
+    expenses, _, _ = await fetch_data(user_id, from_date, to_date)
 
     if not expenses:
         raise HTTPException(
             status_code=404, detail="No expenses found for the specified period"
         )
 
-    # Convert to DataFrame and process data
-    df = pd.DataFrame(expenses)
-    df["date"] = pd.to_datetime(df["date"])
+    buf = create_monthly_line(expenses, from_date, to_date)
+    return Response(content=buf.getvalue(), media_type="image/png")
 
-    # Group by category and sum the amounts
-    category_expenses = df.groupby("category")["amount"].sum()
+@router.get("/category/bar", response_class=Response)
+async def category_bar(
+    from_date: Optional[datetime.date] = None,
+    to_date: Optional[datetime.date] = None,
+    token: str = Header(None)
+):
+    """
+    Endpoint to generate a bar chart of expenses categorized by type within a date range.
+    Returns a PNG image file directly.
+    """
+    user_id = await verify_token(token)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
-    # Plotting the pie chart
-    plt.figure(figsize=(8, 8))
-    plt.pie(
-        category_expenses,
-        labels=category_expenses.index.astype(str).tolist(),
-        autopct="%1.1f%%",
-        startangle=140,
-        colors=["#FF9999", "#FF4D4D", "#FF0000"],
-    )
-    plt.title(f"Expense Distribution by Category (Last {x_days} Days)")
-    plt.axis("equal")  # Equal aspect ratio ensures that pie chart is circular.
+    expenses, _, _ = await fetch_data(user_id, from_date, to_date)
 
-    # Convert the plot to a base64-encoded image
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png")
-    plt.close()
-    buf.seek(0)
-    image_data = base64.b64encode(buf.getvalue()).decode("utf-8")
+    if not expenses:
+        raise HTTPException(
+            status_code=404, detail="No expenses found for the specified period"
+        )
 
-    # Return the HTML response with the embedded image
-    return HTMLResponse(
-        content=f"""
-        <html>
-            <head><title>Expense Pie Chart</title></head>
-            <body>
-                <h1>Expense Distribution by Category (Last {x_days} Days)</h1>
-                <img src="data:image/png;base64,{image_data}" alt="Expense Pie Chart">
-            </body>
-        </html>
-        """
-    )
+    buf = create_category_bar(expenses, from_date, to_date)
+    return Response(content=buf.getvalue(), media_type="image/png")
+
+def prorate_budget(budget: float, from_date: Optional[datetime.date], to_date: Optional[datetime.date], first_expense_date: Optional[datetime.date], last_expense_date: Optional[datetime.date]) -> float:
+    """Prorate the budget based on the date range."""
+    if from_date and to_date:
+        days_in_range = (to_date - from_date).days + 1
+    elif from_date:
+        days_in_range = (last_expense_date - from_date).days + 1 if last_expense_date else (datetime.date.today() - from_date).days + 1
+    elif to_date:
+        days_in_range = (to_date - first_expense_date).days + 1 if first_expense_date else (to_date - datetime.date(1970, 1, 1)).days + 1
+    else:
+        days_in_range = 30  # Default to 30 days if no date range is provided
+
+    print(f"Prorating budget: {budget}, Days in range: {days_in_range}")
+    return (budget / 30) * days_in_range
+
+@router.get("/budget/actual-vs-budget", response_class=Response)
+async def budget_vs_actual(
+    from_date: Optional[datetime.date] = None,
+    to_date: Optional[datetime.date] = None,
+    token: str = Header(None)
+):
+    """
+    Endpoint to generate a bar chart comparing budgeted vs actual expenses within a date range.
+    Returns a PNG image file directly.
+    """
+    user_id = await verify_token(token)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
+
+    if not expenses:
+        raise HTTPException(
+            status_code=404, detail="No expenses found for the specified period"
+        )
+
+    buf = create_budget_vs_actual(expenses, user["categories"], from_date, to_date)
+    
+    return Response(content=buf.getvalue(), media_type="image/png")
