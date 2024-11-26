@@ -21,11 +21,6 @@ from config import config
 from bots.telegram.auth import get_user
 from bots.telegram.categories import categories_view, categories_view_page, categories_handlers
 
-# Add project root to Python path
-project_root = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-)
-sys.path.append(project_root)
 
 # Configure logging
 logging.basicConfig(

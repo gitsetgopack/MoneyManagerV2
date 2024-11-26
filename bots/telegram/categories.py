@@ -32,7 +32,7 @@ async def categories_view(update: Update, context: ContextTypes.DEFAULT_TYPE, to
     """View the list of categories with pagination."""
     headers = {"token": token}
     response = requests.get(
-        f"{TELEGRAM_BOT_API_BASE_URL}/users/",
+        f"{TELEGRAM_BOT_API_BASE_URL}/categories/",
         headers=headers,
         timeout=TIMEOUT
     )
