@@ -164,32 +164,52 @@ Currently, the project includes 150+ tests covering all core functionality.
 
 - **Add Expenses**
 
-<img src="https://github.com/user-attachments/assets/38206a69-68f9-4b1f-b25b-c6853ab90894" alt="Login" width="200"></br>
-<img src="https://github.com/user-attachments/assets/816367c0-e145-4334-af23-97614b9cb1bd" alt="Login" width="200"></br>
-<img src="https://github.com/user-attachments/assets/716f301f-dee6-4fbf-a890-25d0edf1994b" alt="Login" width="200"></br>
-<img src="https://github.com/user-attachments/assets/0bbea4a2-f1e9-438c-8efa-d5297c5aa151" alt="Login" width="200"></br>
-<img src="https://github.com/user-attachments/assets/1cb99a0e-e3ca-4b0f-82e8-05ad42a4880d" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/38206a69-68f9-4b1f-b25b-c6853ab90894" alt="Expenses" width="200"></br>
+<img src="https://github.com/user-attachments/assets/816367c0-e145-4334-af23-97614b9cb1bd" alt="Expenses" width="200"></br>
+<img src="https://github.com/user-attachments/assets/716f301f-dee6-4fbf-a890-25d0edf1994b" alt="Expenses" width="200"></br>
+<img src="https://github.com/user-attachments/assets/0bbea4a2-f1e9-438c-8efa-d5297c5aa151" alt="Expenses" width="200"></br>
+<img src="https://github.com/user-attachments/assets/1cb99a0e-e3ca-4b0f-82e8-05ad42a4880d" alt="Expenses" width="200"></br>
 
 - **View Expenses**
 
-<img src="https://github.com/user-attachments/assets/b54b9329-d2de-4386-8b4c-7c2437b3273e" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/b54b9329-d2de-4386-8b4c-7c2437b3273e" alt="Expenses" width="200"></br>
 
 - **Update Expenses**
 
-<img src="https://github.com/user-attachments/assets/4ad39895-8f66-4e1c-9c3f-8c67c0b735bf" alt="Login" width="200"></br>
-<img src="https://github.com/user-attachments/assets/84cb1a5c-4e88-4326-83f2-c3aaa0d4935e" alt="Login" width="200"></br>
-<img src="https://github.com/user-attachments/assets/727853b8-ba8e-45fc-a82d-f2c1eb4fc06f" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/4ad39895-8f66-4e1c-9c3f-8c67c0b735bf" alt="Expenses" width="200"></br>
+<img src="https://github.com/user-attachments/assets/84cb1a5c-4e88-4326-83f2-c3aaa0d4935e" alt="Expenses" width="200"></br>
+<img src="https://github.com/user-attachments/assets/727853b8-ba8e-45fc-a82d-f2c1eb4fc06f" alt="Expenses" width="200"></br>
 
 - **Delete Expenses**
 
-<img src="https://github.com/user-attachments/assets/6e981ef7-a094-4c1b-835e-3114776c985f" alt="Login" width="200"></br>
-<img src="https://github.com/user-attachments/assets/9ce0a04f-d824-4710-b749-46cfffed05ad" alt="Login" width="200"></br>
-<img src="https://github.com/user-attachments/assets/cf8f26ab-d4ae-4d82-abd5-e5c0a401de32" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/6e981ef7-a094-4c1b-835e-3114776c985f" alt="Expenses" width="200"></br>
+<img src="https://github.com/user-attachments/assets/9ce0a04f-d824-4710-b749-46cfffed05ad" alt="Expenses" width="200"></br>
+<img src="https://github.com/user-attachments/assets/cf8f26ab-d4ae-4d82-abd5-e5c0a401de32" alt="Expenses" width="200"></br>
 
 - **Delete All Expenses**
 
-<img src="https://github.com/user-attachments/assets/a1962ccb-81c9-45c9-9edf-6f57acb7e632" alt="Login" width="200"></br>
-<img src="https://github.com/user-attachments/assets/170a5483-c100-4eae-b124-88c028d864b0" alt="Login" width="200"></br>
+<img src="https://github.com/user-attachments/assets/a1962ccb-81c9-45c9-9edf-6f57acb7e632" alt="Expenses" width="200"></br>
+<img src="https://github.com/user-attachments/assets/170a5483-c100-4eae-b124-88c028d864b0" alt="Expenses" width="200"></br>
+
+- **Add Categories**
+
+<img src="https://github.com/user-attachments/assets/ca18b4a7-bbfc-4b79-8c31-aad577fa15bf" alt="Categories" width="200"></br>
+
+- **View Categories**
+
+<img src="https://github.com/user-attachments/assets/1273770e-83f2-4c0f-9109-58cdb3c4f987" alt="Categories" width="200"></br>
+
+- **Update Categories**
+
+<img src="https://github.com/user-attachments/assets/73d693fc-8967-4bf6-9052-1b3018cdfc64" alt="Categories" width="200"></br>
+<img src="https://github.com/user-attachments/assets/3cf03ea1-2c1a-42ab-8ac8-30104a539988" alt="Categories" width="200"></br>
+
+- **Delete Categories**
+
+<img src="https://github.com/user-attachments/assets/7a4feab0-d8d5-49be-97ce-d291cbc12fb0" alt="Categories" width="200"></br>
+<img src="https://github.com/user-attachments/assets/f92b88b8-66c5-4b58-9a6a-938f4c7c32c2" alt="Categories" width="200"></br>
+<img src="https://github.com/user-attachments/assets/e71da36c-88fa-44ba-b8f1-55f187537a94" alt="Categories" width="200"></br>
+
 
 ## 🚀 Future Enhancements (Needs Change)
 
