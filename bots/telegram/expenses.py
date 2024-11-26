@@ -12,6 +12,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+from pytz import timezone  # type: ignore
 from telegram_bot_calendar import DetailedTelegramCalendar
 from telegram_bot_pagination import InlineKeyboardPaginator
 
@@ -19,6 +20,7 @@ from bots.telegram.auth import authenticate
 from bots.telegram.utils import cancel
 from config.config import TELEGRAM_BOT_API_BASE_URL
 
+from config.config import MONGO_URI, TIME_ZONE
 # Constants
 TIMEOUT = 10  # seconds
 
@@ -27,12 +29,16 @@ TIMEOUT = 10  # seconds
     AMOUNT,
     DESCRIPTION,
     CATEGORY,
+    DATE_OPTION,  # New state
     DATE,
     CURRENCY,
     ACCOUNT,
     CONFIRM_DELETE,
     DELETE_ALL_CONFIRM,
-) = range(8)
+    SELECT_EXPENSE,  # New states for update flow
+    SELECT_FIELD,
+    UPDATE_VALUE,
+) = range(12)
 
 
 @authenticate
@@ -75,7 +81,11 @@ async def fetch_and_show_categories(
     if response.status_code == 200:
         categories = response.json().get("categories", [])
         if not categories:
-            await update.message.reply_text("No categories found.")
+            message = "No categories found."
+            if update.message:
+                await update.message.reply_text(message)
+            elif update.callback_query:
+                await update.callback_query.message.edit_text(message)
             return
 
         keyboard = [
@@ -83,11 +93,18 @@ async def fetch_and_show_categories(
             for category in categories
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text(
-            "Please select a category:", reply_markup=reply_markup
-        )
+        message = "Please select a category:"
+        
+        if update.message:
+            await update.message.reply_text(message, reply_markup=reply_markup)
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(message, reply_markup=reply_markup)
     else:
-        await update.message.reply_text("Failed to fetch categories.")
+        message = "Failed to fetch categories."
+        if update.message:
+            await update.message.reply_text(message)
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(message)
 
 
 async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -166,15 +183,61 @@ async def fetch_and_show_accounts(
 async def account(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> int:
-    """Handle the account selection from the user."""
+    """Handle the account selection from the user and ask for date option."""
     query = update.callback_query
     await query.answer()
     context.user_data["account"] = query.data
-    calendar, step = DetailedTelegramCalendar().build()
+    keyboard = [
+        [
+            InlineKeyboardButton("Now", callback_data="date_now"),
+            InlineKeyboardButton("Custom", callback_data="date_custom"),
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
     await query.edit_message_text(
-        f"Please select the date: {step}", reply_markup=calendar
+        "Please choose the date option:", reply_markup=reply_markup
     )
-    return DATE
+    return DATE_OPTION
+
+@authenticate
+async def handle_date_option(update: Update, context: ContextTypes.DEFAULT_TYPE, token:str) -> int:
+    """Handle the user's date option choice."""
+    query = update.callback_query
+    await query.answer()
+    if query.data == "date_now":
+        tz = timezone(TIME_ZONE)
+        context.user_data["date"] = datetime.now(tz).strftime("%Y-%m-%dT%H:%M:%S.%f")
+        # ...existing code to finalize expense addition...
+        expense_data = {
+            "amount": str(float(context.user_data["amount"])),
+            "description": context.user_data["description"],
+            "category": context.user_data["category"],
+            "currency": context.user_data["currency"],
+            "account": context.user_data["account"],
+            "date": context.user_data["date"],
+        }
+        headers = {"token": token}
+        response = requests.post(
+            f"{TELEGRAM_BOT_API_BASE_URL}/expenses/",
+            json=expense_data,
+            headers=headers,
+            timeout=TIMEOUT,
+        )
+        if response.status_code == 200:
+            await query.message.edit_text("Expense added successfully!\nClick /expenses_view to see updated list.")
+        else:
+            error_detail = response.json().get("detail", "Unknown error")
+            await query.message.edit_text(
+                f"Failed to add expense: {error_detail}"
+            )
+        context.user_data.clear()
+        return ConversationHandler.END
+    elif query.data == "date_custom":
+        calendar, step = DetailedTelegramCalendar().build()
+        await query.edit_message_text(
+            f"Please select the date: {step}", reply_markup=calendar
+        )
+        return DATE
 
 
 @authenticate
@@ -210,7 +273,7 @@ async def date(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -
         )
 
         if response.status_code == 200:
-            await update.callback_query.message.edit_text("Expense added successfully!")
+            await update.callback_query.message.edit_text("Expense added successfully!\nClick /expenses_view to see updated list.")
         else:
             error_detail = response.json().get("detail", "Unknown error")
             await update.callback_query.message.edit_text(
@@ -417,7 +480,7 @@ async def confirm_delete(
             timeout=TIMEOUT,
         )
         if response.status_code == 200:
-            await query.message.edit_text("Expense deleted successfully!")
+            await query.message.edit_text("Expense deleted successfully!\nClick /expenses_view to see updated list.")
         else:
             await query.message.edit_text("Failed to delete expense.")
         context.user_data.clear()
@@ -486,6 +549,166 @@ async def confirm_delete_all(
         return ConversationHandler.END
 
 
+@authenticate
+async def expenses_update(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Start the expense update process by showing list of expenses."""
+    headers = {"token": token}
+    response = requests.get(f"{TELEGRAM_BOT_API_BASE_URL}/expenses/", headers=headers, timeout=TIMEOUT)
+    
+    if response.status_code == 200:
+        expenses = response.json()["expenses"]
+        if not expenses:
+            await update.message.reply_text("No expenses found to update.")
+            return ConversationHandler.END
+
+        # Pagination setup
+        page = int(context.args[0]) if context.args else 1
+        items_per_page = 5
+        total_pages = len(expenses) // items_per_page + (1 if len(expenses) % items_per_page else 0)
+
+        # Create pagination buttons
+        pagination_buttons = []
+        if total_pages > 1:
+            if page > 1:
+                pagination_buttons.append(
+                    InlineKeyboardButton("⬅️", callback_data=f"update_expenses#{page-1}")
+                )
+            if page < total_pages:
+                pagination_buttons.append(
+                    InlineKeyboardButton("➡️", callback_data=f"update_expenses#{page+1}")
+                )
+
+        start_idx = (page - 1) * items_per_page
+        end_idx = start_idx + items_per_page
+        expenses_page = expenses[start_idx:end_idx]
+
+        keyboard = []
+        for expense in expenses_page:
+            button_text = f"{expense['description']} - {expense['amount']} {expense['currency']}"
+            callback_data = f"update_{expense['_id']}"
+            keyboard.append([InlineKeyboardButton(button_text, callback_data=callback_data)])
+
+        # Add pagination row if there are pagination buttons
+        if pagination_buttons:
+            keyboard.append(pagination_buttons)
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        message = "Select an expense to update:"
+
+        if update.message:
+            await update.message.reply_text(message, reply_markup=reply_markup)
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(message, reply_markup=reply_markup)
+        return SELECT_EXPENSE
+    else:
+        message = "Failed to fetch expenses."
+        if update.message:
+            await update.message.reply_text(message)
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(message)
+        return ConversationHandler.END
+
+@authenticate
+async def expenses_update_page(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle pagination for updating expenses."""
+    query = update.callback_query
+    await query.answer()
+    page = int(query.data.split("#")[1])
+    context.args = [page]
+    return await expenses_update(update, context)
+
+async def select_update_field(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Show options for which field to update."""
+    query = update.callback_query
+    await query.answer()
+    
+    if query.data.startswith("update_"):
+        expense_id = query.data.split("_")[1]
+        context.user_data["expense_id"] = expense_id
+        
+        keyboard = [
+            [InlineKeyboardButton("Amount", callback_data="field_amount")],
+            [InlineKeyboardButton("Description", callback_data="field_description")],
+            [InlineKeyboardButton("Category", callback_data="field_category")],
+            [InlineKeyboardButton("Currency", callback_data="field_currency")],
+            [InlineKeyboardButton("Account", callback_data="field_account")],
+            [InlineKeyboardButton("Date", callback_data="field_date")]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await query.message.edit_text("What would you like to update?", reply_markup=reply_markup)
+        return SELECT_FIELD
+
+@authenticate
+async def handle_field_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle the selected field and prompt for new value."""
+    query = update.callback_query
+    await query.answer()
+    
+    field = query.data.split("_")[1]
+    context.user_data["update_field"] = field
+    
+    if field == "category":
+        await fetch_and_show_categories(update, context)
+    elif field == "currency":
+        await fetch_and_show_currencies(update, context)
+    elif field == "account":
+        await fetch_and_show_accounts(update, context)
+    elif field == "date":
+        calendar, step = DetailedTelegramCalendar().build()
+        await query.edit_message_text(f"Select new date:", reply_markup=calendar)
+    else:
+        await query.message.edit_text(f"Please enter new {field}:")
+    
+    return UPDATE_VALUE
+
+@authenticate
+async def handle_update_value(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle the new value and update the expense."""
+    field = context.user_data["update_field"]
+    expense_id = context.user_data["expense_id"]
+    
+    if update.callback_query:  # For category, currency, account, date selections
+        query = update.callback_query
+        await query.answer()
+        
+        if field == "date":
+            result, key, step = DetailedTelegramCalendar().process(query.data)
+            if not result and key:
+                await query.message.edit_text(f"Select date: {step}", reply_markup=key)
+                return UPDATE_VALUE
+            new_value = result.strftime("%Y-%m-%dT%H:%M:%S.%f")
+        else:
+            new_value = query.data
+    else:  # For text input (amount, description)
+        new_value = update.message.text
+        if field == "amount":
+            try:
+                new_value = str(float(new_value))
+            except ValueError:
+                await update.message.reply_text("Please enter a valid number.")
+                return UPDATE_VALUE
+
+    # Update the expense
+    headers = {"token": token}
+    update_data = {field: new_value}
+    response = requests.put(
+        f"{TELEGRAM_BOT_API_BASE_URL}/expenses/{expense_id}",
+        json=update_data,
+        headers=headers,
+        timeout=TIMEOUT
+    )
+
+    message = "Expense updated successfully!\nClick /expenses_view to see updated list." if response.status_code == 200 else f"Failed to update expense: {response.json()['detail']}"
+    
+    if update.callback_query:
+        await update.callback_query.message.edit_text(message)
+    else:
+        await update.message.reply_text(message)
+    
+    context.user_data.clear()
+    return ConversationHandler.END
+
+
 # Handlers for expenses
 expenses_conv_handler = ConversationHandler(
     entry_points=[CommandHandler("expenses_add", expenses_add)],
@@ -495,6 +718,7 @@ expenses_conv_handler = ConversationHandler(
         CATEGORY: [CallbackQueryHandler(category)],
         CURRENCY: [CallbackQueryHandler(currency)],
         ACCOUNT: [CallbackQueryHandler(account)],
+        DATE_OPTION: [CallbackQueryHandler(handle_date_option)],
         DATE: [CallbackQueryHandler(date)],
     },
     fallbacks=[CommandHandler("cancel", cancel)],
@@ -522,3 +746,31 @@ expenses_delete_all_conv_handler = ConversationHandler(
     },
     fallbacks=[CommandHandler("cancel", cancel)],
 )
+
+# Add this new conversation handler at the bottom with other handlers
+expenses_update_conv_handler = ConversationHandler(
+    entry_points=[CommandHandler("expenses_update", expenses_update)],
+    states={
+        SELECT_EXPENSE: [
+            CallbackQueryHandler(expenses_update_page, pattern=r"^update_expenses#\d+$"),
+            CallbackQueryHandler(select_update_field, pattern=r"^update_"),
+        ],
+        SELECT_FIELD: [CallbackQueryHandler(handle_field_selection, pattern=r"^field_")],
+        UPDATE_VALUE: [
+            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_update_value),
+            CallbackQueryHandler(handle_update_value)
+        ],
+    },
+    fallbacks=[CommandHandler("cancel", cancel)],
+)
+
+# Handlers for expenses
+expenses_handlers = [
+    CommandHandler("expenses_view", expenses_view),
+    CallbackQueryHandler(expenses_view_page, pattern="^view_expenses#"),
+    expenses_conv_handler,
+    expenses_delete_conv_handler,
+    expenses_delete_all_conv_handler,
+    expenses_update_conv_handler,
+    CallbackQueryHandler(expenses_delete_page, pattern=r"^delete_expenses#\d+$"),
+]

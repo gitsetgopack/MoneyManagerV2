@@ -1,6 +1,7 @@
 """Authentication handlers and utilities for the Telegram bot."""
 
 import requests
+from typing import Any, Optional
 from motor.motor_asyncio import AsyncIOMotorClient
 from telegram import Update
 from telegram.ext import (
@@ -12,6 +13,7 @@ from telegram.ext import (
 )
 
 from bots.telegram.utils import cancel
+from bots.telegram.utils import get_menu_commands
 from config import config
 
 # Constants
@@ -94,7 +96,7 @@ async def handle_login_password(
             user_id = update.effective_user.id
 
             user = await telegram_collection.find_one(
-                {"username": context.user_data["username"]}
+                {"telegram_id": user_id}
             )
             if user:
                 await telegram_collection.update_one(
@@ -114,7 +116,7 @@ async def handle_login_password(
                 }
                 await telegram_collection.insert_one(user_data)
 
-            await update.message.reply_text("Login successful!")
+            await update.message.reply_text(f"Login successful!\n\n{get_menu_commands()}")
         else:
             await update.message.reply_text(
                 f"Login failed: {response.json()['detail']}\n /signup if you haven't, otherwise /login"
@@ -173,7 +175,7 @@ async def handle_signup_confirm(
                 await telegram_collection.insert_one(user_data)
 
                 await update.message.reply_text(
-                    "Signup successful! You are now logged in."
+                    f"Signup successful! You are now logged in.\n\n{get_menu_commands()}"
                 )
             else:
                 await update.message.reply_text(
@@ -190,6 +192,13 @@ async def handle_signup_confirm(
         )
         return ConversationHandler.END
 
+async def get_user(update: Optional[Update]=None, token: Optional[str]=None) -> Any:
+    """Get user data from the token."""
+    if token:
+        return await telegram_collection.find_one({"token": token})
+    if update:
+        user_id = update.effective_user.id
+        return await telegram_collection.find_one({"telegram_id": user_id})
 
 def authenticate(func):
     """Decorator to check if user is authenticated."""
@@ -201,7 +210,7 @@ def authenticate(func):
         user = await telegram_collection.find_one({"telegram_id": user_id})
         if user and user.get("token"):
             return await func(update, context, token=user.get("token"), *args, **kwargs)
-        await update.message.reply_text("You are not authenticated. Please /login")
+        await update.message.reply_text("Please /login or /signup to continue.")
         return ConversationHandler.END
 
     return wrapper
@@ -211,33 +220,35 @@ async def logout(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     result = await telegram_collection.delete_many({"telegram_id": user_id})
     if result.deleted_count > 0:
-        await update.message.reply_text("You have been logged out successfully.")
+        await update.message.reply_text("You have been logged out successfully.\nPlease /login or /signup to continue.")
     else:
-        await update.message.reply_text("You are not logged in.")
+        await update.message.reply_text("You are not logged in.\nPlease /login or /signup to continue.")
 
 
 # Handlers for authentication
-login_handler = ConversationHandler(
-    entry_points=[CommandHandler("login", login)],
-    states={
-        USERNAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username)],
-        LOGIN_PASSWORD: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_login_password)
-        ],
-    },
-    fallbacks=[CommandHandler("cancel", cancel)],
-)
-
-signup_handler = ConversationHandler(
-    entry_points=[CommandHandler("signup", signup)],
-    states={
-        USERNAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username)],
-        PASSWORD: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_signup_password)
-        ],
-        SIGNUP_CONFIRM: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_signup_confirm)
-        ],
-    },
-    fallbacks=[CommandHandler("cancel", cancel)],
-)
+auth_handlers = [
+    ConversationHandler(
+        entry_points=[CommandHandler("login", login)],
+        states={
+            USERNAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username)],
+            LOGIN_PASSWORD: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_login_password)
+            ],
+        },
+        fallbacks=[CommandHandler("cancel", cancel)],
+    ),
+    ConversationHandler(
+        entry_points=[CommandHandler("signup", signup)],
+        states={
+            USERNAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username)],
+            PASSWORD: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_signup_password)
+            ],
+            SIGNUP_CONFIRM: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_signup_confirm)
+            ],
+        },
+        fallbacks=[CommandHandler("cancel", cancel)],
+    ),
+    CommandHandler("logout", logout),
+]

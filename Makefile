@@ -7,6 +7,7 @@ install: ## Install dependencies in the virtual environment
 	pip install --upgrade pip
 	pip install -r requirements.txt
 	pre-commit install
+	npm install -g nodemon
 
 api: ## Run the FastAPI app using the virtual environment
 	python api/app.py
@@ -35,4 +36,7 @@ no_verify_push: ## Stage, commit & push with --no-verify
 	git commit -a -m "$$msg" --no-verify
 	git push
 
-.PHONY: all help install api test fix clean no_verify_push
+telegram: ## Run the Telegram bot with auto-reload on file changes
+	python scripts/watch_and_run.py bots/telegram/main.py bots/telegram
+
+.PHONY: all help install api test fix clean no_verify_push telegram
