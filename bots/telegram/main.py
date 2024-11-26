@@ -8,11 +8,11 @@ from telegram import Update
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes
 
 from bots.telegram.accounts import accounts_handlers
-from bots.telegram.receipts import receipts_handlers  # New import
 from bots.telegram.analytics import analytics_handlers
 from bots.telegram.auth import auth_handlers, get_user  # Update import
 from bots.telegram.categories import categories_handlers
 from bots.telegram.expenses import expenses_handlers
+from bots.telegram.receipts import receipts_handlers  # New import
 from bots.telegram.utils import get_menu_commands, unknown
 from config import config
 

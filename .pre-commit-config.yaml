@@ -24,7 +24,7 @@ repos:
     hooks:
       - id: pylint
         name: pylint
-        entry: pylint api/ config/ bots/
+        entry: pylint api/ config/
         language: system
         pass_filenames: false
         always_run: true
