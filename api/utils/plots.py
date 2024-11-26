@@ -6,7 +6,6 @@ from typing import Optional
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from reportlab.lib.units import inch
 
 
 def create_expense_bar(
@@ -97,7 +96,6 @@ def create_monthly_line(
     monthly_expenses = df.groupby(df["date"].dt.to_period("M"))["amount"].sum()
 
     plt.figure(figsize=(10, 6))
-    ax = monthly_expenses.plot(kind="line", marker="o", color="skyblue")
 
     date_range_text = get_date_range_text(from_date, to_date)
     total_spend = monthly_expenses.sum()
@@ -196,9 +194,9 @@ def get_date_range_text(
             if from_date == to_date
             else f"Date Range: {from_date} to {to_date}"
         )
-    elif from_date:
+    if from_date:
         return f"Date Range: From {from_date}"
-    elif to_date:
+    if to_date:
         return f"Date Range: To {to_date}"
     return "Date Range: All"
 
