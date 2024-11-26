@@ -119,7 +119,8 @@ async def show_export_formats(update: Update, context: ContextTypes.DEFAULT_TYPE
         [InlineKeyboardButton("PDF", callback_data="export_pdf")],
         [InlineKeyboardButton("Excel", callback_data="export_excel")],
         [InlineKeyboardButton("CSV", callback_data="export_csv")],
-        [InlineKeyboardButton("Email All", callback_data="export_email")]
+        [InlineKeyboardButton("Email All", callback_data="export_email")],
+        [InlineKeyboardButton("⬅️ Back", callback_data="back_to_dates")]  # Added Back button
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     if query:
@@ -128,6 +129,24 @@ async def show_export_formats(update: Update, context: ContextTypes.DEFAULT_TYPE
             reply_markup=reply_markup
         )
     return SELECTING_FORMAT
+
+@authenticate
+async def handle_back_to_dates(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle the back button to return to date selection"""
+    query = update.callback_query
+    await query.answer()
+    
+    keyboard = [
+        [InlineKeyboardButton("Select From Date", callback_data="select_from_date"),
+         InlineKeyboardButton("Skip Dates", callback_data="skip_dates")]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await query.message.edit_text(
+        "📤 *Export Data*\n\nWould you like to select a date range?",
+        reply_markup=reply_markup,
+        parse_mode="Markdown"
+    )
+    return SELECTING_FROM_DATE
 
 @authenticate
 async def handle_csv_options(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
@@ -262,7 +281,8 @@ analytics_handlers.extend([
             SELECTING_FORMAT: [
                 CallbackQueryHandler(handle_csv_options, pattern='^export_csv$'),
                 CallbackQueryHandler(handle_export, pattern='^(export_pdf|export_excel|export_email|csv_\w+)$'),
-                CallbackQueryHandler(show_export_formats, pattern='^back_to_formats$')
+                CallbackQueryHandler(show_export_formats, pattern='^back_to_formats$'),
+                CallbackQueryHandler(handle_back_to_dates, pattern='^back_to_dates$')  # Added handler for Back button
             ]
         },
         fallbacks=[CommandHandler('cancel', lambda u, c: ConversationHandler.END)]

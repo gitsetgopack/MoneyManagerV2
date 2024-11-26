@@ -35,13 +35,14 @@ async def export_callback(update: Update, context: ContextTypes.DEFAULT_TYPE, to
     await query.answer()
     
     data_parts = query.data.split('_')
-    format_type = data_parts[1]
-    
+    format_type = '_'.join(data_parts[1:])  # Adjusted to handle 'email_all'
+
     if format_type == 'csv' and len(data_parts) == 2:
         keyboard = [
             [InlineKeyboardButton("Expenses", callback_data="export_csv_expenses")],
             [InlineKeyboardButton("Accounts", callback_data="export_csv_accounts")],
             [InlineKeyboardButton("Categories", callback_data="export_csv_categories")],
+            [InlineKeyboardButton("⬅️ Back", callback_data="back_to_formats")]  # Added Back button
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await query.message.edit_text(
@@ -62,22 +63,20 @@ async def export_callback(update: Update, context: ContextTypes.DEFAULT_TYPE, to
                     filename = f"{subtype}.csv"
                 else:
                     endpoint = f"exports/{export_type}"
-                    filename = "Ultimate Analytics.pdf" if export_type == 'pdf' else "All Data.xlsx"
+                    filename = "ultimate_analytics.pdf" if export_type == 'pdf' else "all_data.xlsx"
 
-            # ...existing code...
+                response = requests.get(
+                    f"{TELEGRAM_BOT_API_BASE_URL}/{endpoint}",
+                    headers=headers,
+                    timeout=TIMEOUT
+                )
 
-            response = requests.get(
-                f"{TELEGRAM_BOT_API_BASE_URL}/{endpoint}",
-                headers=headers,
-                timeout=TIMEOUT
-            )
-
-            if response.status_code == 200:
-                exports[filename] = BytesIO(response.content)
-                exports[filename].name = filename
-            else:
-                await query.message.reply_text(f"Failed to generate {filename}")
-                return
+                if response.status_code == 200:
+                    exports[filename] = BytesIO(response.content)
+                    exports[filename].name = filename
+                else:
+                    await query.message.reply_text(f"Failed to generate {filename}")
+                    return
 
             # Prepare email
             msg = EmailMessage()
@@ -99,31 +98,17 @@ async def export_callback(update: Update, context: ContextTypes.DEFAULT_TYPE, to
         except Exception as e:
             await query.message.reply_text(f"Error emailing documents: {str(e)}")
 
-    try:
-        headers = {"token": token}
-        
-        if format_type == 'csv':
-            export_type = data_parts[2]
-            endpoint = f"exports/csv?export_type={export_type}"
-            filename = f"{export_type}.csv"
-        else:
-            endpoint = f"exports/{format_type}"
-            filename = "Ultimate Analytics.pdf" if format_type == 'pdf' else "All Data.xlsx"
-
-        response = requests.get(
-            f"{TELEGRAM_BOT_API_BASE_URL}/{endpoint}",
-            headers=headers,
-            timeout=TIMEOUT
-        )
-
-        if response.status_code == 200:
-            file = BytesIO(response.content)
-            file.name = filename
-            await query.message.reply_document(document=file)
-        else:
-            await query.message.reply_text(f"Failed to generate export")
-    except Exception as e:
-        await query.message.reply_text(f"Error: {str(e)}")
+    # Add Back option for other formats
+    keyboard = [
+        [InlineKeyboardButton("⬅️ Back", callback_data="back_to_formats")]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await query.message.edit_text(
+        "If you want to select different dates, click Back.",
+        reply_markup=reply_markup
+    )
+    return
 
 exports_handlers = [
+    CallbackQueryHandler(export_callback, pattern=r'^export_'),
 ]
