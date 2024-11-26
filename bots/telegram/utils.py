@@ -41,6 +41,10 @@ def get_menu_commands() -> str:
             "pattern": re.compile(r"^expenses_"),
             "commands": []
         },
+        "Categories|Budget Commands": {
+            "pattern": re.compile(r"^categories_"),
+            "commands": []
+        },
         "Other Commands": {
             "pattern": re.compile(r".*"),
             "commands": []
