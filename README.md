@@ -176,14 +176,13 @@ By contributing to MoneyManager, you agree that your contributions will fall und
 
 - **Abhishek Rao** ([GitHub](https://github.com/abhira0) | [arao23@ncsu.edu](mailto:arao23@ncsu.edu))
 - **Umang Diyora** ([udiyora@ncsu.edu](mailto:udiyora@ncsu.edu))
-
-- **Astha Bhalodiya** ([abhalod@ncsu.edu](mailto:abhalod@ncsu.edu))
+- **Astha Bhalodiya** ([GitHub](https://github.com/AsthaBhalodiya) | [abhalod@ncsu.edu](mailto:abhalod@ncsu.edu))
 ## 📜 Code of Conduct
 
 Please note that we have a [Code of Conduct](CODE_OF_CONDUCT.md) that all contributors are expected to uphold. This ensures that our community remains welcoming and inclusive for everyone.
 
 ## 🐞 Issues or Bug Reports
-![discord](https://img.shields.io/badge/Discord-%235865F2.svg?&logo=discord&logoColor=white&link=https%3A%2F%2Fdiscord.gg%2FwCHuTY5B22)
+[![discord](https://img.shields.io/badge/Discord-%235865F2.svg?&logo=discord&logoColor=white)](https://discord.gg/8VSckhgS)
 * You can join the discord chat using this invite link for quicker response
 * But, you are also allowed to open an bug issue
 
