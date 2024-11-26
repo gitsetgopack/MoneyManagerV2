@@ -9,9 +9,8 @@ from enum import Enum
 from io import BytesIO, StringIO
 from typing import Optional
 
-import requests
 from bson import ObjectId
-from fastapi import APIRouter, Header, HTTPException, Query, Request, Response
+from fastapi import APIRouter, Header, HTTPException, Query, Response
 from motor.motor_asyncio import AsyncIOMotorClient
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -38,7 +37,6 @@ from api.utils.plots import (
     create_expense_bar,
     create_monthly_line,
 )
-from config.config import TELEGRAM_BOT_API_BASE_URL  # Add this import
 from config.config import MONGO_URI, TIME_ZONE
 
 router = APIRouter(prefix="/exports", tags=["Exports"])
@@ -285,7 +283,7 @@ async def data_to_pdf(
     Returns:
         Response: PDF file containing expenses, accounts, and categories data.
     """
-    # pylint: disable=too-many-locals, too-many-statements
+    # pylint: disable=too-many-locals, too-many-statements, too-many-branches
     user_id = await verify_token(token)
     expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
 
