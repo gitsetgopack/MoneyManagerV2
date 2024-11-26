@@ -26,7 +26,8 @@ TIMEOUT = 10  # seconds
     CONFIRM_DELETE,
     SELECT_CATEGORY,
     NEW_CATEGORY_NAME,
-) = range(5)  # Added MONTHLY_BUDGET
+    UPDATE_BUDGET,
+) = range(6)  # Added UPDATE_BUDGET
 
 @authenticate
 async def categories_view(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
@@ -225,6 +226,82 @@ async def confirm_delete_category(update: Update, context: ContextTypes.DEFAULT_
         context.user_data.clear()
         return ConversationHandler.END
 
+@authenticate
+async def categories_update(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Start the category update process."""
+    headers = {"token": token}
+    response = requests.get(
+        f"{TELEGRAM_BOT_API_BASE_URL}/categories/",
+        headers=headers,
+        timeout=TIMEOUT
+    )
+    
+    if response.status_code == 200:
+        categories = response.json().get("categories", {})
+        if not categories:
+            await update.message.reply_text("No categories found to update.")
+            return ConversationHandler.END
+
+        keyboard = [
+            [InlineKeyboardButton(
+                f"{category} - Budget: {details['monthly_budget']}", 
+                callback_data=f"update_{category}"
+            )]
+            for category, details in categories.items()
+        ]
+        
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.message.reply_text(
+            "Select a category to update its monthly budget:",
+            reply_markup=reply_markup
+        )
+        return SELECT_CATEGORY
+    else:
+        await update.message.reply_text("Failed to fetch categories.")
+        return ConversationHandler.END
+
+async def handle_category_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handle category selection and prompt for new budget."""
+    query = update.callback_query
+    await query.answer()
+    
+    if query.data.startswith("update_"):
+        category_name = query.data.split("_")[1]
+        context.user_data["category_name"] = category_name
+        await query.message.edit_text(f"Please enter the new monthly budget for '{category_name}':")
+        return UPDATE_BUDGET
+
+@authenticate
+async def handle_budget_update(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle the new budget value and update the category."""
+    try:
+        new_budget = float(update.message.text)
+        category_name = context.user_data["category_name"]
+        
+        headers = {"token": token}
+        response = requests.put(
+            f"{TELEGRAM_BOT_API_BASE_URL}/categories/{category_name}",
+            json={"monthly_budget": str(new_budget)},
+            headers=headers,
+            timeout=TIMEOUT
+        )
+        
+        if response.status_code == 200:
+            await update.message.reply_text(
+                f"✅ Monthly budget updated successfully for '{category_name}'!\n"
+                "Click /categories_view to see the updated list."
+            )
+        else:
+            error_detail = response.json().get("detail", "Unknown error")
+            await update.message.reply_text(f"❌ Failed to update category: {error_detail}")
+        
+        context.user_data.clear()
+        return ConversationHandler.END
+        
+    except ValueError:
+        await update.message.reply_text("Please enter a valid number for the monthly budget.")
+        return UPDATE_BUDGET
+
 # Handlers for categories
 categories_conv_handler = ConversationHandler(
     entry_points=[CommandHandler("categories_add", categories_add)],
@@ -244,10 +321,21 @@ categories_delete_conv_handler = ConversationHandler(
     fallbacks=[CommandHandler("cancel", cancel)]
 )
 
+# Add new conversation handler for updates
+categories_update_conv_handler = ConversationHandler(
+    entry_points=[CommandHandler("categories_update", categories_update)],
+    states={
+        SELECT_CATEGORY: [CallbackQueryHandler(handle_category_selection)],
+        UPDATE_BUDGET: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_budget_update)],
+    },
+    fallbacks=[CommandHandler("cancel", cancel)]
+)
+
 # Update the handlers list
 categories_handlers = [
     CommandHandler("categories_view", categories_view),
     CallbackQueryHandler(categories_view_page, pattern="^view_categories#"),
     categories_conv_handler,
-    categories_delete_conv_handler,  # Add the new handler
+    categories_delete_conv_handler,
+    categories_update_conv_handler,  # Add the new handler
 ]
