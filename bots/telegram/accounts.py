@@ -190,7 +190,7 @@ async def accounts_delete(update: Update, context: ContextTypes.DEFAULT_TYPE, to
         headers=headers,
         timeout=TIMEOUT
     )
-    
+
     if response.status_code == 200:
         accounts = response.json().get("accounts", [])
         if not accounts:
@@ -201,11 +201,11 @@ async def accounts_delete(update: Update, context: ContextTypes.DEFAULT_TYPE, to
         keyboard = [
             [InlineKeyboardButton(
                 f"{account['name']} - Balance: {account['balance']} {account['currency']}", 
-                callback_data=f"delete_{account['name']}"
+                callback_data=f"delete_{account['_id']}"
             )]
             for account in accounts
         ]
-        
+
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
             "Select an account to delete:",
@@ -223,8 +223,8 @@ async def confirm_delete_account(update: Update, context: ContextTypes.DEFAULT_T
     await query.answer()
 
     if query.data.startswith("delete_"):
-        account_name = query.data.split("_")[1]
-        context.user_data["account_name"] = account_name
+        account_id = query.data.split("_")[1]
+        context.user_data["account_name"] = account_id
         
         keyboard = [
             [
@@ -233,16 +233,16 @@ async def confirm_delete_account(update: Update, context: ContextTypes.DEFAULT_T
             ]
         ]
         await query.message.edit_text(
-            f"⚠️ Are you sure you want to delete account '{account_name}'?\n",
+            f"⚠️ Are you sure you want to delete account with id '{account_id}'?\n",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
         return CONFIRM_DELETE
         
     elif query.data == "confirm_delete":
-        account_name = context.user_data["account_name"]
+        account_id = context.user_data["account_name"]
         headers = {"token": token}
         response = requests.delete(
-            f"{TELEGRAM_BOT_API_BASE_URL}/accounts/{account_name}",
+            f"{TELEGRAM_BOT_API_BASE_URL}/accounts/{account_id}",
             headers=headers,
             timeout=TIMEOUT
         )
