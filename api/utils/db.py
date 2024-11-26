@@ -1,9 +1,8 @@
-
 """
 Utility functions for database operations.
 """
 import datetime
-from typing import Optional, Tuple, Any, Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 
 from bson import ObjectId
 from fastapi import HTTPException
@@ -32,7 +31,9 @@ async def fetch_data(
             detail="Invalid date range: 'from_date' must be before 'to_date'",
         )
 
-    from_dt = datetime.datetime.combine(from_date, datetime.time.min) if from_date else None
+    from_dt = (
+        datetime.datetime.combine(from_date, datetime.time.min) if from_date else None
+    )
     to_dt = datetime.datetime.combine(to_date, datetime.time.max) if to_date else None
 
     query = {"user_id": user_id}

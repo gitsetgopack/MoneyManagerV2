@@ -121,7 +121,10 @@ def prorate_budget(
 ) -> float:
     """Prorate the budget based on the date range."""
     from api.utils.db import calculate_days_in_range
-    days_in_range = calculate_days_in_range(from_date, to_date, first_expense_date, last_expense_date)
+
+    days_in_range = calculate_days_in_range(
+        from_date, to_date, first_expense_date, last_expense_date
+    )
     return (budget / 30) * days_in_range
 
 
