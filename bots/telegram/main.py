@@ -7,14 +7,13 @@ import sys
 from telegram import Update
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes
 
-from bots.telegram.auth import auth_handlers, get_user  # Update import
-from bots.telegram.expenses import expenses_handlers
-from bots.telegram.utils import unknown, get_menu_commands
-from config import config
-from bots.telegram.categories import categories_handlers
 from bots.telegram.accounts import accounts_handlers
 from bots.telegram.analytics import analytics_handlers
-
+from bots.telegram.auth import auth_handlers, get_user  # Update import
+from bots.telegram.categories import categories_handlers
+from bots.telegram.expenses import expenses_handlers
+from bots.telegram.utils import get_menu_commands, unknown
+from config import config
 
 # Configure logging
 logging.basicConfig(

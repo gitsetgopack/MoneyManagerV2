@@ -1,7 +1,8 @@
 """Authentication handlers and utilities for the Telegram bot."""
 
-import requests
 from typing import Any, Optional
+
+import requests
 from motor.motor_asyncio import AsyncIOMotorClient
 from telegram import Update
 from telegram.ext import (
@@ -12,8 +13,7 @@ from telegram.ext import (
     filters,
 )
 
-from bots.telegram.utils import cancel
-from bots.telegram.utils import get_menu_commands
+from bots.telegram.utils import cancel, get_menu_commands
 from config import config
 
 # Constants

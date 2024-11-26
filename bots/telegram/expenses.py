@@ -3,6 +3,7 @@
 from datetime import datetime
 
 import requests
+from pytz import timezone  # type: ignore
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     CallbackQueryHandler,
@@ -12,15 +13,12 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-from pytz import timezone  # type: ignore
 from telegram_bot_calendar import DetailedTelegramCalendar
 from telegram_bot_pagination import InlineKeyboardPaginator
 
 from bots.telegram.auth import authenticate
 from bots.telegram.utils import cancel
-from config.config import TELEGRAM_BOT_API_BASE_URL
-
-from config.config import MONGO_URI, TIME_ZONE
+from config.config import MONGO_URI, TELEGRAM_BOT_API_BASE_URL, TIME_ZONE
 
 # Constants
 TIMEOUT = 10  # seconds

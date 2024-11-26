@@ -5,25 +5,26 @@ from a specified number of days.
 """
 
 import base64
-import io
 import datetime
+import io
+from typing import Optional
 
-from bson import ObjectId
 import matplotlib.pyplot as plt
 import pandas as pd
+from bson import ObjectId
 from fastapi import APIRouter, Header, HTTPException, Response
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from motor.motor_asyncio import AsyncIOMotorClient
-from typing import Optional
+
 from api.utils.auth import verify_token
-from config.config import MONGO_URI
 from api.utils.plots import (
-    create_expense_bar,
-    create_category_pie,
-    create_monthly_line,
-    create_category_bar,
     create_budget_vs_actual,
+    create_category_bar,
+    create_category_pie,
+    create_expense_bar,
+    create_monthly_line,
 )
+from config.config import MONGO_URI
 
 # MongoDB setup
 client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URI)

@@ -1,10 +1,11 @@
 """Utility functions for the Telegram bot."""
 
+import re
+
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 
 from config.config import TELEGRAM_SET_COMMAND_TEXT
-import re
 
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:

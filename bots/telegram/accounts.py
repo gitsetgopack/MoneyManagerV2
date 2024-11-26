@@ -1,20 +1,20 @@
 """Account management handlers for the Telegram bot."""
 
 import requests
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ContextTypes
-from telegram_bot_pagination import InlineKeyboardPaginator
-
-from bots.telegram.auth import authenticate
-from config.config import TELEGRAM_BOT_API_BASE_URL
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     CallbackQueryHandler,
     CommandHandler,
+    ContextTypes,
     ConversationHandler,
     MessageHandler,
     filters,
 )
+from telegram_bot_pagination import InlineKeyboardPaginator
+
+from bots.telegram.auth import authenticate
 from bots.telegram.utils import cancel
+from config.config import TELEGRAM_BOT_API_BASE_URL
 
 # Constants
 TIMEOUT = 10  # seconds
