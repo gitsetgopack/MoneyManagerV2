@@ -6,6 +6,7 @@ import calendar
 from datetime import datetime
 
 from config.config import TELEGRAM_BOT_API_BASE_URL
+from bots.telegram.utils import cancel
 
 from config.config import MONGO_URI, TIME_ZONE
 from bots.telegram.auth import authenticate
@@ -19,7 +20,7 @@ from telegram.ext import (
 TIMEOUT = 10
 
 # States for the conversation
-SELECTING_FROM_DATE, SELECTING_TO_DATE, SELECTING_FORMAT = range(3)
+SELECTING_FROM_DATE, SELECTING_TO_DATE, SELECTING_FORMAT, SELECTING_DATE_OPTION = range(4)
 
 @authenticate
 async def analytics(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
@@ -70,19 +71,88 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE, to
             await query.message.reply_text(f"Error: {str(e)}")
 
 @authenticate
-async def exports(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
-    """Handle the /exports command - show date selection options"""
+async def show_date_options(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Show options to select dates or skip."""
+    query = update.callback_query
+    if query:
+        await query.answer()
+    
     keyboard = [
-        [InlineKeyboardButton("Select From Date", callback_data="select_from_date"),
-         InlineKeyboardButton("Skip Dates", callback_data="skip_dates")]
+        [InlineKeyboardButton("Set From Date", callback_data="set_from_date")],
+        [InlineKeyboardButton("Set To Date", callback_data="set_to_date")],
+        [InlineKeyboardButton("Clear Dates", callback_data="clear_dates")],  # Added Clear Dates
+        [InlineKeyboardButton("Next", callback_data="next")]  # Added Next button
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(
-        "📤 *Export Data*\n\nWould you like to select a date range?",
-        reply_markup=reply_markup,
-        parse_mode="Markdown"
-    )
-    return SELECTING_FROM_DATE
+    if query:
+        await query.message.edit_text(
+            "Would you like to select dates for export?",
+            reply_markup=reply_markup
+        )
+    else:
+        await update.message.reply_text(
+            "📤 *Export Data*\n\nWould you like to select a date range?",
+            reply_markup=reply_markup,
+            parse_mode="Markdown"
+        )
+    return SELECTING_DATE_OPTION
+
+@authenticate
+async def exports(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle the /exports command - show date selection options"""
+    return await show_date_options(update, context)
+
+@authenticate
+async def handle_date_option(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle user's choice on date selection"""
+    query = update.callback_query
+    await query.answer()
+    choice = query.data
+
+    if choice == "set_from_date":
+        return await select_from_date(update, context)
+    elif choice == "set_to_date":
+        return await select_to_date(update, context)
+    elif choice == "clear_dates":
+        context.user_data.pop('from_date', None)
+        context.user_data.pop('to_date', None)
+        await query.message.reply_text("✅ Dates have been cleared.")
+        return SELECTING_DATE_OPTION
+    elif choice == "next":
+        return await show_export_formats(update, context)
+    return ConversationHandler.END
+
+@authenticate
+async def handle_date_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+    """Handle date selection from calendar"""
+    query = update.callback_query
+    await query.answer()
+    
+    if query.data.startswith('date_'):
+        _, year, month, day = query.data.split('_')
+        selected_date = datetime(int(year), int(month), int(day)).strftime('%Y-%m-%d')
+        
+        if 'set_both' in context.user_data and context.user_data['set_both']:
+            if 'from_date' not in context.user_data:
+                context.user_data['from_date'] = selected_date
+                keyboard = [[InlineKeyboardButton("Select To Date", callback_data="select_to_date")]]
+                reply_markup = InlineKeyboardMarkup(keyboard)
+                await query.message.edit_text(
+                    f"From date selected: {selected_date}\nNow select the end date:",
+                    reply_markup=reply_markup
+                )
+                return SELECTING_TO_DATE
+            else:
+                context.user_data['to_date'] = selected_date
+                return await show_export_formats(update, context)
+        else:
+            if 'from_date' in context.user_data:
+                context.user_data['to_date'] = selected_date
+                return await show_export_formats(update, context)
+            else:
+                context.user_data['from_date'] = selected_date
+                return await show_export_formats(update, context)
+    return SELECTING_FORMAT
 
 async def create_calendar_markup(year: int, month: int) -> InlineKeyboardMarkup:
     """Create an inline keyboard with a calendar"""
@@ -108,8 +178,7 @@ async def create_calendar_markup(year: int, month: int) -> InlineKeyboardMarkup:
         keyboard.append(row)
     return InlineKeyboardMarkup(keyboard)
 
-@authenticate
-async def show_export_formats(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
+async def show_export_formats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Show export format options"""
     query = update.callback_query
     if query:
@@ -136,17 +205,7 @@ async def handle_back_to_dates(update: Update, context: ContextTypes.DEFAULT_TYP
     query = update.callback_query
     await query.answer()
     
-    keyboard = [
-        [InlineKeyboardButton("Select From Date", callback_data="select_from_date"),
-         InlineKeyboardButton("Skip Dates", callback_data="skip_dates")]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await query.message.edit_text(
-        "📤 *Export Data*\n\nWould you like to select a date range?",
-        reply_markup=reply_markup,
-        parse_mode="Markdown"
-    )
-    return SELECTING_FROM_DATE
+    return await show_date_options(update, context)
 
 @authenticate
 async def handle_csv_options(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> None:
@@ -231,31 +290,23 @@ async def handle_export(update: Update, context: ContextTypes.DEFAULT_TYPE, toke
         await query.message.reply_text(f"❌ Error during export: {str(e)}")
         return ConversationHandler.END
 
-@authenticate
-async def handle_date_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, token: str) -> int:
-    """Handle date selection from calendar"""
-    query = update.callback_query
-    await query.answer()
-    
-    if query.data.startswith('date_'):
-        _, year, month, day = query.data.split('_')
-        selected_date = datetime(int(year), int(month), int(day)).strftime('%Y-%m-%d')
-        
-        if context.user_data.get('from_date') is None:
-            context.user_data['from_date'] = selected_date
-            keyboard = [[InlineKeyboardButton("Select To Date", callback_data="select_to_date")]]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            await query.message.edit_text(
-                f"From date selected: {selected_date}\nNow select the end date:",
-                reply_markup=reply_markup
-            )
-            return SELECTING_TO_DATE
-        else:
-            context.user_data['to_date'] = selected_date
-            return await show_export_formats(update, context, token)
-    return SELECTING_TO_DATE
+async def select_from_date(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Send the calendar for selecting the start date."""
+    calendar_markup = await create_calendar_markup(datetime.now().year, datetime.now().month)
+    await update.callback_query.message.edit_text(
+        "Select the start date:",
+        reply_markup=calendar_markup
+    )
+    return SELECTING_FROM_DATE
 
-# Remove or comment out the old expense_bar function since it's now handled by the callback
+async def select_to_date(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Send the calendar for selecting the end date."""
+    calendar_markup = await create_calendar_markup(datetime.now().year, datetime.now().month)
+    await update.callback_query.message.edit_text(
+        "Select the end date:",
+        reply_markup=calendar_markup
+    )
+    return SELECTING_TO_DATE
 
 analytics_handlers = [
     CommandHandler('analytics', analytics),
@@ -267,15 +318,15 @@ analytics_handlers.extend([
     ConversationHandler(
         entry_points=[CommandHandler('exports', exports)],
         states={
+            SELECTING_DATE_OPTION: [
+                CallbackQueryHandler(handle_date_option, pattern='^(set_from_date|set_to_date|clear_dates|next)$')  # Updated pattern
+            ],
             SELECTING_FROM_DATE: [
-                CallbackQueryHandler(show_export_formats, pattern='^skip_dates$'),
-                CallbackQueryHandler(lambda u, c: create_calendar_markup(datetime.now().year, datetime.now().month), 
-                                   pattern='^select_from_date$'),
+                CallbackQueryHandler(select_from_date, pattern='^select_from_date$'),
                 CallbackQueryHandler(handle_date_selection, pattern='^date_\d{4}_\d{1,2}_\d{1,2}$')
             ],
             SELECTING_TO_DATE: [
-                CallbackQueryHandler(lambda u, c: create_calendar_markup(datetime.now().year, datetime.now().month), 
-                                   pattern='^select_to_date$'),
+                CallbackQueryHandler(select_to_date, pattern='^select_to_date$'),
                 CallbackQueryHandler(handle_date_selection, pattern='^date_\d{4}_\d{1,2}_\d{1,2}$')
             ],
             SELECTING_FORMAT: [
@@ -285,6 +336,6 @@ analytics_handlers.extend([
                 CallbackQueryHandler(handle_back_to_dates, pattern='^back_to_dates$')  # Added handler for Back button
             ]
         },
-        fallbacks=[CommandHandler('cancel', lambda u, c: ConversationHandler.END)]
+        fallbacks=[CommandHandler('cancel', cancel)]
     )
 ])
