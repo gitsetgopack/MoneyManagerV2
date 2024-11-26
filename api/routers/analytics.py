@@ -347,3 +347,87 @@ async def category_bar(
     buf.seek(0)
     
     return Response(content=buf.getvalue(), media_type="image/png")
+
+def prorate_budget(budget: float, from_date: Optional[datetime.date], to_date: Optional[datetime.date], first_expense_date: Optional[datetime.date], last_expense_date: Optional[datetime.date]) -> float:
+    """Prorate the budget based on the date range."""
+    if from_date and to_date:
+        days_in_range = (to_date - from_date).days + 1
+    elif from_date:
+        days_in_range = (last_expense_date - from_date).days + 1 if last_expense_date else (datetime.date.today() - from_date).days + 1
+    elif to_date:
+        days_in_range = (to_date - first_expense_date).days + 1 if first_expense_date else (to_date - datetime.date(1970, 1, 1)).days + 1
+    else:
+        days_in_range = 30  # Default to 30 days if no date range is provided
+
+    print(f"Prorating budget: {budget}, Days in range: {days_in_range}")
+    return (budget / 30) * days_in_range
+
+@router.get("/budget/actual-vs-budget", response_class=Response)
+async def budget_vs_actual(
+    from_date: Optional[datetime.date] = None,
+    to_date: Optional[datetime.date] = None,
+    token: str = Header(None)
+):
+    """
+    Endpoint to generate a bar chart comparing budgeted vs actual expenses within a date range.
+    Returns a PNG image file directly.
+    """
+    user_id = await verify_token(token)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
+
+    if not expenses:
+        raise HTTPException(
+            status_code=404, detail="No expenses found for the specified period"
+        )
+
+    # Convert to DataFrame and process data
+    df = pd.DataFrame(expenses)
+    df["date"] = pd.to_datetime(df["date"])
+    category_expenses = df.groupby("category")["amount"].sum()
+    first_expense_date = df["date"].min().date() if not from_date else from_date
+    last_expense_date = df["date"].max().date() if not to_date else to_date
+
+    # Assuming user document contains budget information
+    categories = user.get("categories", {})
+
+    # Prepare data for plotting
+    category_names = list(set(category_expenses.index).union(set(categories.keys())))
+    actuals = [category_expenses.get(cat, 0) for cat in category_names]
+    budgeted = [prorate_budget(categories[cat]["monthly_budget"], from_date, to_date, first_expense_date, last_expense_date) if cat in categories else 0 for cat in category_names]
+
+    # Plotting the bar chart
+    plt.figure(figsize=(10, 6))
+    x = range(len(category_names))
+    plt.bar(x, budgeted, width=0.4, label='Budgeted', align='center')
+    plt.bar(x, actuals, width=0.4, label='Actual', align='edge')
+    plt.xticks(x, category_names, rotation=45)
+    
+    # Create detailed date range text
+    if from_date and to_date:
+        if from_date == to_date:
+            date_range_text = f"Date: {from_date}"
+        else:
+            date_range_text = f"Date Range: {from_date} to {to_date}"
+    elif from_date:
+        date_range_text = f"Date Range: From {from_date}"
+    elif to_date:
+        date_range_text = f"Date Range: To {to_date}"
+    else:
+        date_range_text = "Date Range: All"
+    
+    plt.title(f"Budget vs Actual Expenses\n{date_range_text}")
+    plt.xlabel("Category")
+    plt.ylabel("Amount")
+    plt.legend()
+    plt.tight_layout()
+
+    # Send image directly from memory
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png", bbox_inches="tight")
+    plt.close()
+    buf.seek(0)
+    
+    return Response(content=buf.getvalue(), media_type="image/png")
