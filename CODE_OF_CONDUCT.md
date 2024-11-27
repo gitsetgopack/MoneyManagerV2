@@ -53,7 +53,7 @@ This Code applies within all community areas and extends to public representatio
 
 ## Reporting Issues
 
-Instances of unacceptable behavior may be reported to community leaders at dollarbot38@googlegroups.com. All reports will be reviewed and addressed swiftly, with respect for the privacy of those involved.
+Instances of unacceptable behavior may be reported to community leaders at moneymanagerv2.0@gmail.com. All reports will be reviewed and addressed swiftly, with respect for the privacy of those involved.
 
 ## Enforcement Guidelines
 
