@@ -273,8 +273,9 @@ By contributing to MoneyManager, you agree that your contributions will fall und
 ## 🤝 Contributors
 
 - **Abhishek Rao** ([GitHub](https://github.com/abhira0) | [arao23@ncsu.edu](mailto:arao23@ncsu.edu))
-- **Umang Diyora** ([udiyora@ncsu.edu](mailto:udiyora@ncsu.edu))
+- **Umang Diyora** ([GitHub](https://github.com/umangdiyora) | [udiyora@ncsu.edu](mailto:udiyora@ncsu.edu))
 - **Astha Bhalodiya** ([GitHub](https://github.com/AsthaBhalodiya) | [abhalod@ncsu.edu](mailto:abhalod@ncsu.edu))
+
 ## 📜 Code of Conduct
 
 Please note that we have a [Code of Conduct](CODE_OF_CONDUCT.md) that all contributors are expected to uphold. This ensures that our community remains welcoming and inclusive for everyone.
