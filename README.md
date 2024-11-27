@@ -55,7 +55,7 @@ A REST API application for managing expenses. Build your own automation—be it 
 ![black](https://img.shields.io/badge/code%20style-black-black?style=plastic&)
 ![license](https://img.shields.io/github/license/gitsetgopack/MoneyManager?style=plastic&)
 ![maintained](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=plastic&)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14027400.svg)](https://doi.org/10.5281/zenodo.14027400)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14226963.svg)](https://doi.org/10.5281/zenodo.14226963)
 
 
 ### 📊 Stats
