@@ -41,13 +41,13 @@ A REST API application for managing expenses. Build your own automation—be it 
 
 ### ✅ Quality
 
-[![badge_pytest_status](https://img.shields.io/badge/PyTest-passing-brightgreen?style=plastic&logo=pytest&logoColor=white)](https://github.com/gitsetgopack/MoneyManagerV2/actions/runs/12041505351)
-[![badge_code_coverage](https://img.shields.io/badge/coverage-96%25-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManagerV2/actions/runs/12041505351)
+[![badge_pytest_status](https://img.shields.io/badge/PyTest-passing-brightgreen?style=plastic&logo=pytest&logoColor=white)](https://github.com/gitsetgopack/MoneyManagerV2/actions/runs/12041615362)
+[![badge_code_coverage](https://img.shields.io/badge/coverage-96%25-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManagerV2/actions/runs/12041615362)
 [![badge_total_tests](https://img.shields.io/badge/tests-162-blue?style=plastic&logo=pytest&logoColor=white)](https://github.com/gitsetgopack/hw2/tree/main/tests)
-[![badge_pylint](https://img.shields.io/badge/pylint-9.08-yellow?style=plastic)](https://github.com/gitsetgopack/MoneyManagerV2/actions/runs/12041505351)
-[![badge_black](https://img.shields.io/badge/black_formatter-failing-red?style=plastic&labelColor=black)](https://github.com/gitsetgopack/MoneyManagerV2/actions/runs/12041505351)
-[![badge_mypy](https://img.shields.io/badge/mypy-passing-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManagerV2/actions/runs/12041505351)
-[![badge_bandit](https://img.shields.io/badge/bandit-passing-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManagerV2/actions/runs/12041505351)
+[![badge_pylint](https://img.shields.io/badge/pylint-9.08-yellow?style=plastic)](https://github.com/gitsetgopack/MoneyManagerV2/actions/runs/12041615362)
+[![badge_black](https://img.shields.io/badge/black_formatter-failing-red?style=plastic&labelColor=black)](https://github.com/gitsetgopack/MoneyManagerV2/actions/runs/12041615362)
+[![badge_mypy](https://img.shields.io/badge/mypy-passing-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManagerV2/actions/runs/12041615362)
+[![badge_bandit](https://img.shields.io/badge/bandit-passing-brightgreen?style=plastic)](https://github.com/gitsetgopack/MoneyManagerV2/actions/runs/12041615362)
 
 ### 📏 Standards
 
