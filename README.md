@@ -220,15 +220,13 @@ Refer to [INSTALL](INSTALL.md) for the guidance and follow the steps.
 
 <img src="https://github.com/user-attachments/assets/1f0e054c-5c0f-45e7-8071-4401ad56638a" alt="Cancel" width="200"></br>
 
-## 🚀 Future Enhancements (Needs Change)
+## 🚀 Future Enhancements
 
-- **External Integrations**: Explore integrations with platforms like Discord, WhatsApp, and Slack to provide seamless notifications and financial management within users' preferred communication apps.
-- **UI/Website Development**: Develop a user-friendly web interface to enhance accessibility, offering streamlined access to financial data and resources.
-- **Advanced Telegram Bot**: Enhance the current Telegram bot with extensive testing and improvements for greater reliability and comprehensive functionality.
-- **Expanded REST Features**:
-  - Advanced analytics for deeper insights into financial habits.
-  - CSV import/export support for easy data handling.
-  - Group expense tracking with features like bill splitting, real-time updates, and integrated payment options.
+- **Group Expense Management:** The introduction of group expense management functionality will enable users to create and manage shared expenses across multiple participants. This feature will cater to scenarios such as splitting bills, organizing group events, or managing shared household expenses. It will enhance collaboration and provide users with precise tracking and reconciliation tools for shared financial activities.
+- **Voice integration:** Simplify interactions with the platform by integrating voice command functionality. Users can add expenses, query their budgets, or request financial reports using voice assistants like Alexa, Google Assistant, or Siri, making financial management more accessible and convenient.
+- **Gamification:** Add gamification elements like achievement badges for reaching savings milestones, weekly challenges to encourage reduced spending, and leaderboards for group expense tracking. These features enhance user engagement, making financial management interactive and motivating users to build better spending habits.
+- **Alerts & Notification:** Enhance user experience by implementing smart alerts and notifications. These could include alerts for overspending in specific categories, and updates on budget performance, helping users stay on top of their finances with minimal effort.
+- **Rest API & Telegram Bot Enchancement:** Upgrade the REST API and Telegram bot to support more advanced functionalities, including custom , personalized recommendations, and multi-language support. These improvements will ensure a seamless, responsive, and adaptable financial management experience across platforms.
 
 ## 🤝 Contributing
 
