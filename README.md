@@ -15,6 +15,7 @@
     - [📋 Pre-requisite Tasks](#-pre-requisite-tasks)
     - [🛠️ Developer Installation](#-developer-installation)
     - [🧪 Testing](#%F0%9F%A7%AA-testing)
+  - [👨‍💻 Functionalities]
   - [🚀 Future Enhancements](#-future-enhancements)
   - [🤝 Contributing](#-contributing)
   - [📜 LICENSE](#-license)
@@ -152,7 +153,7 @@ Currently, the project includes 150+ tests covering all core functionality.
 
 <img width="677" alt="image" src="https://github.com/user-attachments/assets/03d6d77f-7494-424e-bda6-0518ac79b124">
 
-## Functionalities
+## 👨‍💻 Functionalities
 
 - **Sign Up:**
   
