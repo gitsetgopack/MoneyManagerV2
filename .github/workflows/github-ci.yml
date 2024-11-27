@@ -110,6 +110,7 @@ jobs:
         continue-on-error: true
         run: |
           source .venv/bin/activate
+          tree
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
           echo "PYLINT_EXIT_CODE=0" >> $GITHUB_ENV
           pylint api > tmp/pylint_output.txt || echo "PYLINT_EXIT_CODE=$?" >> $GITHUB_ENV
