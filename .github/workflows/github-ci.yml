@@ -99,6 +99,7 @@ jobs:
           source .venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          mv config/config_sample.py config/config.py
 
       - name: Format check with black
         run: |
@@ -110,7 +111,6 @@ jobs:
         continue-on-error: true
         run: |
           source .venv/bin/activate
-          tree
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
           echo "PYLINT_EXIT_CODE=0" >> $GITHUB_ENV
           pylint api > tmp/pylint_output.txt || echo "PYLINT_EXIT_CODE=$?" >> $GITHUB_ENV
@@ -119,7 +119,6 @@ jobs:
       - name: Run pytest
         continue-on-error: true
         run: |
-          mv config/config_sample.py config/config.py
           source .venv/bin/activate
           echo "PYTEST_EXIT_CODE=0" >> $GITHUB_ENV
           pytest --cov-report=json:tmp/coverage.json --junitxml=tmp/pytest_output.xml || echo "PYTEST_EXIT_CODE=$?" >> $GITHUB_ENV
