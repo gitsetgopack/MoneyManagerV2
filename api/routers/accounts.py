@@ -148,11 +148,17 @@ async def update_account(
         account_update.currency = account_update.currency.upper()
 
     # Update account details (balance, currency, and name)
-    update_data = {
-        "balance": account_update.balance,
-        "currency": account_update.currency,
-        "name": account_update.name,
-    }
+
+    update_data = {}
+    if account_update.balance:
+        update_data["balance"] = float(account_update.balance)  # type: ignore
+    if account_update.currency:
+        update_data["currency"] = account_update.currency  # type: ignore
+    if account_update.name:
+        update_data["name"] = account_update.name  # type: ignore
+
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No update data provided")
 
     result = await accounts_collection.update_one(
         {"_id": ObjectId(account_id)}, {"$set": update_data}

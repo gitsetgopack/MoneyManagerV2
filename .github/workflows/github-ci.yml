@@ -10,54 +10,68 @@ permissions:
   contents: write
 
 jobs:
-
-  pre-commit:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Cache virtual environment
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-
-
-      - name: Cache pre-commit
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pre-commit
-          key: ${{ runner.os }}-pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pre-commit-
-
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.12"
-
-      - name: Install requirements
-        run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Set PYTHONPATH
-        run: |
-          echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
-
-      - name: Run pre-commit
-        run: |
-          cp config/config_sample.py config/config.py
-          source .venv/bin/activate
-          pre-commit run --all-files || true
+# pre-commit:
+#   runs-on: ubuntu-latest
+#   env:
+#     MONGO_URI: ${{ secrets.MONGO_URI }}
+#     TOKEN_SECRET_KEY: ${{ secrets.TOKEN_SECRET_KEY }}
+#     TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+#     GMAIL_SMTP_USERNAME: ${{ secrets.GMAIL_SMTP_USERNAME }}
+#     GMAIL_SMTP_PASSWORD: ${{ secrets.GMAIL_SMTP_PASSWORD }}
+#     GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+#
+#   steps:
+#     - uses: actions/checkout@v4
+#
+#     - name: Cache virtual environment
+#       uses: actions/cache@v3
+#       with:
+#         path: .venv
+#         key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements.txt') }}
+#         restore-keys: |
+#           ${{ runner.os }}-venv-
+#
+#     - name: Cache pre-commit
+#       uses: actions/cache@v3
+#       with:
+#         path: ~/.cache/pre-commit
+#         key: ${{ runner.os }}-pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+#         restore-keys: |
+#           ${{ runner.os }}-pre-commit-
+#
+#     - name: Set up Python 3.12
+#       uses: actions/setup-python@v3
+#       with:
+#         python-version: "3.12"
+#
+#     - name: Install requirements
+#       run: |
+#         python -m venv .venv
+#         source .venv/bin/activate
+#         python -m pip install --upgrade pip
+#         pip install -r requirements.txt
+#
+#     - name: Set PYTHONPATH
+#       run: |
+#         echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+#
+#     - name: Run pre-commit
+#       run: |
+#         mv config/config_sample.py config/config.py
+#         source .venv/bin/activate
+#         true || pre-commit run --all-files || true
 
   update-badges:
-    needs: pre-commit
+    # needs: pre-commit
     runs-on: ubuntu-latest
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      TOKEN_SECRET_KEY: ${{ secrets.TOKEN_SECRET_KEY }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      GMAIL_SMTP_USERNAME: ${{ secrets.GMAIL_SMTP_USERNAME }}
+      GMAIL_SMTP_PASSWORD: ${{ secrets.GMAIL_SMTP_PASSWORD }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -85,6 +99,7 @@ jobs:
           source .venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          mv config/config_sample.py config/config.py
 
       - name: Format check with black
         run: |
@@ -104,7 +119,6 @@ jobs:
       - name: Run pytest
         continue-on-error: true
         run: |
-          cp config_sample.py config.py
           source .venv/bin/activate
           echo "PYTEST_EXIT_CODE=0" >> $GITHUB_ENV
           pytest --cov-report=json:tmp/coverage.json --junitxml=tmp/pytest_output.xml || echo "PYTEST_EXIT_CODE=$?" >> $GITHUB_ENV

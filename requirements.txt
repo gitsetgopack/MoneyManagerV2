@@ -21,3 +21,6 @@ reportlab
 python-telegram-bot
 requests
 openpyxl
+python-telegram-bot-calendar
+python-telegram-bot-pagination
+watchdog==3.0.0
