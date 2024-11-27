@@ -114,44 +114,9 @@ https://github.com/user-attachments/assets/0f668b62-a0ac-4d36-b8b7-f897a7550c57
 MoneyManager allows you to take control of your personal finances, providing insights into where your money goes and helping you make informed financial decisions. Whether you're looking to monitor daily spending or analyze broader trends, MoneyManager has the tools you need to stay on top of your finances.
 
 
-## 🛠️ Installation (Needs Change)
+## 🛠️ Installation
 
-### 📋 Pre-requisite Tasks
-
-To get started, you'll need to create a Telegram bot through BotFather:
-
-- Open Telegram: Launch the Telegram app and log in to your account.
-- Find BotFather: Search for "@BotFather" in the Telegram search bar and start a conversation with it.
-- Create a new bot: Send the command "/newbot" to BotFather.
-- Set bot details:
-  - Bot Name: Enter a descriptive name for your bot.
-  - Bot Username: Choose a unique username, which must end with "bot".
-- Receive your token: Once you set the details, BotFather will provide you with a unique access token, which is crucial for coding your bot's functionality.
-
-
-### 🛠️ Developer Installation
-
-These instructions guide you through setting up the bot's communication and running it:
-
-1. Clone this repository to your local system.
-2. From the root of the cloned repository:
-  ```bash
-  make install
-  ```
-3. Rename the `sample_config.py` to `config.py`
-4. Fill in the configurations, such as Mongo DB URL `MONGO_URI`, previously created telegram token `TELEGRAM_BOT_TOKEN`, and many more knobs.
-
-### 🧪 Testing
-
-This project uses pytest and mongodb (docker) to test all core functionalities:
-
-Run the following command from the project's root directory to execute all unit tests:
-  ```bash
-  make test
-  ```
-Currently, the project includes 150+ tests covering all core functionality.
-
-<img width="677" alt="image" src="https://github.com/user-attachments/assets/03d6d77f-7494-424e-bda6-0518ac79b124">
+Refer to [INSTALL](INSTALL.md) for the guidance and follow the steps.
 
 ## 👨‍💻 Functionalities
 
