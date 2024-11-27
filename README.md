@@ -35,7 +35,7 @@
 A REST API application for managing expenses. Build your own automation—be it a Telegram bot 🤖, Discord bot, or your own app 📱!
 
 🚨 Spoiler Alert! 🚨
-> We have built a Telegram bot as a proof of concept! 🎉
+> We have also built a Telegram bot! 🎉
 
 ## 🏅 Badges
 
@@ -230,6 +230,27 @@ Currently, the project includes 150+ tests covering all core functionality.
 <img src="https://github.com/user-attachments/assets/18870a19-eb0e-4cdd-84ff-cbd1b4cccfab" alt="Accounts" width="200"></br>
 <img src="https://github.com/user-attachments/assets/7cadd130-8d89-427c-b236-1bfd3614c6aa" alt="Accounts" width="200"></br>
 <img src="https://github.com/user-attachments/assets/e3ec96dc-2de7-4c40-8502-773ccbe1459a" alt="Accounts" width="200"></br>
+
+- **Analytics**
+
+<img src="https://github.com/user-attachments/assets/6365fe39-33ca-45ef-a068-327a3e352b56" alt="Analytics" width="200"></br>
+<img src="https://github.com/user-attachments/assets/c30c1c10-b4c5-4947-affe-88a59f608839" alt="Analytics" width="200"></br>
+<img src="https://github.com/user-attachments/assets/a22d553e-0e27-4924-9e57-4ec7bdd85ffd" alt="Analytics" width="200"></br>
+
+- **Exports**
+
+<img src="https://github.com/user-attachments/assets/e80f74ce-9417-4403-8c4a-fc1d3c3338b8" alt="Exports" width="200"></br>
+<img src="https://github.com/user-attachments/assets/35f20478-429e-4100-b163-558ab11e91f0" alt="Exports" width="200"></br>
+<img src="https://github.com/user-attachments/assets/f1e5459e-7906-4d72-bcb3-1059ef5f12c5" alt="Exports" width="200"></br>
+<img src="https://github.com/user-attachments/assets/d73196c5-fa96-4984-8750-4fbf0320398f" alt="Exports" width="200"></br>
+
+- **Menu**
+
+<img src="https://github.com/user-attachments/assets/168d3ee1-9bac-4358-936f-86eb9d91bf44" alt="Menu" width="200"></br>
+
+- **Cancel**
+
+<img src="https://github.com/user-attachments/assets/1f0e054c-5c0f-45e7-8071-4401ad56638a" alt="Cancel" width="200"></br>
 
 ## 🚀 Future Enhancements (Needs Change)
 
