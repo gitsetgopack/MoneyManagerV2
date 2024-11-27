@@ -7,15 +7,14 @@ import sys
 from telegram import Update
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes
 
-from bots.telegram.auth import auth_handlers, get_user  # Update import
-from bots.telegram.expenses import expenses_handlers
-from bots.telegram.utils import unknown, get_menu_commands
-from config import config
-from bots.telegram.categories import categories_handlers
 from bots.telegram.accounts import accounts_handlers
-from bots.telegram.receipts import receipts_handlers  # New import
 from bots.telegram.analytics import analytics_handlers
-
+from bots.telegram.auth import auth_handlers, get_user  # Update import
+from bots.telegram.categories import categories_handlers
+from bots.telegram.expenses import expenses_handlers
+from bots.telegram.receipts import receipts_handlers  # New import
+from bots.telegram.utils import get_menu_commands, unknown
+from config import config
 
 # Configure logging
 logging.basicConfig(
@@ -30,13 +29,19 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = await get_user(update=update)
     if user:
         username = user.get("username")
-        await update.message.reply_text(f"Welcome back, {username}!\n\n{get_menu_commands()}")
+        await update.message.reply_text(
+            f"Welcome back, {username}!\n\n{get_menu_commands()}"
+        )
     else:
-        await update.message.reply_text("Welcome to Money Manager Telegram Bot!\nPlease /login or /signup to continue.")
+        await update.message.reply_text(
+            "Welcome to Money Manager Telegram Bot!\nPlease /login or /signup to continue."
+        )
+
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle the /menu command."""
     await update.message.reply_text(get_menu_commands())
+
 
 def main() -> None:
     """Initialize and start the bot."""
@@ -46,22 +51,24 @@ def main() -> None:
     # Register handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("menu", menu))
-    
+
     # Add auth handlers
     for handler in auth_handlers:
         application.add_handler(handler)
-    
+
     # Add expenses handlers
     for handler in expenses_handlers:
         application.add_handler(handler)
-        
+
     # Add categories handlers
     for handler in categories_handlers:
         application.add_handler(handler)
     # Add categories handlers
     for handler in accounts_handlers:
         application.add_handler(handler)
-        
+    for handler in analytics_handlers:
+        application.add_handler(handler)
+
     application.add_handler(CommandHandler("unknown", unknown))
 
     # Start the bot

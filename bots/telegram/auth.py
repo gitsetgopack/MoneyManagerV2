@@ -1,7 +1,8 @@
 """Authentication handlers and utilities for the Telegram bot."""
 
-import requests
 from typing import Any, Optional
+
+import requests
 from motor.motor_asyncio import AsyncIOMotorClient
 from telegram import Update
 from telegram.ext import (
@@ -12,8 +13,7 @@ from telegram.ext import (
     filters,
 )
 
-from bots.telegram.utils import cancel
-from bots.telegram.utils import get_menu_commands
+from bots.telegram.utils import cancel, get_menu_commands
 from config import config
 
 # Constants
@@ -26,8 +26,10 @@ USERNAME, PASSWORD, LOGIN_PASSWORD, SIGNUP_CONFIRM = range(4)
 mongodb_client = AsyncIOMotorClient(config.MONGO_URI)
 telegram_collection = mongodb_client.mmdb.telegram_bot
 
+
 class UnauthorizedError(Exception):
     pass
+
 
 class AuthHandler:
     def __init__(self):
@@ -37,9 +39,9 @@ class AuthHandler:
     def login(self, username, password):
         if not username or not password:
             raise ValueError("Username and password cannot be empty")
-        if username == 'user' and password == 'pass':
+        if username == "user" and password == "pass":
             self.is_authenticated = True
-            self.token = 'valid_token'
+            self.token = "valid_token"
             return True
         else:
             self.is_authenticated = False
@@ -51,14 +53,15 @@ class AuthHandler:
 
     def refresh_token(self):
         if self.is_authenticated:
-            self.token = 'new_token'
+            self.token = "new_token"
         else:
             self.token = None  # Ensures token is None when not authenticated
 
     def access_protected_resource(self):
         if not self.is_authenticated:
             raise UnauthorizedError("User is not authenticated")
-        return 'Resource content'
+        return "Resource content"
+
 
 async def login(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start the login process."""
@@ -95,9 +98,7 @@ async def handle_login_password(
             token = response.json()["result"]["token"]
             user_id = update.effective_user.id
 
-            user = await telegram_collection.find_one(
-                {"telegram_id": user_id}
-            )
+            user = await telegram_collection.find_one({"telegram_id": user_id})
             if user:
                 await telegram_collection.update_one(
                     {"telegram_id": user_id},
@@ -116,7 +117,9 @@ async def handle_login_password(
                 }
                 await telegram_collection.insert_one(user_data)
 
-            await update.message.reply_text(f"Login successful!\n\n{get_menu_commands()}")
+            await update.message.reply_text(
+                f"Login successful!\n\n{get_menu_commands()}"
+            )
         else:
             await update.message.reply_text(
                 f"Login failed: {response.json()['detail']}\n /signup if you haven't, otherwise /login"
@@ -192,13 +195,15 @@ async def handle_signup_confirm(
         )
         return ConversationHandler.END
 
-async def get_user(update: Optional[Update]=None, token: Optional[str]=None) -> Any:
+
+async def get_user(update: Optional[Update] = None, token: Optional[str] = None) -> Any:
     """Get user data from the token."""
     if token:
         return await telegram_collection.find_one({"token": token})
     if update:
         user_id = update.effective_user.id
         return await telegram_collection.find_one({"telegram_id": user_id})
+
 
 def authenticate(func):
     """Decorator to check if user is authenticated."""
@@ -220,9 +225,13 @@ async def logout(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     result = await telegram_collection.delete_many({"telegram_id": user_id})
     if result.deleted_count > 0:
-        await update.message.reply_text("You have been logged out successfully.\nPlease /login or /signup to continue.")
+        await update.message.reply_text(
+            "You have been logged out successfully.\nPlease /login or /signup to continue."
+        )
     else:
-        await update.message.reply_text("You are not logged in.\nPlease /login or /signup to continue.")
+        await update.message.reply_text(
+            "You are not logged in.\nPlease /login or /signup to continue."
+        )
 
 
 # Handlers for authentication
@@ -230,7 +239,9 @@ auth_handlers = [
     ConversationHandler(
         entry_points=[CommandHandler("login", login)],
         states={
-            USERNAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username)],
+            USERNAME: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username)
+            ],
             LOGIN_PASSWORD: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_login_password)
             ],
@@ -240,7 +251,9 @@ auth_handlers = [
     ConversationHandler(
         entry_points=[CommandHandler("signup", signup)],
         states={
-            USERNAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username)],
+            USERNAME: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username)
+            ],
             PASSWORD: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_signup_password)
             ],

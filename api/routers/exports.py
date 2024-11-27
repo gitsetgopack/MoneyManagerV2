@@ -7,12 +7,10 @@ import datetime
 import os
 from enum import Enum
 from io import BytesIO, StringIO
-import requests
 from typing import Optional
-from config.config import TELEGRAM_BOT_API_BASE_URL  # Add this import
 
 from bson import ObjectId
-from fastapi import APIRouter, Header, HTTPException, Query, Response, Request
+from fastapi import APIRouter, Header, HTTPException, Query, Response
 from motor.motor_asyncio import AsyncIOMotorClient
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -32,11 +30,14 @@ from reportlab.platypus import (  # type: ignore
 )
 
 from api.utils.auth import verify_token
-from config.config import MONGO_URI, TIME_ZONE
 from api.utils.plots import (
-    create_expense_bar, create_category_pie, create_monthly_line,
-    create_category_bar, create_budget_vs_actual
+    create_budget_vs_actual,
+    create_category_bar,
+    create_category_pie,
+    create_expense_bar,
+    create_monthly_line,
 )
+from config.config import MONGO_URI, TIME_ZONE
 
 router = APIRouter(prefix="/exports", tags=["Exports"])
 
@@ -57,7 +58,7 @@ class ExportType(str, Enum):
 
 
 # Utility function to fetch data
-async def fetch_data(
+async def fetch_user_data(
     user_id: str, from_date: Optional[datetime.date], to_date: Optional[datetime.date]
 ):
     """Fetch data from the database based on user ID and date range."""
@@ -95,13 +96,13 @@ def write_expenses_to_sheet(sheet: Worksheet, expenses: list):
     for expense in expenses:
         sheet.append(
             [
-            expense["date"].strftime("%Y-%m-%d") if expense.get("date") else "",
-            expense["amount"],
-            expense["currency"],
-            expense["category"],
-            expense.get("description", ""),
-            expense["account_name"],
-            str(expense["_id"]),
+                expense["date"].strftime("%Y-%m-%d") if expense.get("date") else "",
+                expense["amount"],
+                expense["currency"],
+                expense["category"],
+                expense.get("description", ""),
+                expense["account_name"],
+                str(expense["_id"]),
             ]
         )
 
@@ -143,7 +144,7 @@ async def data_to_xlsx(
         Response: XLSX file containing expenses, accounts, and categories data.
     """
     user_id = await verify_token(token)
-    expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
+    expenses, accounts, user = await fetch_user_data(user_id, from_date, to_date)
 
     if not expenses and not accounts and not user:
         raise HTTPException(status_code=404, detail="No data found")
@@ -163,7 +164,7 @@ async def data_to_xlsx(
 
     # Write categories
     categories_sheet: Optional[Worksheet] = workbook.create_sheet(title="Categories")
-    if categories_sheet is not None and user and "categories" in user:
+    if categories_sheet is not None and user and user.get("categories"):
         write_categories_to_sheet(categories_sheet, user["categories"])
 
     output = BytesIO()
@@ -208,7 +209,7 @@ async def data_to_csv(
         Response: CSV file containing the selected data.
     """
     user_id = await verify_token(token)
-    expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
+    expenses, accounts, user = await fetch_user_data(user_id, from_date, to_date)
     output = StringIO()
     writer = csv.writer(output)
 
@@ -252,7 +253,7 @@ async def data_to_csv(
                 ]
             )
     elif export_type == ExportType.CATEGORIES:
-        if not user or "categories" not in user:
+        if not user or not user.get("categories"):
             raise HTTPException(status_code=404, detail="No categories found")
         writer.writerow(["name", "monthly_budget"])
         for category_name, category_data in user["categories"].items():
@@ -282,9 +283,9 @@ async def data_to_pdf(
     Returns:
         Response: PDF file containing expenses, accounts, and categories data.
     """
-    # pylint: disable=too-many-locals, too-many-statements
+    # pylint: disable=too-many-locals, too-many-statements, too-many-branches
     user_id = await verify_token(token)
-    expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
+    expenses, accounts, user = await fetch_user_data(user_id, from_date, to_date)
 
     if not expenses and not accounts and not user:
         raise HTTPException(status_code=404, detail="No data found")
@@ -293,7 +294,7 @@ async def data_to_pdf(
     doc = SimpleDocTemplate(
         buffer,
         pagesize=letter,
-        title=f"MM PDF Export - {user['username']}",
+        title=f"MM PDF Export - {user['username'] if user else 'Unknown'}",
         lang="en-gb",
     )
     styles = getSampleStyleSheet()
@@ -340,13 +341,31 @@ async def data_to_pdf(
     toc = [
         create_paragraph("<link href='#expenses'>1. Expenses</link>", styles["Normal"]),
         create_paragraph("<link href='#accounts'>2. Accounts</link>", styles["Normal"]),
-        create_paragraph("<link href='#categories'>3. Categories</link>", styles["Normal"]),
-        create_paragraph("<link href='#analytics'>4. Analytics</link>", styles["Normal"]),
-        create_paragraph("   <link href='#expense-chart'>4.1. Expense Chart</link>", styles["Normal"]),
-        create_paragraph("   <link href='#category-pie'>4.2. Category Distribution</link>", styles["Normal"]),
-        create_paragraph("   <link href='#monthly-line'>4.3. Monthly Expenses</link>", styles["Normal"]),
-        create_paragraph("   <link href='#category-bar'>4.4. Category Comparison</link>", styles["Normal"]),
-        create_paragraph("   <link href='#budget-actual'>4.5. Budget vs Actual</link>", styles["Normal"]),
+        create_paragraph(
+            "<link href='#categories'>3. Categories</link>", styles["Normal"]
+        ),
+        create_paragraph(
+            "<link href='#analytics'>4. Analytics</link>", styles["Normal"]
+        ),
+        create_paragraph(
+            "   <link href='#expense-chart'>4.1. Expense Chart</link>", styles["Normal"]
+        ),
+        create_paragraph(
+            "   <link href='#category-pie'>4.2. Category Distribution</link>",
+            styles["Normal"],
+        ),
+        create_paragraph(
+            "   <link href='#monthly-line'>4.3. Monthly Expenses</link>",
+            styles["Normal"],
+        ),
+        create_paragraph(
+            "   <link href='#category-bar'>4.4. Category Comparison</link>",
+            styles["Normal"],
+        ),
+        create_paragraph(
+            "   <link href='#budget-actual'>4.5. Budget vs Actual</link>",
+            styles["Normal"],
+        ),
     ]
     elements.append(create_paragraph("Table of Contents", styles["Title"]))
     elements.append(Spacer(1, 12))
@@ -390,7 +409,7 @@ async def data_to_pdf(
                 expense["currency"],
                 expense["category"],
                 expense.get("description", ""),
-                expense["account_name"]
+                expense["account_name"],
             ]
         )
     expenses_table = create_table(
@@ -416,13 +435,7 @@ async def data_to_pdf(
     elements.append(Spacer(1, 12))
     accounts_data = [["Name", "Balance", "Currency"]]
     for account in accounts:
-        accounts_data.append(
-            [
-                account["name"],
-                account["balance"],
-                account["currency"]
-            ]
-        )
+        accounts_data.append([account["name"], account["balance"], account["currency"]])
     accounts_table = create_table(
         wrap_text(accounts_data),
         [100, 100, 100, 100],
@@ -478,11 +491,13 @@ async def data_to_pdf(
         "<a name='category-pie'/>Category Distribution": create_category_pie,
         "<a name='monthly-line'/>Monthly Expenses": create_monthly_line,
         "<a name='category-bar'/>Category Comparison": create_category_bar,
-        "<a name='budget-actual'/>Budget vs Actual": lambda e, f, t: create_budget_vs_actual(e, user["categories"], f, t)
+        "<a name='budget-actual'/>Budget vs Actual": lambda e, f, t: create_budget_vs_actual(
+            e, user["categories"] if user else {}, f, t
+        ),
     }
 
     for title, generator in plot_generators.items():
-        image_data = generator(expenses, from_date, to_date)
+        image_data = generator(expenses, from_date, to_date)  # type: ignore
         if image_data:
             elements.append(create_paragraph(title, styles["Heading2"]))
             elements.append(Spacer(1, 12))
@@ -512,4 +527,3 @@ async def data_to_pdf(
     response = Response(content=buffer.getvalue(), media_type="application/pdf")
     response.headers["Content-Disposition"] = "attachment; filename=data.pdf"
     return response
-

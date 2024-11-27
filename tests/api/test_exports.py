@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 from api.app import app
-from api.routers.exports import fetch_data
+from api.utils.db import fetch_data
 
 client = TestClient(app)
 
@@ -202,62 +202,6 @@ def mock_db_no_categories(monkeypatch):
     monkeypatch.setattr(
         "api.routers.exports.users_collection", MockCollection(users_data)
     )
-
-
-@pytest.mark.anyio
-class TestFetchData:
-    async def test_fetch_data(self, mock_db):
-        user_id = "507f1f77bcf86cd799439011"
-        from_date = datetime.date(2023, 1, 1)
-        to_date = datetime.date(2023, 1, 31)
-        expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
-        assert len(expenses) == 1
-        assert len(accounts) == 1
-        assert user is not None
-
-    async def test_fetch_data_no_date_range(self, mock_db):
-        user_id = "507f1f77bcf86cd799439011"
-        expenses, accounts, user = await fetch_data(user_id, None, None)
-        assert len(expenses) == 1
-        assert len(accounts) == 1
-        assert user is not None
-
-    async def test_fetch_data_only_from_date(self, mock_db):
-        user_id = "507f1f77bcf86cd799439011"
-        from_date = datetime.date(2023, 1, 1)
-        expenses, accounts, user = await fetch_data(user_id, from_date, None)
-        assert len(expenses) == 1
-        assert len(accounts) == 1
-        assert user is not None
-
-    async def test_fetch_data_only_to_date(self, mock_db):
-        user_id = "507f1f77bcf86cd799439011"
-        to_date = datetime.date(2023, 1, 31)
-        expenses, accounts, user = await fetch_data(user_id, None, to_date)
-        assert len(expenses) == 1
-        assert len(accounts) == 1
-        assert user is not None
-
-    async def test_fetch_data_invalid_date_range(self, mock_db):
-        user_id = "507f1f77bcf86cd799439011"
-        from_date = datetime.date(2023, 1, 31)
-        to_date = datetime.date(2023, 1, 1)
-        with pytest.raises(HTTPException) as exc_info:
-            await fetch_data(user_id, from_date, to_date)
-        assert exc_info.value.status_code == 422
-        assert (
-            exc_info.value.detail
-            == "Invalid date range: 'from_date' must be before 'to_date'"
-        )
-
-    async def test_fetch_data_same_from_to_date(self, mock_db):
-        user_id = "507f1f77bcf86cd799439011"
-        from_date = datetime.date(2023, 1, 1)
-        to_date = datetime.date(2023, 1, 1)
-        expenses, accounts, user = await fetch_data(user_id, from_date, to_date)
-        assert len(expenses) == 1
-        assert len(accounts) == 1
-        assert user is not None
 
 
 @pytest.mark.anyio

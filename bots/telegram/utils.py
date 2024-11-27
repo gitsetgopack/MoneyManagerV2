@@ -1,10 +1,11 @@
 """Utility functions for the Telegram bot."""
 
+import re
+
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 
 from config.config import TELEGRAM_SET_COMMAND_TEXT
-import re
 
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -26,38 +27,30 @@ async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle unknown commands."""
     await update.message.reply_text("Sorry, I didn't understand that command.")
 
+
 def get_menu_commands() -> str:
     commands = TELEGRAM_SET_COMMAND_TEXT.strip().split("\n")
     grouped_commands = {
         "Helper Commands": {
             "pattern": re.compile(r"^(start|menu|cancel)$"),
-            "commands": []
+            "commands": [],
         },
         "User Commands": {
             "pattern": re.compile(r"^(login|signup|logout)$"),
-            "commands": []
+            "commands": [],
         },
-        "Expense Commands": {
-            "pattern": re.compile(r"^expenses_"),
-            "commands": []
-        },
+        "Expense Commands": {"pattern": re.compile(r"^expenses_"), "commands": []},
         "Categories|Budget Commands": {
             "pattern": re.compile(r"^categories_"),
-            "commands": []
+            "commands": [],
         },
-        "Accounts Commands": {
-            "pattern": re.compile(r"^accounts_"),
-            "commands": []
-        },
-        "Other Commands": {
-            "pattern": re.compile(r".*"),
-            "commands": []
-        }
+        "Accounts Commands": {"pattern": re.compile(r"^accounts_"), "commands": []},
+        "Other Commands": {"pattern": re.compile(r".*"), "commands": []},
     }
 
     for cmd in commands:
         if cmd:
-            command, description = cmd.split(' - ')
+            command, description = cmd.split(" - ")
             for group, data in grouped_commands.items():
                 if data["pattern"].match(command):
                     data["commands"].append(f"/{command} - {description}")

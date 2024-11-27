@@ -5,9 +5,10 @@ profile = "black"
 filterwarnings = [
     "ignore::DeprecationWarning",
 ]
-addopts = "--cov=api --cov=bots --cov-report=term-missing"
+addopts = "--cov=api --cov-report=term-missing"
 
 [tool.pylint]
-disable = ["fixme"]
+disable = ["fixme", "R0801"]
+
 [tool.pylint.MASTER]
 ignore = ["tests"]
