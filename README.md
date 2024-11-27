@@ -210,6 +210,26 @@ Currently, the project includes 150+ tests covering all core functionality.
 <img src="https://github.com/user-attachments/assets/f92b88b8-66c5-4b58-9a6a-938f4c7c32c2" alt="Categories" width="200"></br>
 <img src="https://github.com/user-attachments/assets/e71da36c-88fa-44ba-b8f1-55f187537a94" alt="Categories" width="200"></br>
 
+- **Add Accounts**
+
+<img src="https://github.com/user-attachments/assets/c6bdb2d8-0bd3-45f6-b237-be0dd4b2e8f8" alt="Accounts" width="200"></br>
+<img src="https://github.com/user-attachments/assets/5c6b6ffa-c877-4e86-8077-f8273bf226ac" alt="Accounts" width="200"></br>
+
+- **View Accounts**
+
+<img src="https://github.com/user-attachments/assets/f86b08cb-aae0-4e1c-9076-67274587f288" alt="Accounts" width="200"></br>
+
+- **Update Accounts**
+
+<img src="https://github.com/user-attachments/assets/294f0b80-7883-4c93-9967-c37a16a4cddf" alt="Accounts" width="200"></br>
+<img src="https://github.com/user-attachments/assets/f6fbb986-bc9f-41f1-b2d3-a7d4740290f7" alt="Accounts" width="200"></br>
+<img src="https://github.com/user-attachments/assets/cca9307d-b633-4035-b113-c93b94e74ed8" alt="Accounts" width="200"></br>
+
+- **Delete Accounts**
+
+<img src="https://github.com/user-attachments/assets/18870a19-eb0e-4cdd-84ff-cbd1b4cccfab" alt="Accounts" width="200"></br>
+<img src="https://github.com/user-attachments/assets/7cadd130-8d89-427c-b236-1bfd3614c6aa" alt="Accounts" width="200"></br>
+<img src="https://github.com/user-attachments/assets/e3ec96dc-2de7-4c40-8502-773ccbe1459a" alt="Accounts" width="200"></br>
 
 ## 🚀 Future Enhancements (Needs Change)
 
