@@ -395,11 +395,15 @@ async def expenses_delete(
         if total_pages > 1:
             if page > 1:
                 pagination_buttons.append(
-                    InlineKeyboardButton("⬅️", callback_data=f"delete_expenses#{page-1}")
+                    InlineKeyboardButton(
+                        "⬅️", callback_data=f"delete_expenses#{page-1}"
+                    )
                 )
             if page < total_pages:
                 pagination_buttons.append(
-                    InlineKeyboardButton("➡️", callback_data=f"delete_expenses#{page+1}")
+                    InlineKeyboardButton(
+                        "➡️", callback_data=f"delete_expenses#{page+1}"
+                    )
                 )
 
         start_idx = (page - 1) * items_per_page
@@ -585,11 +589,15 @@ async def expenses_update(
         if total_pages > 1:
             if page > 1:
                 pagination_buttons.append(
-                    InlineKeyboardButton("⬅️", callback_data=f"update_expenses#{page-1}")
+                    InlineKeyboardButton(
+                        "⬅️", callback_data=f"update_expenses#{page-1}"
+                    )
                 )
             if page < total_pages:
                 pagination_buttons.append(
-                    InlineKeyboardButton("➡️", callback_data=f"update_expenses#{page+1}")
+                    InlineKeyboardButton(
+                        "➡️", callback_data=f"update_expenses#{page+1}"
+                    )
                 )
 
         start_idx = (page - 1) * items_per_page
