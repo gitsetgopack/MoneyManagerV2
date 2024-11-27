@@ -15,7 +15,7 @@
 
 # MoneyManager Installation Guide
 
-Welcome to the **MoneyManager** project! This guide will help you set up the environment and install dependencies to get started.
+Welcome to the **MoneyManagerV2** project! This guide will help you set up the environment and install dependencies to get started.
 
 ## Prerequisites
 
@@ -32,8 +32,8 @@ Before beginning the installation, please ensure you have the following installe
    Begin by cloning the repository to your local machine:
 
    ```bash
-   git clone https://github.com/gitsetgopack/MoneyManager.git
-   cd MoneyManager
+   git clone https://github.com/your-username/MoneyManagerV2.git
+   cd MoneyManagerV2
    ```
 
 2. **Install Dependencies**
@@ -48,6 +48,16 @@ Before beginning the installation, please ensure you have the following installe
    - Upgrade `pip` to the latest version.
    - Install the required Python packages as specified in the `requirements.txt`.
    - Install pre-commit hooks.
+
+## Fill in the config.py
+
+Before running the application, you need to set up the necessary configurations in the config.py file. Follow these steps:
+
+- **Create a bot and get its token:** Set up a bot using the Telegram Bot API, and obtain the API token required to integrate the bot with the application.
+- **Create a Gmail account and get the app password:** Generate an app-specific password for Gmail to enable email functionality securely.
+- **Set up a MongoDB database and get the connection token:** Create a MongoDB cluster or database, and retrieve the connection string/token for the database.
+
+Ensure you replace the placeholder values in config.py with the actual credentials and tokens for these services.
 
 ## Available Make Commands
 
@@ -65,10 +75,17 @@ Here are the commands available in the `Makefile` to help you work with the proj
 
 - **run**: Run the FastAPI application using the virtual environment.
   ```bash
-  make run
+  make api
   ```
 
   This will execute the FastAPI app located at `api/app.py`.
+
+  - **telegram**: Launch the Telegram bot to test its functionality and interaction.
+  ```bash
+  make telegram
+  ```
+
+  This will initialize the telegram bot.
 
 - **test**: Start a MongoDB Docker container, run tests, and clean up after the tests.
   ```bash
@@ -80,9 +97,9 @@ Here are the commands available in the `Makefile` to help you work with the proj
   - Run all tests using `pytest`.
   - Stop and remove the MongoDB container after testing is complete.
 
-- **fix**: Run code formatting on the `api` directory using `black` and `isort`.
+- **pre-commit**: Will run `black`, `isort`, `pylint` and other checks to ensure the code style is consistent.
   ```bash
-  make fix
+  pre-commit run --all-files
   ```
 
 - **clean**: Clean up Python bytecode files, cache, and MongoDB Docker containers.
@@ -117,10 +134,10 @@ Here are the commands available in the `Makefile` to help you work with the proj
 After installation, you can run the FastAPI server by executing:
 
 ```bash
-make run
+make api
 ```
 
-This command will start the application, and you can access it in your browser at the specified URL (typically `http://127.0.0.1:8000`).
+This command will start the application, and you can access it in your browser at the specified URL.
 
 ## Running Tests
 
@@ -134,4 +151,4 @@ This command will automatically set up the necessary database for testing purpos
 
 ---
 
-Feel free to reach out if you have any issues setting up **MoneyManager**!
+Feel free to reach out if you have any issues setting up **MoneyManagerV2**!
