@@ -7,7 +7,7 @@ import os
 
 MONGO_URI = os.getenv(
     "MONGO_URI",
-    "",
+    "mongodb://localhost:27017",
 )
 
 TOKEN_SECRET_KEY = os.getenv("TOKEN_SECRET_KEY", "")
