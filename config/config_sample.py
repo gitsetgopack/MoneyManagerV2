@@ -47,8 +47,8 @@ exports - Export data to pdf, xlsx, csv
 cancel - To cancel any operation
 """
 
-GMAIL_SMTP_SERVER = os.getenv("GMAIL_SMTP_USERNAME", "smtp.gmail.com")
-GMAIL_SMTP_PORT = int(os.getenv("GMAIL_SMTP_USERNAME", "587"))
+GMAIL_SMTP_SERVER = os.getenv("GMAIL_SMTP_SERVER", "smtp.gmail.com")
+GMAIL_SMTP_PORT = int(os.getenv("GMAIL_SMTP_PORT", "587"))
 GMAIL_SMTP_USERNAME = os.getenv("GMAIL_SMTP_USERNAME", "")
 GMAIL_SMTP_PASSWORD = os.getenv("GMAIL_SMTP_PASSWORD", "")
 
