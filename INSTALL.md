@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [MoneyManager Installation Guide](#moneymanager-installation-guide)
+- [MoneyManagerV2 Installation Guide](#moneymanager-installation-guide)
   - [Prerequisites](#prerequisites)
   - [Installation Steps](#installation-steps)
   - [Available Make Commands](#available-make-commands)
