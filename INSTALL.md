@@ -80,7 +80,7 @@ Here are the commands available in the `Makefile` to help you work with the proj
 
   This will execute the FastAPI app located at `api/app.py`.
 
-  - **telegram**: Launch the Telegram bot to test its functionality and interaction.
+- **telegram**: Launch the Telegram bot to test its functionality and interaction.
   ```bash
   make telegram
   ```
