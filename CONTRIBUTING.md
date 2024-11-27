@@ -94,7 +94,7 @@ Before committing your changes, it's essential to ensure your code adheres to th
 pre-commit run --all-files
 ```
 
-This command will run `black`, `isort`, 'pylint' and other checks to ensure the code style is consistent.
+This command will run `black`, `isort`, `pylint` and other checks to ensure the code style is consistent.
 
 ### 8. Run locally
 
