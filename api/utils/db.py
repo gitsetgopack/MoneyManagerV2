@@ -1,6 +1,7 @@
 """
 Utility functions for database operations.
 """
+
 import datetime
 from typing import Any, Dict, List, Optional, Tuple
 

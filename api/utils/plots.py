@@ -156,15 +156,17 @@ def create_budget_vs_actual(
     category_names = list(set(category_expenses.index).union(set(categories.keys())))
     actuals = [category_expenses.get(cat, 0) for cat in category_names]
     budgeted = [
-        prorate_budget(
-            categories[cat]["monthly_budget"],
-            from_date,
-            to_date,
-            first_expense_date,
-            last_expense_date,
+        (
+            prorate_budget(
+                categories[cat]["monthly_budget"],
+                from_date,
+                to_date,
+                first_expense_date,
+                last_expense_date,
+            )
+            if cat in categories
+            else 0
         )
-        if cat in categories
-        else 0
         for cat in category_names
     ]
 

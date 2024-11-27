@@ -280,7 +280,9 @@ async def confirm_delete_account(
             )
         else:
             error_detail = response.json().get("detail", "Unknown error")
-            await query.message.edit_text(f"❌ Failed to delete account: {error_detail}")
+            await query.message.edit_text(
+                f"❌ Failed to delete account: {error_detail}"
+            )
 
         context.user_data.clear()
         return ConversationHandler.END
